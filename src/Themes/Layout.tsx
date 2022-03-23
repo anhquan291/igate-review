@@ -11,6 +11,11 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
   },
+  fillAbsolute: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 999,
+  },
   /* Column Layouts */
   column: {
     flexDirection: 'column',

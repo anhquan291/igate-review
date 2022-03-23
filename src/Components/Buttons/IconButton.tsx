@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MediumText from '../texts/MediumText';
-import Colors from '../../theme/Colors';
-import Layout from '../../theme/Layout';
-import { kScaledSize, kSpacing } from '../../utils/Constants';
+import MediumText from '../Texts/MediumText';
+import Colors from '../../Themes/Colors';
+import Layout from '../../Themes/Layout';
+import { kScaledSize, kSpacing } from '../../Utils/Constants';
 
 type Props = {
   title: string;
@@ -17,7 +17,8 @@ const IconButton = ({ title, style, onPress }: Props) => {
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={[Layout.rowCenter, styles.button, style]}>
+      style={[Layout.rowCenter, styles.button, style]}
+    >
       <MediumText numberOfLines={1} style={styles.title}>
         {title}
       </MediumText>

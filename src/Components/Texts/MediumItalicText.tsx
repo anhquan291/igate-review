@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, StyleSheet, TextProps } from 'react-native';
-import { kTextSizes } from '../../Utils/Constant';
+import { kTextSizes } from '../../Utils/Constants';
 
-const RegularText = (props: TextProps) => {
+const MediumItalicText = (props: TextProps) => {
   return (
     <Text {...props} style={[styles.text, props.style]}>
       {props.children}
@@ -13,7 +13,9 @@ const RegularText = (props: TextProps) => {
 const styles = StyleSheet.create({
   text: {
     fontSize: kTextSizes.body,
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
 });
 
-export default RegularText;
+export default MediumItalicText;

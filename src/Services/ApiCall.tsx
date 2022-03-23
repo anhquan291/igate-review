@@ -46,7 +46,7 @@ export const requestGet = async (
     ...(options?.needToken && { Authorization: userToken }),
   };
   const response: AxiosResponse = await axios.request({
-    baseURL: Config.API_BASE,
+    baseURL: Config.API_URL,
     url: endpoint,
     method: 'GET',
     data: options?.data,
@@ -87,10 +87,46 @@ export const requestPost = async (
     formData.append('avatar', file);
   }
   const response: AxiosResponse = await axios.request({
-    baseURL: Config.API_BASE,
+    baseURL: Config.API_URL,
     url: endpoint,
     method: 'POST',
     data: options?.formData ? formData : options?.data,
+    params: options?.params,
+    timeout: 20000,
+    headers: header,
+  });
+  return response;
+};
+
+export const requestPostXform = async (
+  endpoint: string,
+  options?: {
+    data?: Object;
+    params?: Object;
+    needToken?: boolean;
+  }
+) => {
+  const token: any = await AsyncStorage.getItem('authToken');
+  const auth = JSON.parse(token);
+  const userToken = options?.needToken ? auth : null;
+  let formBody: any = [];
+  const details: any = options?.data;
+  for (const property in details) {
+    const encodedKey = encodeURIComponent(property);
+    const encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+  formBody = formBody.join('&');
+  console.log('Config.API_URL', formBody);
+  let header = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    ...(options?.needToken && { Authorization: userToken }),
+  };
+  const response: AxiosResponse = await axios.request({
+    baseURL: Config.API_URL,
+    url: endpoint,
+    method: 'POST',
+    data: formBody,
     params: options?.params,
     timeout: 20000,
     headers: header,

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "ios copy.png",
+      "filename" : "vnpt-vector-logo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "ios copy-1.png",
+      "filename" : "vnpt-vector-logo-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "ios copy-2.png",
+      "filename" : "vnpt-vector-logo-2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

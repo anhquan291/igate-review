@@ -1,29 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../../Hooks/Hooks';
-import { fetchUsers } from '../../Store/UserSlice';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { View, StyleSheet } from 'react-native';
+import { Header } from '../../Components/Headers';
+import { MediumText } from '../../Components/Texts';
 import Layout from '../../Themes/Layout';
-import { UserData } from '../../Types/ResponseTypes';
-import Config from 'react-native-config';
 
 const HomeScreen: React.FC = () => {
-  const { users, loading } = useAppSelector((state) => state.users);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchUsers());
-  }, []);
-  // console.log(users);
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        users.map((user: UserData) => (
-          <Text key={user.id}>{user.first_name}</Text>
-        ))
-      )}
-      <Text>{Config.API_URL ? Config.API_URL : 'Not import'}</Text>
+    <View style={[Layout.fill]}>
+      <Header name="Danh sách hồ sơ" showBackButton={false} />
+      <View style={[Layout.fill]}></View>
     </View>
   );
 };

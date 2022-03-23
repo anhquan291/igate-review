@@ -1,5 +1,5 @@
 export default {
-  primary: '#05944F',
+  primary: '#2396fa',
   secondary: '#FFC043',
   error: '#E73232',
   blue: '#0B24FB',
@@ -30,4 +30,5 @@ export default {
   note: '#84878E',
   transparent: 'rgba(0,0,0,0)',
   inputBackground: '#FFFFFF',
+  text: '#000000',
 };

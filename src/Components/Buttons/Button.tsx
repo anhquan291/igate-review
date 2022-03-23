@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import MediumText from '../texts/MediumText';
-import Colors from '../../theme/Colors';
-import Layout from '../../theme/Layout';
-import { kScaledSize, kSpacing } from '../../utils/Constants';
+import MediumText from '../Texts/MediumText';
+import Colors from '../../Themes/Colors';
+import Layout from '../../Themes/Layout';
+import { kSpacing } from '../../Utils/Constants';
 
 type Props = {
   title: string;
@@ -16,7 +16,8 @@ const Button = ({ title, style, onPress }: Props) => {
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={[Layout.center, styles.button, style]}>
+      style={[Layout.center, styles.button, style]}
+    >
       <MediumText numberOfLines={1} style={styles.title}>
         {title}
       </MediumText>

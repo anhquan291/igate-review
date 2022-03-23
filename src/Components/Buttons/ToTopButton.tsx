@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Themes/Colors';
 import Layout from '../../Themes/Layout';
-import { kScaledSize, kSpacing } from '../../Utils/Constant';
+import { kScaledSize, kSpacing } from '../../Utils/Constants';
 
 type Props = {
   style?: ViewStyle;

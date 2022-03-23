@@ -68,7 +68,6 @@ async function getVerifiedKeys(keys: Key) {
     }
   } else {
     console.log('access not available please login');
-
     return null;
   }
 }

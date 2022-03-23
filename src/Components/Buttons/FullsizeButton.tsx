@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { kScaledSize, kSpacing, kTextSizes } from '../../utils/Constants';
-import { SemiBoldText } from '../texts';
-import Colors from '../../theme/Colors';
-import Layout from '../../theme/Layout';
+import { kScaledSize, kSpacing, kTextSizes } from '../../Utils/Constants';
+import { SemiBoldText } from '../Texts';
+import Colors from '../../Themes/Colors';
+import Layout from '../../Themes/Layout';
 
 interface Props {
   style?: ViewStyle;
@@ -16,7 +16,8 @@ const FullsizeButton = (props: Props) => {
     <TouchableOpacity
       onPress={props.onPress}
       activeOpacity={0.8}
-      style={[styles.container, Layout.center, props.style]}>
+      style={[styles.container, Layout.center, props.style]}
+    >
       <SemiBoldText numberOfLines={1} style={styles.text}>
         {props.label}
       </SemiBoldText>

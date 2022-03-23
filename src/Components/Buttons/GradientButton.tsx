@@ -2,12 +2,12 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 // Components
-import { SemiBoldText } from '../texts';
+import { SemiBoldText } from '../Texts';
 // Theme
-import Colors from '../../theme/Colors';
-import Layout from '../../theme/Layout';
+import Colors from '../../Themes/Colors';
+import Layout from '../../Themes/Layout';
 // Constants
-import { kScaledSize, kSpacing, kTextSizes } from '../../utils/Constants';
+import { kScaledSize, kSpacing, kTextSizes } from '../../Utils/Constants';
 
 interface Props {
   style?: ViewStyle;
@@ -26,7 +26,8 @@ const GradientButton = ({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
-      disabled={isDisable}>
+      disabled={isDisable}
+    >
       <LinearGradient
         style={[styles.container, Layout.center, style]}
         colors={[
@@ -35,13 +36,15 @@ const GradientButton = ({
         ]}
         useAngle={true}
         angle={45}
-        angleCenter={{ x: 0.5, y: 0.5 }}>
+        angleCenter={{ x: 0.5, y: 0.5 }}
+      >
         <SemiBoldText
           numberOfLines={1}
           style={[
             styles.text,
             { color: isDisable ? Colors.grey6 : Colors.white },
-          ]}>
+          ]}
+        >
           {label}
         </SemiBoldText>
       </LinearGradient>

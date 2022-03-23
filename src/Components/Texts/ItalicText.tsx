@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, StyleSheet, TextProps } from 'react-native';
-import { kTextSizes } from '../../Utils/Constant';
+import { kTextSizes } from '../../Utils/Constants';
 
-const BoldText = (props: TextProps) => {
+const ItalicText = (props: TextProps) => {
   return (
     <Text {...props} style={[styles.text, props.style]}>
       {props.children}
@@ -13,8 +13,8 @@ const BoldText = (props: TextProps) => {
 const styles = StyleSheet.create({
   text: {
     fontSize: kTextSizes.body,
-    fontWeight: 'bold',
+    fontStyle: 'italic',
   },
 });
 
-export default BoldText;
+export default ItalicText;

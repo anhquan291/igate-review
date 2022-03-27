@@ -32,11 +32,10 @@ export const authGetToken = createAsyncThunk(
           needToken: false,
         }
       );
-      console.log('res', response.data);
       return response.data;
     } catch (error: any) {
       console.log(error);
-      if (error.status === 401) {
+      if (error.response.status === 401) {
         handleAlert({
           message: 'Hết phiên đăng nhập, vui lòng lấy token mới',
           onPress1: forceLogout,
@@ -62,7 +61,7 @@ const AuthSlice = createSlice({
       state.token = '';
       state.refreshToken = '';
       removeFromStorage('authToken');
-      removeFromStorage('BiometricConfig');
+      removeFromStorage('refreshToken');
     },
   },
   extraReducers: (builder) => {
@@ -71,7 +70,7 @@ const AuthSlice = createSlice({
     });
     builder.addCase(authGetToken.fulfilled, (state, action) => {
       const { access_token, refresh_token }: any = action.payload;
-      saveToStorage('token', JSON.stringify(access_token));
+      saveToStorage('authToken', JSON.stringify(access_token));
       saveToStorage('refreshToken', JSON.stringify(refresh_token));
       state.token = access_token;
       state.refreshToken = refresh_token;

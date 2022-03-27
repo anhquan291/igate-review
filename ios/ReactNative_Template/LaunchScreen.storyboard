@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina6_0" orientation="portrait" appearance="light"/>
+    <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
@@ -13,11 +13,11 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OLo-XH-8gj">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="WmF-wn-SNW">
-                                <rect key="frame" x="20" y="239" width="350" height="262"/>
+                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="WmF-wn-SNW">
+                                <rect key="frame" x="20" y="194" width="374" height="502"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zKd-Lg-ed2"/>
@@ -25,6 +25,8 @@
                         <constraints>
                             <constraint firstItem="zKd-Lg-ed2" firstAttribute="trailing" secondItem="WmF-wn-SNW" secondAttribute="trailing" constant="20" id="IZq-6M-Z94"/>
                             <constraint firstItem="WmF-wn-SNW" firstAttribute="leading" secondItem="zKd-Lg-ed2" secondAttribute="leading" constant="20" id="SYS-Sr-ezU"/>
+                            <constraint firstItem="zKd-Lg-ed2" firstAttribute="bottom" secondItem="WmF-wn-SNW" secondAttribute="bottom" constant="166" id="VgT-0W-z8q"/>
+                            <constraint firstItem="WmF-wn-SNW" firstAttribute="top" secondItem="zKd-Lg-ed2" secondAttribute="top" constant="150" id="i5w-5g-tND"/>
                         </constraints>
                     </view>
                 </viewController>

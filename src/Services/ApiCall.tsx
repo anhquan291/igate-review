@@ -43,10 +43,11 @@ export const requestGet = async (
 
   let header = {
     'content-type': 'application/json',
-    ...(options?.needToken && { Authorization: userToken }),
+    ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
   };
+  console.log(token);
   const response: AxiosResponse = await axios.request({
-    baseURL: Config.API_URL,
+    baseURL: Config.API_DATA,
     url: endpoint,
     method: 'GET',
     data: options?.data,
@@ -74,7 +75,7 @@ export const requestPost = async (
     'content-type': options?.formData
       ? 'multipart/form-data'
       : 'application/json',
-    ...(options?.needToken && { Authorization: userToken }),
+    ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
   };
   let formData = new FormData();
   if (options?.formData) {
@@ -87,7 +88,7 @@ export const requestPost = async (
     formData.append('avatar', file);
   }
   const response: AxiosResponse = await axios.request({
-    baseURL: Config.API_URL,
+    baseURL: Config.API_DATA,
     url: endpoint,
     method: 'POST',
     data: options?.formData ? formData : options?.data,
@@ -117,10 +118,9 @@ export const requestPostXform = async (
     formBody.push(encodedKey + '=' + encodedValue);
   }
   formBody = formBody.join('&');
-  console.log('Config.API_URL', formBody);
   let header = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    ...(options?.needToken && { Authorization: userToken }),
+    ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
   };
   const response: AxiosResponse = await axios.request({
     baseURL: Config.API_URL,

@@ -56,6 +56,11 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   /* Default Layouts */
   center: {
     alignItems: 'center',

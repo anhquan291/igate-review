@@ -1,34 +1,40 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Header } from '../../Components/Headers';
 import { AppLoader } from '../../Components/Loaders';
 import { MediumText } from '../../Components/Texts';
 import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
-import { taskGetData } from '../../Store/TaskSlice';
+import { fileGetData } from '../../Store/FileSlice';
 import Layout from '../../Themes/Layout';
+import { kSpacing } from '../../Utils/Constants';
+import HomeItem from './HomeItem';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector((state) => state.tasks);
-  const onGetTaskList = async () => {
-    await dispatch(taskGetData({ page: 0, size: 10, spec: 'page' }));
+  const { fileList, isLoading } = useAppSelector((state) => state.files);
+  const [page, setPage] = useState<number>(0);
+  const onGetFileList = async () => {
+    await dispatch(fileGetData({ page: page, size: 20, spec: 'page' }));
   };
   useEffect(() => {
-    onGetTaskList();
+    onGetFileList();
   }, []);
   return (
     <View style={[Layout.fill]}>
       <Header name="Danh sách hồ sơ" showBackButton={false} />
       {isLoading && <AppLoader />}
-      <View style={[Layout.fill]}></View>
+      <View style={[Layout.fill, styles.container]}>
+        <FlatList
+          data={fileList}
+          renderItem={({ item }) => <HomeItem item={item} />}
+        />
+      </View>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: kSpacing.kSpacing10,
   },
 });
 

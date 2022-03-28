@@ -1,5 +1,6 @@
 import { Dimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import dayjs from 'dayjs';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
@@ -51,3 +52,6 @@ export const removeFromStorage = async (key: string): Promise<void> => {
     console.log(error);
   }
 };
+
+export const formatDateMonth = (date: Date) =>
+  dayjs(date).format('DD/MM/YYYY HH:MM');

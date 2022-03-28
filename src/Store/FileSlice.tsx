@@ -5,22 +5,22 @@ import { handleAlert } from '../Utils/Notification';
 
 interface initialStateFields {
   isLoading: boolean;
-  taskList: any;
+  fileList: any;
   page: number;
   totalPages: number;
   error: boolean;
 }
 
-interface taskListParams {
+interface fileListParams {
   page: number;
   size: number;
   spec: string;
   code?: string;
 }
 
-export const taskGetData = createAsyncThunk(
-  'task/get_list',
-  async (fields: taskListParams, { rejectWithValue, dispatch }) => {
+export const fileGetData = createAsyncThunk(
+  'file/get_list',
+  async (fields: fileListParams, { rejectWithValue, dispatch }) => {
     try {
       const response = await requestGet('pa/dossier/', {
         params: fields,
@@ -41,29 +41,29 @@ export const taskGetData = createAsyncThunk(
   }
 );
 
-const TaskSlice = createSlice({
+const FileSlice = createSlice({
   name: 'task',
   initialState: {
     isLoading: false,
-    taskList: [],
+    fileList: [],
     totalPages: 0,
     error: false,
   } as initialStateFields,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(taskGetData.pending, (state) => {
+    builder.addCase(fileGetData.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(taskGetData.fulfilled, (state, action) => {
+    builder.addCase(fileGetData.fulfilled, (state, action) => {
       const data: any = action.payload;
-      state.taskList = data.content;
+      state.fileList = data.content;
       state.totalPages = data.totalPages;
       state.isLoading = false;
     });
-    builder.addCase(taskGetData.rejected, (state) => {
+    builder.addCase(fileGetData.rejected, (state) => {
       state.isLoading = false;
     });
   },
 });
 
-export default TaskSlice.reducer;
+export default FileSlice.reducer;

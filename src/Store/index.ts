@@ -1,6 +1,6 @@
 import ThemeSlice from './ThemeSlice';
 import UserSlice from './UserSlice';
 import AuthSlice from './AuthSlice';
-import TaskSlice from './TaskSlice';
+import FileSlice from './FileSlice';
 
-export { ThemeSlice, UserSlice, AuthSlice, TaskSlice };
+export { ThemeSlice, UserSlice, AuthSlice, FileSlice };

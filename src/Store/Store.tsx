@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { ThemeSlice, UserSlice, AuthSlice, TaskSlice } from './index';
+import { ThemeSlice, UserSlice, AuthSlice, FileSlice } from './index';
 
 export const store = configureStore({
   reducer: {
     themes: ThemeSlice,
     users: UserSlice,
     auth: AuthSlice,
-    tasks: TaskSlice,
+    files: FileSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

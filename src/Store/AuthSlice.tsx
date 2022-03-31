@@ -25,25 +25,20 @@ export const authGetToken = createAsyncThunk(
       dispatch(onLogout());
     };
     try {
-      const response = await requestPostXform(
-        'auth/realms/digo/protocol/openid-connect/token',
-        {
-          data: fields,
-          needToken: false,
-        }
-      );
+      const response = await requestPostXform('auth/realms/digo/protocol/openid-connect/token', {
+        data: fields,
+        needToken: false,
+      });
       return response.data;
     } catch (error: any) {
-      console.log(error);
-      if (error.response.status === 401) {
-        handleAlert({
-          message: 'Hết phiên đăng nhập, vui lòng lấy token mới',
-          onPress1: forceLogout,
-        });
-      }
+      handleAlert({
+        message:
+          error.response.status === 401 ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại' : 'Có lỗi xẩy ra',
+        onPress1: error.response.status === 401 ? forceLogout : () => {},
+      });
       return rejectWithValue(error);
     }
-  }
+  },
 );
 
 const AuthSlice = createSlice({

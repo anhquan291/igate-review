@@ -150,4 +150,8 @@ export default StyleSheet.create({
   rotate90Inverse: {
     transform: [{ rotate: '-90deg' }],
   },
+  // Text
+  whiteText: {
+    color: Colors.white,
+  },
 });

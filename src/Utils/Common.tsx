@@ -34,10 +34,7 @@ export const hasNotch = (): boolean => {
   return false;
 };
 
-export const saveToStorage = async (
-  key: string,
-  value: string
-): Promise<void> => {
+export const saveToStorage = async (key: string, value: string): Promise<void> => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (error) {
@@ -53,5 +50,4 @@ export const removeFromStorage = async (key: string): Promise<void> => {
   }
 };
 
-export const formatDateMonth = (date: Date) =>
-  dayjs(date).format('DD/MM/YYYY HH:MM');
+export const formatDateMonth = (date: any) => dayjs(date).format('DD/MM/YYYY HH:MM');

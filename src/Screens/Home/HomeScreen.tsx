@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Header } from '../../Components/Headers';
 import { AppLoader } from '../../Components/Loaders';
-import { MediumText } from '../../Components/Texts';
 import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
 import { fileGetData } from '../../Store/FileSlice';
 import Layout from '../../Themes/Layout';
@@ -14,7 +13,7 @@ const HomeScreen: React.FC = () => {
   const { fileList, isLoading } = useAppSelector((state) => state.files);
   const [page, setPage] = useState<number>(0);
   const onGetFileList = async () => {
-    await dispatch(fileGetData({ page: page, size: 20, spec: 'page' }));
+    await dispatch(fileGetData({ page: page, size: 20, spec: 'page' })).unwrap();
   };
   useEffect(() => {
     onGetFileList();
@@ -26,6 +25,8 @@ const HomeScreen: React.FC = () => {
       <View style={[Layout.fill, styles.container]}>
         <FlatList
           data={fileList}
+          initialNumToRender={10}
+          removeClippedSubviews
           renderItem={({ item }) => <HomeItem item={item} />}
         />
       </View>

@@ -1,16 +1,27 @@
 import React from 'react';
-import {View, Text} from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../../Screens/Home';
+import FileDetailScreen from '../../Screens/FileDetail';
+import { RouteProp } from '@react-navigation/native';
+import { FileFields } from '../../Screens/Home/Type';
+import RateScreen from '../../Screens/RateScreen';
 
-interface Props {}
+export type HomeParamList = {
+  HomeScreen: undefined;
+  FileDetailScreen: { item: FileFields };
+  RatingScreen: { item: any };
+};
 
-const Stack = createNativeStackNavigator();
+export type HomeRouteProps<RouteName extends keyof HomeParamList> = RouteProp<HomeParamList, RouteName>;
 
-const HomeStack = (props: Props) => {
+const Stack = createNativeStackNavigator<HomeParamList>();
+
+const HomeStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="FileDetailScreen" component={FileDetailScreen} />
+      <Stack.Screen name="RatingScreen" component={RateScreen} />
     </Stack.Navigator>
   );
 };

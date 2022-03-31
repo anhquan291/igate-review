@@ -5,12 +5,18 @@ import Colors from '../../Themes/Colors';
 import Layout from '../../Themes/Layout';
 import { ItalicText, MediumText, RegularText } from '../../Components/Texts';
 import { formatDateMonth } from '../../Utils/Common';
+import { useNavigation } from '@react-navigation/native';
+import { FileFields } from './Type';
 
 interface Props {
-  item: any;
+  item: FileFields;
 }
 
 const HomeItem = ({ item }: Props) => {
+  const navigation = useNavigation<any>();
+  const onNavigate = (): void => {
+    navigation.navigate('FileDetailScreen', { item });
+  };
   const onGetColor = () => {
     switch (item.dossierStatus.id) {
       case 0:
@@ -21,6 +27,7 @@ const HomeItem = ({ item }: Props) => {
         return Colors.orange;
       case 3:
         return Colors.primary;
+      // Co ket qua
       case 4:
         return Colors.secondary;
       case 5:
@@ -32,10 +39,7 @@ const HomeItem = ({ item }: Props) => {
     }
   };
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      style={[styles.container, Layout.shadow]}
-    >
+    <TouchableOpacity onPress={onNavigate} activeOpacity={0.7} style={[styles.container, Layout.shadow]}>
       <View style={[Layout.rowBetween]}>
         <MediumText numberOfLines={1} style={styles.text}>
           {item.code}
@@ -48,34 +52,27 @@ const HomeItem = ({ item }: Props) => {
             },
           ]}
         >
-          <RegularText style={[styles.text, { color: Colors.white }]}>
-            {item.dossierStatus.name}
-          </RegularText>
+          <RegularText style={[styles.text, { color: Colors.white }]}>{item.dossierStatus.name}</RegularText>
         </View>
       </View>
       <View style={[Layout.rowBetween, styles.client]}>
         <RegularText style={[styles.text]}>Tên khách hàng</RegularText>
-        <MediumText style={styles.name}>
-          {item.applicant.data.fullname}
-        </MediumText>
+        <MediumText style={styles.name}>{item.applicant.data.fullname}</MediumText>
       </View>
       <View>
         <RegularText style={styles.name} numberOfLines={3}>
           <MediumText style={styles.name}>Về việc: </MediumText>
-          Theo kế hoạch, ông Quyết sẽ tham gia Diễn đàn đầu tư Việt Nam ở London
-          vào sáng 30/3 và phát biểu kết luận vào cuối phiên với vai trò Chủ
-          tịch Bamboo Airways. Chiều cùng ngày, Roadshow giới thiệu về hệ sinh
-          thái của FLC cũng sẽ được tổ chức tại đây.
+          Theo kế hoạch, ông Quyết sẽ tham gia Diễn đàn đầu tư Việt Nam ở London vào sáng 30/3 và phát biểu
+          kết luận vào cuối phiên với vai trò Chủ tịch Bamboo Airways. Chiều cùng ngày, Roadshow giới thiệu về
+          hệ sinh thái của FLC cũng sẽ được tổ chức tại đây.
         </RegularText>
       </View>
 
       <View style={[styles.dateContainer, Layout.rowBetween]}>
         <ItalicText style={[styles.date, { color: Colors.grey6, flex: 1 }]}>
-          Ngày trả dự kiến: {formatDateMonth(item.appointmentDate)}
+          Ngày trả dự kiến: {formatDateMonth(new Date(item.appointmentDate))}
         </ItalicText>
-        <MediumText style={[styles.name]}>
-          {item.dossierTaskStatus.name}
-        </MediumText>
+        <MediumText style={[styles.name]}>{item.dossierTaskStatus.name}</MediumText>
       </View>
     </TouchableOpacity>
   );

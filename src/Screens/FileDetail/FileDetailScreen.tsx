@@ -58,6 +58,9 @@ const FileDetailScreen: React.FC = () => {
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
+            <TouchableOpacity onPress={onRate} style={[styles.result, { backgroundColor: Colors.green1 }]}>
+              <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
+            </TouchableOpacity>
             {fileDetail.dossierStatus.id === 4 && (
               <TouchableOpacity onPress={onRate} style={[styles.result, { backgroundColor: Colors.green1 }]}>
                 <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>

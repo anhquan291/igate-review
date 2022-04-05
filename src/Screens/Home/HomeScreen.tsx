@@ -13,7 +13,7 @@ const HomeScreen: React.FC = () => {
   const { fileList, isLoading } = useAppSelector((state) => state.files);
   const [page, setPage] = useState<number>(0);
   const onGetFileList = async () => {
-    await dispatch(fileGetData({ page: page, size: 20, spec: 'page' })).unwrap();
+    await dispatch(fileGetData({ page: page, size: 40, spec: 'page' })).unwrap();
   };
   useEffect(() => {
     onGetFileList();

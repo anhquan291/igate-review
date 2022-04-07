@@ -10,7 +10,7 @@ export const convertFromApiToApp = (
     api: string;
     app: string;
     defaultValue?: any;
-  }>
+  }>,
 ): Object => {
   let ret: any = {};
   mapping.forEach(({ api, app, defaultValue }) => {
@@ -35,7 +35,7 @@ export const requestGet = async (
     data?: Object;
     params?: Object;
     needToken?: boolean;
-  }
+  },
 ) => {
   const token: any = await AsyncStorage.getItem('authToken');
   const auth = JSON.parse(token);
@@ -65,16 +65,14 @@ export const requestPost = async (
     params?: Object;
     needToken?: boolean;
     formData?: boolean;
-  }
+  },
 ) => {
   const token: any = await AsyncStorage.getItem('authToken');
   const auth = JSON.parse(token);
   const userToken = options?.needToken ? auth : null;
   const data = options?.data;
   let header = {
-    'content-type': options?.formData
-      ? 'multipart/form-data'
-      : 'application/json',
+    'content-type': options?.formData ? 'multipart/form-data' : 'application/json',
     ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
   };
   let formData = new FormData();
@@ -105,7 +103,7 @@ export const requestPostXform = async (
     data?: Object;
     params?: Object;
     needToken?: boolean;
-  }
+  },
 ) => {
   const token: any = await AsyncStorage.getItem('authToken');
   const auth = JSON.parse(token);

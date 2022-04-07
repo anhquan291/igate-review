@@ -1,7 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 import { Header } from '../../Components/Headers';
 import { AppLoader } from '../../Components/Loaders';
 import { MediumText, RegularText } from '../../Components/Texts';
@@ -50,18 +49,18 @@ const FileDetailScreen: React.FC = () => {
             <View
               style={[
                 styles.result,
-                { backgroundColor: fileDetail.dossierStatus.id === 4 ? Colors.primary : Colors.orange },
+                { backgroundColor: fileDetail?.dossierStatus.id === 4 ? Colors.primary : Colors.orange },
               ]}
             >
               <RegularText style={Layout.whiteText}>
-                {fileDetail.dossierStatus.id === 4 ? 'Đã trả hồ sơ' : 'Chưa trả hồ sơ'}
+                {fileDetail?.dossierStatus.id === 4 ? 'Đã trả hồ sơ' : 'Chưa trả hồ sơ'}
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
             <TouchableOpacity onPress={onRate} style={[styles.result, { backgroundColor: Colors.green1 }]}>
               <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
             </TouchableOpacity>
-            {fileDetail.dossierStatus.id === 4 && (
+            {fileDetail?.dossierStatus.id === 4 && (
               <TouchableOpacity onPress={onRate} style={[styles.result, { backgroundColor: Colors.green1 }]}>
                 <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
               </TouchableOpacity>
@@ -70,34 +69,34 @@ const FileDetailScreen: React.FC = () => {
           <View style={[styles.content, Layout.shadow]}>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Mã hồ sơ</RegularText>
-              <MediumText style={[styles.text, styles.textLeft]}>{fileDetail.code}</MediumText>
+              <MediumText style={[styles.text, styles.textLeft]}>{fileDetail?.code}</MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Tên thủ tục</RegularText>
               <MediumText style={[styles.text, styles.textLeft]}>
-                {fileDetail.procedure.translate.name}
+                {fileDetail?.procedure.translate.name}
               </MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Đơn vị nhận hồ sơ</RegularText>
-              <MediumText style={[styles.text, styles.textLeft]}>{fileDetail.agency.name}</MediumText>
+              <MediumText style={[styles.text, styles.textLeft]}>{fileDetail?.agency.name}</MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Ngày nộp</RegularText>
               <MediumText style={[styles.text, styles.textLeft]}>
-                {formatDateMonth(fileDetail.appliedDate)}
+                {formatDateMonth(fileDetail?.appliedDate)}
               </MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Ngày tiếp nhận</RegularText>
               <MediumText style={[styles.text, styles.textLeft]}>
-                {formatDateMonth(fileDetail.acceptedDate)}
+                {formatDateMonth(fileDetail?.acceptedDate)}
               </MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
               <RegularText style={styles.fieldName}>Ngày hẹn trả</RegularText>
               <MediumText style={[styles.text, styles.textLeft]}>
-                {formatDateMonth(fileDetail.appointmentDate)}
+                {formatDateMonth(fileDetail?.appointmentDate)}
               </MediumText>
             </View>
           </View>

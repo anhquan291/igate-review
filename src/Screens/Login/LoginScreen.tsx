@@ -1,38 +1,100 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
+import { View, StyleSheet, Image } from 'react-native';
+// Components
 import { Header } from '../../Components/Headers';
-import Layout from '../../Themes/Layout';
 import { Button } from '../../Components/Buttons';
 import { AppLoader } from '../../Components/Loaders';
-import { authGetToken } from '../../Store/AuthSlice';
+// Reddux
+import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
+import { authCheckLogin, authGetToken } from '../../Store/AuthSlice';
+// Form
+import { useForm } from 'react-hook-form';
+// Theme
+import Layout from '../../Themes/Layout';
+import { CommonTextInput, PasswordTextInput } from '../../Components/Input';
+import { kScaledSize, kSpacing } from '../../Utils/Constants';
+import { ScrollContainer } from '../../Components/Container';
 
 const LoginScreen: React.FC = () => {
   const { isLoading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const onGetToken = async (): Promise<void> => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'all',
+  });
+  const onGetToken = async (data: any): Promise<void> => {
+    const { username, password } = data;
     const details = {
-      client_id: 'svc-adapter',
-      grant_type: 'client_credentials',
-      client_secret: '62ca3e28-2878-473c-8956-22f5cf288b3a',
+      client_id: 'web-onegate',
+      grant_type: 'password',
       scope: 'openid',
+      username,
+      password,
     };
     await dispatch(authGetToken(details)).unwrap();
   };
 
+  useEffect(() => {
+    dispatch(authCheckLogin());
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Header name="VNPT iGate Review" showBackButton={false} />
+    <View style={[Layout.fill]}>
+      <Header name="iGate Review" showBackButton={false} />
       {isLoading && <AppLoader />}
-      <View style={[Layout.fill, Layout.center]}>
-        <Button title="Lấy Token" onPress={onGetToken} />
-      </View>
+      <ScrollContainer contentStyle={styles.container}>
+        <View style={Layout.center}>
+          <Image source={require('../../Assets/Images/logo.png')} style={styles.logo} />
+        </View>
+        <CommonTextInput
+          controller={{
+            name: 'username',
+            control: control,
+            rules: {
+              required: {
+                value: true,
+                message: 'Không được bỏ trống',
+              },
+              validate: (value) => value.length >= 6 || 'Tối thiểu 6 ký tự',
+            },
+          }}
+          errorText={errors?.username?.message}
+          placeholder={'Tên đăng nhập'}
+          inputProps={{
+            autoCapitalize: 'none',
+          }}
+        />
+        <PasswordTextInput
+          controller={{
+            name: 'password',
+            control: control,
+            rules: {
+              required: {
+                value: true,
+                message: 'Không được bỏ trống',
+              },
+              validate: (value) => value.length >= 6 || 'Tối thiểu 6 ký tự',
+            },
+          }}
+          errorText={errors?.password?.message}
+          placeholder={'Mật khẩu'}
+        />
+        <Button title="Đăng nhập" onPress={handleSubmit(onGetToken)} />
+      </ScrollContainer>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginHorizontal: kSpacing.kSpacing15,
+  },
+  logo: {
+    width: kScaledSize(200),
+    height: kScaledSize(150),
+    resizeMode: 'contain',
   },
 });
 

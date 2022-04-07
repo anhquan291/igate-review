@@ -8,7 +8,7 @@ import { onLogout } from './AuthSlice';
 interface initialStateFields {
   isLoading: boolean;
   fileList: FileFields[] | [];
-  fileDetail: any;
+  fileDetail: FileFields | null;
   page: number;
   totalPages: number;
   error: boolean;

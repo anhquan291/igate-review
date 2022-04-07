@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { QuestionFields } from '../Models/Question';
 import { FileFields } from '../Screens/Home/Type';
 import { requestGet, requestPost, requestPostXform } from '../Services/ApiCall';
 import { removeFromStorage, saveToStorage } from '../Utils/Common';
@@ -7,7 +8,7 @@ import { onLogout } from './AuthSlice';
 
 interface initialStateFields {
   isLoading: boolean;
-  data: any;
+  data: QuestionFields | null;
   error: boolean;
 }
 

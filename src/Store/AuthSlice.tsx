@@ -1,6 +1,7 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { requestPostXform } from '../Services/ApiCall';
-import { removeFromStorage, saveToStorage } from '../Utils/Common';
+import { checkTokenExpired, removeFromStorage, saveToStorage } from '../Utils/Common';
 import { handleAlert } from '../Utils/Notification';
 
 interface initialStateFields {
@@ -14,8 +15,9 @@ interface initialStateFields {
 interface authTokenParams {
   client_id: string;
   grant_type: string;
-  client_secret: string;
   scope: string;
+  username: string;
+  password: string;
 }
 
 export const authGetToken = createAsyncThunk(
@@ -24,18 +26,44 @@ export const authGetToken = createAsyncThunk(
     const forceLogout = () => {
       dispatch(onLogout());
     };
+    console.log('field', fields);
     try {
-      const response = await requestPostXform('auth/realms/digo/protocol/openid-connect/token', {
-        data: fields,
-        needToken: false,
-      });
+      const response = await requestPostXform(
+        'auth/realms/digo/protocol/openid-connect/token',
+        {
+          data: fields,
+          needToken: false,
+        },
+      );
+      console.log('data', response.data);
       return response.data;
     } catch (error: any) {
+      console.log(error.response);
       handleAlert({
         message:
-          error.response.status === 401 ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại' : 'Có lỗi xẩy ra',
+          error.response.status === 401
+            ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại'
+            : 'Tên đăng nhập hoặc mật khẩu không đúng',
         onPress1: error.response.status === 401 ? forceLogout : () => {},
       });
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const authCheckLogin = createAsyncThunk(
+  'auth/check_login',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token: any = await AsyncStorage.getItem('authToken');
+      if (token) {
+        const isTokenExpire = checkTokenExpired(token);
+        return isTokenExpire;
+      } else {
+        return true;
+      }
+    } catch (error: any) {
+      console.log(error);
       return rejectWithValue(error);
     }
   },
@@ -74,6 +102,15 @@ const AuthSlice = createSlice({
     });
     builder.addCase(authGetToken.rejected, (state) => {
       state.isLoading = false;
+    });
+    // Check Token Expire to Keep Login
+    builder.addCase(authCheckLogin.fulfilled, (state, action) => {
+      const isExpired = action.payload;
+      if (!isExpired) {
+        state.isLogin = true;
+      } else {
+        state.isLogin = false;
+      }
     });
   },
 });

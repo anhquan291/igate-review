@@ -30,7 +30,7 @@ export default Button;
 const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.primary,
-    paddingVertical: kSpacing.kSpacing7,
+    paddingVertical: kSpacing.kSpacing10,
     paddingHorizontal: kSpacing.kSpacing20,
     borderRadius: 5,
   },

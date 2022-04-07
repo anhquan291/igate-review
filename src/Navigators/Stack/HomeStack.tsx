@@ -9,7 +9,7 @@ import RateScreen from '../../Screens/RateScreen';
 export type HomeParamList = {
   HomeScreen: undefined;
   FileDetailScreen: { item: FileFields };
-  RatingScreen: { item: any };
+  RatingScreen: { item: FileFields };
 };
 
 export type HomeRouteProps<RouteName extends keyof HomeParamList> = RouteProp<HomeParamList, RouteName>;

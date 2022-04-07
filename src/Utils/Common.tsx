@@ -1,6 +1,7 @@
 import { Dimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import dayjs from 'dayjs';
+import jwtDecode from 'jwt-decode';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
@@ -51,3 +52,12 @@ export const removeFromStorage = async (key: string): Promise<void> => {
 };
 
 export const formatDateMonth = (date: any) => dayjs(date).format('DD/MM/YYYY HH:MM');
+export const formatDate = (date: any) => dayjs(date).format('DD/MM/YYYY');
+export const checkTokenExpired = (token: string) => {
+  let decoded: any = jwtDecode(token);
+  if (Date.now() / 1000 > decoded.exp) {
+    return true;
+  } else {
+    return false;
+  }
+};

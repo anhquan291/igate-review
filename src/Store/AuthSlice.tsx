@@ -3,12 +3,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { requestPostXform } from '../Services/ApiCall';
 import { checkTokenExpired, removeFromStorage, saveToStorage } from '../Utils/Common';
 import { handleAlert } from '../Utils/Notification';
+import jwtDecode from 'jwt-decode';
 
 interface initialStateFields {
   token: string;
   refreshToken: string;
   isLogin: boolean;
   isLoading: boolean;
+  userData: any;
   error: boolean;
 }
 
@@ -26,7 +28,6 @@ export const authGetToken = createAsyncThunk(
     const forceLogout = () => {
       dispatch(onLogout());
     };
-    console.log('field', fields);
     try {
       const response = await requestPostXform(
         'auth/realms/digo/protocol/openid-connect/token',
@@ -35,7 +36,6 @@ export const authGetToken = createAsyncThunk(
           needToken: false,
         },
       );
-      console.log('data', response.data);
       return response.data;
     } catch (error: any) {
       console.log(error.response);
@@ -58,9 +58,9 @@ export const authCheckLogin = createAsyncThunk(
       const token: any = await AsyncStorage.getItem('authToken');
       if (token) {
         const isTokenExpire = checkTokenExpired(token);
-        return isTokenExpire;
+        return { isTokenExpire, token };
       } else {
-        return true;
+        return { isTokenExpire: true };
       }
     } catch (error: any) {
       console.log(error);
@@ -93,10 +93,12 @@ const AuthSlice = createSlice({
     });
     builder.addCase(authGetToken.fulfilled, (state, action) => {
       const { access_token, refresh_token }: any = action.payload;
+      let decoded: any = jwtDecode(access_token);
       saveToStorage('authToken', JSON.stringify(access_token));
       saveToStorage('refreshToken', JSON.stringify(refresh_token));
       state.token = access_token;
       state.refreshToken = refresh_token;
+      state.userData = decoded;
       state.isLoading = false;
       state.isLogin = true;
     });
@@ -105,8 +107,10 @@ const AuthSlice = createSlice({
     });
     // Check Token Expire to Keep Login
     builder.addCase(authCheckLogin.fulfilled, (state, action) => {
-      const isExpired = action.payload;
-      if (!isExpired) {
+      const { isTokenExpire, token }: any = action.payload;
+      if (!isTokenExpire) {
+        let decoded: any = jwtDecode(token);
+        state.userData = decoded;
         state.isLogin = true;
       } else {
         state.isLogin = false;

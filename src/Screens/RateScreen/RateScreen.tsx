@@ -1,4 +1,4 @@
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
@@ -13,8 +13,8 @@ import { Header } from '../../Components/Headers';
 import { AppLoader } from '../../Components/Loaders';
 import { MediumText, RegularText } from '../../Components/Texts';
 import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
-import { FileFields } from '../../Models/File';
-import { rateGetData } from '../../Store/RateSlice';
+import { FileDetailFields } from '../../Models/File';
+import { rateGetData, rateOfficer, rateOfficerParams } from '../../Store/RateSlice';
 import Colors from '../../Themes/Colors';
 import Layout from '../../Themes/Layout';
 import { formatDate, formatDateMonth } from '../../Utils/Common';
@@ -48,20 +48,81 @@ const QuestionAnswer = [
 const RateScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { params } = useRoute<any>();
-  const fileDetail: FileFields = params.item;
+  const navigation = useNavigation<any>();
+  const fileDetail: FileDetailFields = params.item;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
   const { userData } = useAppSelector((state) => state.auth);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
   const ref = useRef<any>(null);
-  const onRating = (): void => {
-    if (!selectAnswer) {
+
+  const renderIcon = (type: string): any => {
+    switch (type) {
+      case 'Không hài lòng':
+        return require('../../Assets/Images/notSatisfied.png');
+      case 'Bình thường':
+        return require('../../Assets/Images/normal.png');
+      case 'Hài lòng':
+        return require('../../Assets/Images/satisfied.png');
+      case 'Rất hài lòng':
+        return require('../../Assets/Images/verySatisfied.png');
+      default:
+        return require('../../Assets/Images/normal.png');
+    }
+  };
+
+  const onRating = async (): Promise<void> => {
+    if (selectAnswer === null) {
       handleAlert({ message: 'Vui lòng chọn ý kiến đánh giá' });
       return;
     }
-    handleAlert({ message: 'Đánh giá thành công' });
+    let formatAnswer: Array<any> = [];
+    questionData?.answer.map((item, index) =>
+      formatAnswer.push({
+        ...item,
+        chosen: index === selectAnswer ? 1 : 0,
+      }),
+    );
+    let body: rateOfficerParams;
+    if (data) {
+      body = {
+        formData: {
+          participantName: fileDetail.applicant.data.fullname,
+          identityNumber: fileDetail.applicant.data.identityNumber,
+          profileNumber: fileDetail.code,
+        },
+        ratingOfficer: {
+          id: data?.id,
+          name: data?.name,
+          agency: {
+            id: fileDetail.agency.id,
+          },
+          userGroup: data?.userGroup,
+          startDate: data?.startDate,
+          endDate: data?.endDate,
+        },
+        officer: {
+          id: fileDetail.task[0].assignee.id,
+          name: fileDetail.task[0].assignee.fullname,
+        },
+        detail: [
+          {
+            answer: formatAnswer,
+          },
+        ],
+        deploymentId: data.deploymentId,
+      };
+      await dispatch(rateOfficer(body)).unwrap();
+      handleAlert({
+        message: 'Đánh giá thành công',
+        onPress1: () => {
+          navigation.goBack();
+        },
+      });
+    }
   };
+
   const onScrollToIndex = (type: string): void => {
     if (
       type === 'next' &&
@@ -75,12 +136,15 @@ const RateScreen: React.FC = () => {
       setQuestionIndex(questionIndex - 1);
     }
   };
+
   const onGetData = async (): Promise<void> => {
     dispatch(rateGetData({ page: 0, size: 1, status: 1 })).unwrap();
   };
+
   useEffect(() => {
     onGetData();
   }, []);
+
   return (
     <View style={[Layout.fill]}>
       <Header name="Đánh giá độ hài lòng" />
@@ -92,14 +156,16 @@ const RateScreen: React.FC = () => {
         <>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.officer}>
-              <MediumText style={styles.name}>{userData.given_name}</MediumText>
+              <MediumText style={styles.name}>
+                {fileDetail.task[0].assignee.fullname}
+              </MediumText>
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Chức vụ</RegularText>
                 <MediumText style={styles.detail}>Chuyên viên</MediumText>
               </View>
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Đơn vị</RegularText>
-                <MediumText style={styles.detail}>VPNT Tỉnh Quảng Ngãi</MediumText>
+                <MediumText style={styles.detail}>{fileDetail.agency.name}</MediumText>
               </View>
             </View>
             <MediumText style={[styles.title]}>
@@ -123,7 +189,7 @@ const RateScreen: React.FC = () => {
             </View>
             <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
             <View style={[Layout.rowBetween, { marginBottom: kSpacing.kSpacing20 }]}>
-              {QuestionAnswer.map((item, index) => (
+              {questionData?.answer.map((item, index) => (
                 <TouchableOpacity
                   key={item.id}
                   onPress={() => setSelectAnswer(index)}
@@ -137,14 +203,14 @@ const RateScreen: React.FC = () => {
                     Layout.center,
                   ]}
                 >
-                  <Image source={item.icon} style={styles.moodIcon} />
+                  <Image source={renderIcon(item.content)} style={styles.moodIcon} />
                   <RegularText
                     style={[
                       styles.moodText,
                       { color: selectAnswer === index ? Colors.white : Colors.black },
                     ]}
                   >
-                    {item.name}
+                    {item.content}
                   </RegularText>
                 </TouchableOpacity>
               ))}

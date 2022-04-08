@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FileFields } from '../Screens/Home/Type';
+import { FileDetailFields, FileFields } from '../Models/File';
 import { requestGet, requestPost, requestPostXform } from '../Services/ApiCall';
 import { removeFromStorage, saveToStorage } from '../Utils/Common';
 import { handleAlert } from '../Utils/Notification';
@@ -8,7 +8,7 @@ import { onLogout } from './AuthSlice';
 interface initialStateFields {
   isLoading: boolean;
   fileList: FileFields[] | [];
-  fileDetail: FileFields | null;
+  fileDetail: FileDetailFields | null;
   page: number;
   totalPages: number;
   error: boolean;

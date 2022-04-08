@@ -12,7 +12,7 @@ import Colors from '../../Themes/Colors';
 import Layout from '../../Themes/Layout';
 import { formatDateMonth } from '../../Utils/Common';
 import { kSpacing, kTextSizes } from '../../Utils/Constants';
-import { FileFields } from '../Home/Type';
+import { FileFields } from '../../Models/File';
 
 const FileDetailScreen: React.FC = () => {
   const route: HomeRouteProps<'FileDetailScreen'> = useRoute();
@@ -61,13 +61,7 @@ const FileDetailScreen: React.FC = () => {
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
-            <TouchableOpacity
-              onPress={onRate}
-              style={[styles.result, { backgroundColor: Colors.green1 }]}
-            >
-              <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
-            </TouchableOpacity>
-            {fileDetail?.dossierStatus.id === 4 && (
+            {fileDetail?.task && (
               <TouchableOpacity
                 onPress={onRate}
                 style={[styles.result, { backgroundColor: Colors.green1 }]}
@@ -75,6 +69,15 @@ const FileDetailScreen: React.FC = () => {
                 <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
               </TouchableOpacity>
             )}
+
+            {/* {fileDetail?.dossierStatus.id === 4 && (
+              <TouchableOpacity
+                onPress={onRate}
+                style={[styles.result, { backgroundColor: Colors.green1 }]}
+              >
+                <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
+              </TouchableOpacity>
+            )} */}
           </View>
           <View style={[styles.content, Layout.shadow]}>
             <View style={[Layout.rowBetween, styles.detail]}>

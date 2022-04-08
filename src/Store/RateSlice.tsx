@@ -19,6 +19,11 @@ interface qustionListParams {
   status?: number;
 }
 
+interface checkRatingParams extends qustionListParams {
+  'rating-id': string;
+  'officer-id': string;
+}
+
 interface nameFields {
   languageId: number;
   name: string;
@@ -66,7 +71,7 @@ export const rateGetData = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      console.log('error', error);
+      console.log('error', error.response);
       handleAlert({
         message:
           error.response.status === 401
@@ -80,20 +85,47 @@ export const rateGetData = createAsyncThunk(
 );
 
 export const rateOfficer = createAsyncThunk(
-  'rate/get_data',
+  'rate/rating_officer',
   async (fields: rateOfficerParams, { rejectWithValue, dispatch }) => {
     const forceLogout = () => {
       dispatch(onLogout());
     };
+    console.log('rateOfficer', fields);
     try {
       const response = await requestPost('su/rating-officer-results/', {
+        data: fields,
+        needToken: true,
+      });
+      return response.data;
+    } catch (error: any) {
+      console.log('error', error.response);
+      handleAlert({
+        message:
+          error.response.status === 401
+            ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại'
+            : 'Có lỗi xẩy ra',
+        onPress1: error.response.status === 401 ? forceLogout : () => {},
+      });
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const rateCheckFile = createAsyncThunk(
+  'rate/check_rating_file',
+  async (fields: checkRatingParams, { rejectWithValue, dispatch }) => {
+    const forceLogout = () => {
+      dispatch(onLogout());
+    };
+    try {
+      const response = await requestPost('/su/rating-officer-results/dossier-officer', {
         params: fields,
         needToken: true,
       });
-      console.log('res', response.data);
+      console.log(response.data);
       return response.data;
     } catch (error: any) {
-      console.log('error', error);
+      console.log('error', error.response);
       handleAlert({
         message:
           error.response.status === 401
@@ -126,6 +158,28 @@ const RateSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(rateGetData.rejected, (state) => {
+      state.isLoading = false;
+      state.error = true;
+    });
+    // Rating officer
+    builder.addCase(rateOfficer.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(rateOfficer.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(rateOfficer.rejected, (state) => {
+      state.isLoading = false;
+      state.error = true;
+    });
+    // Check rating file
+    builder.addCase(rateCheckFile.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(rateCheckFile.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(rateCheckFile.rejected, (state) => {
       state.isLoading = false;
       state.error = true;
     });

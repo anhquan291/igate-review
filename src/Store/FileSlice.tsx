@@ -14,12 +14,16 @@ interface initialStateFields {
   error: boolean;
 }
 
-interface fileListParams {
+interface fileDetailParams {
   page?: number;
   size?: number;
   spec?: string;
   code?: string;
 }
+interface fileListParams extends fileDetailParams {
+  'user-id': string;
+}
+
 export const fileGetData = createAsyncThunk(
   'file/get_list',
   async (fields: fileListParams, { rejectWithValue, dispatch }) => {
@@ -48,7 +52,7 @@ export const fileGetData = createAsyncThunk(
 
 export const fileGetDetail = createAsyncThunk(
   'file/get_detail',
-  async (fields: fileListParams, { rejectWithValue, dispatch }) => {
+  async (fields: fileDetailParams, { rejectWithValue, dispatch }) => {
     const forceLogout = () => {
       dispatch(onLogout());
     };

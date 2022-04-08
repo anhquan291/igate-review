@@ -12,6 +12,7 @@ const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const scrollRef = useRef<any>(null);
   const { fileList, isLoading, totalPages } = useAppSelector((state) => state.files);
+  const { userData } = useAppSelector((state) => state.auth);
   const [page, setPage] = useState<number>(0);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] =
@@ -19,7 +20,12 @@ const HomeScreen: React.FC = () => {
 
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     await dispatch(
-      fileGetData({ page: reload ? 0 : page, size: 10, spec: 'page' }),
+      fileGetData({
+        page: reload ? 0 : page,
+        size: 10,
+        spec: 'page',
+        'user-id': userData.user_id,
+      }),
     ).unwrap();
   };
 
@@ -36,7 +42,9 @@ const HomeScreen: React.FC = () => {
   const onRefresh = async (): Promise<void> => {
     setRefresh(true);
     setPage(0);
-    await dispatch(fileGetData({ page: 0, size: 10, spec: 'page' }));
+    await dispatch(
+      fileGetData({ page: 0, size: 10, spec: 'page', 'user-id': userData.user_id }),
+    );
     setRefresh(false);
   };
 
@@ -44,7 +52,7 @@ const HomeScreen: React.FC = () => {
     onGetFileList();
     setOnEndReachedCalledDuringMomentum(false);
   }, [page]);
-  console.log(onEndReachedCalledDuringMomentum);
+
   return (
     <View style={[Layout.fill]}>
       <Header name="Danh sách hồ sơ" showBackButton={false} />

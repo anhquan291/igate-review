@@ -40,11 +40,7 @@ export const authGetToken = createAsyncThunk(
     } catch (error: any) {
       console.log(error.response);
       handleAlert({
-        message:
-          error.response.status === 401
-            ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại'
-            : 'Tên đăng nhập hoặc mật khẩu không đúng',
-        onPress1: error.response.status === 401 ? forceLogout : () => {},
+        message: 'Tên đăng nhập hoặc mật khẩu không đúng',
       });
       return rejectWithValue(error);
     }

@@ -84,6 +84,7 @@ const RateScreen: React.FC = () => {
         chosen: index === selectAnswer ? 1 : 0,
       }),
     );
+    console.log(formatAnswer);
     let body: rateOfficerParams;
     if (data) {
       body = {
@@ -109,13 +110,20 @@ const RateScreen: React.FC = () => {
         detail: [
           {
             answer: formatAnswer,
+            status: questionData?.status,
+            question: {
+              id: questionData?.id,
+              content: questionData?.content,
+              multipleChoice: questionData?.multipleChoice,
+              requiredChoice: questionData?.requiredChoice,
+            },
           },
         ],
         deploymentId: data.deploymentId,
       };
       await dispatch(rateOfficer(body)).unwrap();
       handleAlert({
-        message: 'Đánh giá thành công',
+        message: 'Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn',
         onPress1: () => {
           navigation.goBack();
         },

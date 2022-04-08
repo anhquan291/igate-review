@@ -19,6 +19,7 @@ const FileDetailScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { error, fileDetail } = useAppSelector((state) => state.files);
+  const { userData } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const item: FileFields = route.params.item;
   const onGetDetail = async (): Promise<void> => {
@@ -61,12 +62,12 @@ const FileDetailScreen: React.FC = () => {
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
-            {fileDetail?.task && (
+            {fileDetail?.task && fileDetail.applicant.userId === userData.user_id && (
               <TouchableOpacity
                 onPress={onRate}
                 style={[styles.result, { backgroundColor: Colors.green1 }]}
               >
-                <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
+                <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
               </TouchableOpacity>
             )}
 
@@ -75,7 +76,7 @@ const FileDetailScreen: React.FC = () => {
                 onPress={onRate}
                 style={[styles.result, { backgroundColor: Colors.green1 }]}
               >
-                <RegularText style={Layout.whiteText}>Đánh giá cón bộ</RegularText>
+                <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
               </TouchableOpacity>
             )} */}
           </View>

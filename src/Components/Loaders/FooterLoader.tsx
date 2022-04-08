@@ -8,13 +8,9 @@ interface Props {
 }
 
 const FooterLoader = ({ loading, page }: Props) => {
-  if (loading && page !== 1 && page !== 0) {
+  if (loading && page !== 0) {
     return (
-      <ActivityIndicator
-        style={styles.indicator}
-        size="small"
-        color={Colors.primary}
-      />
+      <ActivityIndicator style={styles.indicator} size="small" color={Colors.primary} />
     );
   }
   return null;
@@ -24,7 +20,8 @@ export default FooterLoader;
 
 const styles = StyleSheet.create({
   indicator: {
-    marginVertical: 5,
+    marginTop: 10,
+    marginBottom: 20,
     alignSelf: 'center',
   },
 });

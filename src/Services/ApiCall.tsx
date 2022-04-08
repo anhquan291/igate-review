@@ -45,7 +45,6 @@ export const requestGet = async (
     'content-type': 'application/json',
     ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
   };
-  console.log(token);
   const response: AxiosResponse = await axios.request({
     baseURL: Config.API_DATA,
     url: endpoint,

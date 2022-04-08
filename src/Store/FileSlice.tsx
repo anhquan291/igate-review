@@ -63,7 +63,9 @@ export const fileGetDetail = createAsyncThunk(
       console.log('error', error);
       handleAlert({
         message:
-          error.response.status === 401 ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại' : 'Có lỗi xẩy ra',
+          error.response.status === 401
+            ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại'
+            : 'Có lỗi xẩy ra',
         onPress1: error.response.status === 401 ? forceLogout : () => {},
       });
       return rejectWithValue(error);
@@ -89,8 +91,13 @@ const FileSlice = createSlice({
     });
     builder.addCase(fileGetData.fulfilled, (state, action) => {
       const data: any = action.payload;
-      state.fileList = data.content;
       state.totalPages = data.totalPages;
+      if (data.pageable.pageNumber === 0) {
+        state.fileList = data.content;
+        state.isLoading = false;
+        return;
+      }
+      state.fileList = [...state.fileList, ...data.content];
       state.isLoading = false;
     });
     builder.addCase(fileGetData.rejected, (state) => {

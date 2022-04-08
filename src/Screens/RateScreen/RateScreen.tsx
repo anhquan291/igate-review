@@ -58,7 +58,9 @@ const RateScreen: React.FC = () => {
   const onRating = (): void => {
     if (!selectAnswer) {
       handleAlert({ message: 'Vui lòng chọn ý kiến đánh giá' });
+      return;
     }
+    handleAlert({ message: 'Đánh giá thành công' });
   };
   const onScrollToIndex = (type: string): void => {
     if (

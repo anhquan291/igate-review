@@ -1,12 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Animated } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+// Components
 import { Header } from '../../Components/Headers';
 import { AppLoader, FooterLoader } from '../../Components/Loaders';
+import HomeItem from './HomeItem';
+// Redux
 import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
 import { fileGetData } from '../../Store/FileSlice';
+// Layout
 import Layout from '../../Themes/Layout';
-import { kSpacing } from '../../Utils/Constants';
-import HomeItem from './HomeItem';
+import { kScaledSize, kSpacing } from '../../Utils/Constants';
+import Colors from '../../Themes/Colors';
+
+const AnimatedList = Animated.createAnimatedComponent(FlatList);
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +24,15 @@ const HomeScreen: React.FC = () => {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] =
     useState<boolean>(true);
+  const scrollY = new Animated.Value(0);
+  const onScrollToTop = () => {
+    scrollRef.current.scrollToOffset(0, 0, true);
+  };
+  const opacityStyle = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, 1],
+    extrapolateRight: 'clamp',
+  });
 
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     await dispatch(
@@ -58,12 +74,22 @@ const HomeScreen: React.FC = () => {
       <Header name="Danh sách hồ sơ" showBackButton={false} />
       {isLoading && <AppLoader />}
       <View style={[Layout.fill, styles.container]}>
-        <FlatList
+        <AnimatedList
+          ref={scrollRef}
           data={fileList}
           initialNumToRender={10}
           removeClippedSubviews
           onRefresh={onRefresh}
           refreshing={refresh}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: { contentOffset: { y: scrollY } },
+              },
+            ],
+            { useNativeDriver: true },
+          )}
+          scrollEventThrottle={16}
           renderItem={({ item }) => <HomeItem item={item} />}
           ListFooterComponent={<FooterLoader loading={isLoading} page={page} />}
           onEndReached={() => {
@@ -72,9 +98,23 @@ const HomeScreen: React.FC = () => {
               setOnEndReachedCalledDuringMomentum(true);
             }
           }}
-          // onMomentumScrollBegin={() => console.log('scroll ne')}
           onEndReachedThreshold={0.01}
         />
+        <Animated.View
+          style={[
+            styles.floatButton,
+            Layout.shadow,
+            Layout.center,
+            { opacity: opacityStyle },
+          ]}
+        >
+          <TouchableOpacity
+            style={[Layout.center, styles.button]}
+            onPress={onScrollToTop}
+          >
+            <AntDesign name="arrowup" size={kScaledSize(24)} color={Colors.white} />
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </View>
   );
@@ -82,6 +122,17 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     marginTop: kSpacing.kSpacing10,
+  },
+  floatButton: {
+    position: 'absolute',
+    bottom: 35,
+    right: 15,
+  },
+  button: {
+    height: kScaledSize(50),
+    width: kScaledSize(50),
+    borderRadius: kScaledSize(25),
+    backgroundColor: Colors.primary,
   },
 });
 

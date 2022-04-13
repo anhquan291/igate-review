@@ -20,7 +20,7 @@ interface qustionListParams {
 }
 
 interface checkRatingParams extends qustionListParams {
-  'rating-id': string;
+  'dossier-id': string;
   'officer-id': string;
 }
 
@@ -118,7 +118,7 @@ export const rateCheckFile = createAsyncThunk(
       dispatch(onLogout());
     };
     try {
-      const response = await requestPost('/su/rating-officer-results/dossier-officer', {
+      const response = await requestGet('su/rating-officer-results/dossier-officer/', {
         params: fields,
         needToken: true,
       });

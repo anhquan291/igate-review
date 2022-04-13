@@ -84,7 +84,6 @@ const RateScreen: React.FC = () => {
         chosen: index === selectAnswer ? 1 : 0,
       }),
     );
-    console.log(formatAnswer);
     let body: rateOfficerParams;
     if (data) {
       body = {
@@ -125,7 +124,10 @@ const RateScreen: React.FC = () => {
       handleAlert({
         message: 'Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn',
         onPress1: () => {
-          navigation.goBack();
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen' }],
+          });
         },
       });
     }

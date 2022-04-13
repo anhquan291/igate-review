@@ -13,6 +13,8 @@ import Layout from '../../Themes/Layout';
 import { formatDateMonth } from '../../Utils/Common';
 import { kSpacing, kTextSizes } from '../../Utils/Constants';
 import { FileFields } from '../../Models/File';
+import { rateCheckFile } from '../../Store/RateSlice';
+import { handleAlert } from '../../Utils/Notification';
 
 const FileDetailScreen: React.FC = () => {
   const route: HomeRouteProps<'FileDetailScreen'> = useRoute();
@@ -32,8 +34,26 @@ const FileDetailScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
-  const onRate = (): void => {
-    navigation.navigate('RatingScreen', { item: fileDetail });
+  const onRate = async (): Promise<void> => {
+    try {
+      if (fileDetail) {
+        const fileCheck = await dispatch(
+          rateCheckFile({
+            'officer-id': fileDetail?.applicant.userId,
+            'dossier-id': fileDetail?.code,
+          }),
+        ).unwrap();
+        if (fileCheck.content.length > 0) {
+          handleAlert({ message: 'Hồ sơ này đã được đánh giá' });
+          return;
+        }
+      }
+      navigation.navigate('RatingScreen', { item: fileDetail });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   useEffect(() => {
     onGetDetail();

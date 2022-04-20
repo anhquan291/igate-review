@@ -82,14 +82,16 @@ const FileDetailScreen: React.FC = () => {
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
-            {fileDetail?.task && fileDetail.applicant.userId === userData.user_id && (
-              <TouchableOpacity
-                onPress={onRate}
-                style={[styles.result, { backgroundColor: Colors.green1 }]}
-              >
-                <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
-              </TouchableOpacity>
-            )}
+            {fileDetail?.task &&
+              fileDetail.applicant.userId === userData.user_id &&
+              fileDetail?.dossierStatus.id === 5 && (
+                <TouchableOpacity
+                  onPress={onRate}
+                  style={[styles.result, { backgroundColor: Colors.green1 }]}
+                >
+                  <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
+                </TouchableOpacity>
+              )}
 
             {/* {fileDetail?.dossierStatus.id === 4 && (
               <TouchableOpacity

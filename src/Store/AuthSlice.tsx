@@ -40,7 +40,10 @@ export const authGetToken = createAsyncThunk(
     } catch (error: any) {
       console.log(error.response);
       handleAlert({
-        message: 'Tên đăng nhập hoặc mật khẩu không đúng',
+        message:
+          error.response === undefined
+            ? 'Cố lỗi xẩy ra'
+            : 'Tên đăng nhập hoặc mật khẩu không đúng',
       });
       return rejectWithValue(error);
     }

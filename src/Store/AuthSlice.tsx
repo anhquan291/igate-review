@@ -1,9 +1,13 @@
-import AsyncStorage from '@react-native-community/async-storage';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { requestPostXform } from '../Services/ApiCall';
-import { checkTokenExpired, removeFromStorage, saveToStorage } from '../Utils/Common';
-import { handleAlert } from '../Utils/Notification';
-import jwtDecode from 'jwt-decode';
+import AsyncStorage from "@react-native-community/async-storage";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { requestPostXform } from "../Services/ApiCall";
+import {
+  checkTokenExpired,
+  removeFromStorage,
+  saveToStorage,
+} from "../Utils/Common";
+import { handleAlert } from "../Utils/Notification";
+import jwtDecode from "jwt-decode";
 
 interface initialStateFields {
   token: string;
@@ -23,27 +27,28 @@ interface authTokenParams {
 }
 
 export const authGetToken = createAsyncThunk(
-  'auth/get_token',
+  "auth/get_token",
   async (fields: authTokenParams, { rejectWithValue, dispatch }) => {
     const forceLogout = () => {
       dispatch(onLogout());
     };
     try {
       const response = await requestPostXform(
-        'auth/realms/digo/protocol/openid-connect/token',
+        "auth/realms/digo/protocol/openid-connect/token",
         {
           data: fields,
           needToken: false,
         },
       );
+      console.log(response.data);
       return response.data;
     } catch (error: any) {
       console.log(error.response);
       handleAlert({
         message:
           error.response === undefined
-            ? 'Cố lỗi xẩy ra'
-            : 'Tên đăng nhập hoặc mật khẩu không đúng',
+            ? "Cố lỗi xẩy ra"
+            : "Tên đăng nhập hoặc mật khẩu không đúng",
       });
       return rejectWithValue(error);
     }
@@ -51,10 +56,10 @@ export const authGetToken = createAsyncThunk(
 );
 
 export const authCheckLogin = createAsyncThunk(
-  'auth/check_login',
+  "auth/check_login",
   async (_, { rejectWithValue }) => {
     try {
-      const token: any = await AsyncStorage.getItem('authToken');
+      const token: any = await AsyncStorage.getItem("authToken");
       if (token) {
         const isTokenExpire = checkTokenExpired(token);
         return { isTokenExpire, token };
@@ -69,21 +74,21 @@ export const authCheckLogin = createAsyncThunk(
 );
 
 const AuthSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: {
-    token: '',
-    refreshToken: '',
+    token: "",
+    refreshToken: "",
     isLogin: false,
     isLoading: false,
     error: false,
   } as initialStateFields,
   reducers: {
-    onLogout: (state) => {
+    onLogout: (state: initialStateFields) => {
       state.isLogin = false;
-      state.token = '';
-      state.refreshToken = '';
-      removeFromStorage('authToken');
-      removeFromStorage('refreshToken');
+      state.token = "";
+      state.refreshToken = "";
+      removeFromStorage("authToken");
+      removeFromStorage("refreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -93,8 +98,8 @@ const AuthSlice = createSlice({
     builder.addCase(authGetToken.fulfilled, (state, action) => {
       const { access_token, refresh_token }: any = action.payload;
       let decoded: any = jwtDecode(access_token);
-      saveToStorage('authToken', JSON.stringify(access_token));
-      saveToStorage('refreshToken', JSON.stringify(refresh_token));
+      saveToStorage("authToken", JSON.stringify(access_token));
+      saveToStorage("refreshToken", JSON.stringify(refresh_token));
       state.token = access_token;
       state.refreshToken = refresh_token;
       state.userData = decoded;

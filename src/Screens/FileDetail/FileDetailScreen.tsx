@@ -1,23 +1,23 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Container } from '../../Components/Container';
-import { Header } from '../../Components/Headers';
-import { AppLoader } from '../../Components/Loaders';
-import { MediumText, RegularText } from '../../Components/Texts';
-import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
-import { HomeRouteProps } from '../../Navigators/Stack/HomeStack';
-import { fileGetDetail } from '../../Store/FileSlice';
-import Colors from '../../Themes/Colors';
-import Layout from '../../Themes/Layout';
-import { formatDateMonth } from '../../Utils/Common';
-import { kSpacing, kTextSizes } from '../../Utils/Constants';
-import { FileFields } from '../../Models/File';
-import { rateCheckFile } from '../../Store/RateSlice';
-import { handleAlert } from '../../Utils/Notification';
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Container } from "../../Components/Container";
+import { Header } from "../../Components/Headers";
+import { AppLoader } from "../../Components/Loaders";
+import { MediumText, RegularText } from "../../Components/Texts";
+import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
+import { HomeRouteProps } from "../../Navigators/Stack/HomeStack";
+import { fileGetDetail } from "../../Store/FileSlice";
+import Colors from "../../Themes/Colors";
+import Layout from "../../Themes/Layout";
+import { formatDateMonth } from "../../Utils/Common";
+import { kSpacing, kTextSizes } from "../../Utils/Constants";
+import { FileFields } from "../../Models/File";
+import { rateCheckFile } from "../../Store/RateSlice";
+import { handleAlert } from "../../Utils/Notification";
 
 const FileDetailScreen: React.FC = () => {
-  const route: HomeRouteProps<'FileDetailScreen'> = useRoute();
+  const route: HomeRouteProps<"FileDetailScreen"> = useRoute();
   const navigation = useNavigation<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { error, fileDetail } = useAppSelector((state) => state.files);
@@ -39,16 +39,16 @@ const FileDetailScreen: React.FC = () => {
       if (fileDetail) {
         const fileCheck = await dispatch(
           rateCheckFile({
-            'officer-id': fileDetail?.applicant.userId,
-            'dossier-id': fileDetail?.code,
+            "officer-id": fileDetail?.applicant.userId,
+            "dossier-id": fileDetail?.code,
           }),
         ).unwrap();
         if (fileCheck.content.length > 0) {
-          handleAlert({ message: 'Hồ sơ này đã được đánh giá' });
+          handleAlert({ message: "Hồ sơ này đã được đánh giá" });
           return;
         }
       }
-      navigation.navigate('RatingScreen', { item: fileDetail });
+      navigation.navigate("RatingScreen", { item: fileDetail });
     } catch (error) {
       console.log(error);
     } finally {
@@ -58,6 +58,7 @@ const FileDetailScreen: React.FC = () => {
   useEffect(() => {
     onGetDetail();
   }, []);
+  console.log(fileDetail);
   return (
     <View style={[Layout.fill]}>
       <Header name="Chi tiết hồ sơ" />
@@ -73,34 +74,30 @@ const FileDetailScreen: React.FC = () => {
                 styles.result,
                 {
                   backgroundColor:
-                    fileDetail?.dossierStatus.id === 4 ? Colors.primary : Colors.orange,
+                    fileDetail?.dossierStatus.id === 4
+                      ? Colors.primary
+                      : Colors.orange,
                 },
               ]}
             >
               <RegularText style={Layout.whiteText}>
-                {fileDetail?.dossierStatus.id === 4 ? 'Đã trả hồ sơ' : 'Chưa trả hồ sơ'}
+                {fileDetail?.dossierStatus.id === 4
+                  ? "Đã trả hồ sơ"
+                  : "Chưa trả hồ sơ"}
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
-            {fileDetail?.task &&
-              fileDetail.applicant.userId === userData.user_id &&
-              fileDetail?.dossierStatus.id === 5 && (
-                <TouchableOpacity
-                  onPress={onRate}
-                  style={[styles.result, { backgroundColor: Colors.green1 }]}
-                >
-                  <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
-                </TouchableOpacity>
-              )}
-
-            {/* {fileDetail?.dossierStatus.id === 4 && (
+            {/* fileDetail.applicant.userId === userData.user_id && */}
+            {fileDetail?.dossierStatus.id === 4 && (
               <TouchableOpacity
                 onPress={onRate}
                 style={[styles.result, { backgroundColor: Colors.green1 }]}
               >
-                <RegularText style={Layout.whiteText}>Đánh giá cán bộ</RegularText>
+                <RegularText style={Layout.whiteText}>
+                  Đánh giá cán bộ
+                </RegularText>
               </TouchableOpacity>
-            )} */}
+            )}
           </View>
           <View style={[styles.content, Layout.shadow]}>
             <View style={[Layout.rowBetween, styles.detail]}>
@@ -116,7 +113,9 @@ const FileDetailScreen: React.FC = () => {
               </MediumText>
             </View>
             <View style={[Layout.rowBetween, styles.detail]}>
-              <RegularText style={styles.fieldName}>Đơn vị nhận hồ sơ</RegularText>
+              <RegularText style={styles.fieldName}>
+                Đơn vị nhận hồ sơ
+              </RegularText>
               <MediumText style={[styles.text, styles.textLeft]}>
                 {fileDetail?.agency.name}
               </MediumText>
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
     color: Colors.grey6,
   },
   textLeft: {
-    textAlign: 'right',
+    textAlign: "right",
     flex: 1,
     marginLeft: kSpacing.kSpacing10,
   },

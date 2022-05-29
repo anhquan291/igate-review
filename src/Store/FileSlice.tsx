@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FileDetailFields, FileFields } from '../Models/File';
-import { requestGet, requestPost, requestPostXform } from '../Services/ApiCall';
-import { removeFromStorage, saveToStorage } from '../Utils/Common';
-import { handleAlert } from '../Utils/Notification';
-import { onLogout } from './AuthSlice';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { FileDetailFields, FileFields } from "../Models/File";
+import { requestGet, requestPost, requestPostXform } from "../Services/ApiCall";
+import { removeFromStorage, saveToStorage } from "../Utils/Common";
+import { handleAlert } from "../Utils/Notification";
+import { onLogout } from "./AuthSlice";
 
 interface initialStateFields {
   isLoading: boolean;
@@ -21,27 +21,30 @@ interface fileDetailParams {
   code?: string;
 }
 interface fileListParams extends fileDetailParams {
-  'user-id': string;
+  "user-id": string;
 }
 
 export const fileGetData = createAsyncThunk(
-  'file/get_list',
+  "file/get_list",
   async (fields: fileListParams, { rejectWithValue, dispatch }) => {
     const forceLogout = () => {
       dispatch(onLogout());
     };
     try {
-      const response = await requestGet('pa/dossier/', {
-        params: fields,
-        needToken: true,
-      });
-      console.log('res', response.data);
+      const response = await requestGet(
+        "pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=",
+        {
+          params: fields,
+          needToken: true,
+        },
+      );
+      console.log("res", response.data);
       return response.data;
     } catch (error: any) {
-      console.log('error', error);
+      console.log("error", error);
       if (error.response.status === 401) {
         handleAlert({
-          message: 'Hết phiên đăng nhập, vui lòng đăng nhập lại',
+          message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
           onPress1: forceLogout,
         });
       }
@@ -51,25 +54,25 @@ export const fileGetData = createAsyncThunk(
 );
 
 export const fileGetDetail = createAsyncThunk(
-  'file/get_detail',
+  "file/get_detail",
   async (fields: fileDetailParams, { rejectWithValue, dispatch }) => {
     const forceLogout = () => {
       dispatch(onLogout());
     };
     try {
-      const response = await requestGet('pa/dossier/search', {
+      const response = await requestGet("pa/dossier/search", {
         params: fields,
         needToken: true,
       });
-      console.log('res', response.data);
+      console.log("res", response.data);
       return response.data;
     } catch (error: any) {
-      console.log('error', error);
+      console.log("error", error);
       handleAlert({
         message:
           error.response.status === 401
-            ? 'Hết phiên đăng nhập, vui lòng đăng nhập lại'
-            : 'Có lỗi xẩy ra',
+            ? "Hết phiên đăng nhập, vui lòng đăng nhập lại"
+            : "Có lỗi xẩy ra",
         onPress1: error.response.status === 401 ? forceLogout : () => {},
       });
       return rejectWithValue(error);
@@ -78,7 +81,7 @@ export const fileGetDetail = createAsyncThunk(
 );
 
 const FileSlice = createSlice({
-  name: 'task',
+  name: "task",
   initialState: {
     isLoading: false,
     fileList: [],
@@ -97,7 +100,15 @@ const FileSlice = createSlice({
       const data: any = action.payload;
       state.totalPages = data.totalPages;
       if (data.pageable.pageNumber === 0) {
-        state.fileList = data.content;
+        const latestItem = data.content.reduce(
+          (
+            a: { acceptedDate: string | number | Date },
+            b: { acceptedDate: string | number | Date },
+          ) => {
+            return new Date(a.acceptedDate) > new Date(b.acceptedDate) ? a : b;
+          },
+        );
+        state.fileList = [latestItem];
         state.isLoading = false;
         return;
       }

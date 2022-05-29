@@ -1,12 +1,12 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { kSpacing, kTextSizes } from '../../Utils/Constants';
-import Colors from '../../Themes/Colors';
-import Layout from '../../Themes/Layout';
-import { ItalicText, MediumText, RegularText } from '../../Components/Texts';
-import { formatDateMonth } from '../../Utils/Common';
-import { useNavigation } from '@react-navigation/native';
-import { FileFields } from './Type';
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { kSpacing, kTextSizes } from "../../Utils/Constants";
+import Colors from "../../Themes/Colors";
+import Layout from "../../Themes/Layout";
+import { ItalicText, MediumText, RegularText } from "../../Components/Texts";
+import { formatDateMonth } from "../../Utils/Common";
+import { useNavigation } from "@react-navigation/native";
+import { FileFields } from "../../Models/File";
 
 interface Props {
   item: FileFields;
@@ -15,7 +15,7 @@ interface Props {
 const HomeItem = ({ item }: Props) => {
   const navigation = useNavigation<any>();
   const onNavigate = (): void => {
-    navigation.navigate('FileDetailScreen', { item });
+    navigation.navigate("FileDetailScreen", { item });
   };
   const onGetColor = () => {
     switch (item.dossierStatus.id) {
@@ -39,7 +39,11 @@ const HomeItem = ({ item }: Props) => {
     }
   };
   return (
-    <TouchableOpacity onPress={onNavigate} activeOpacity={0.7} style={[styles.container, Layout.shadow]}>
+    <TouchableOpacity
+      onPress={onNavigate}
+      activeOpacity={0.7}
+      style={[styles.container, Layout.shadow]}
+    >
       <View style={[Layout.rowBetween]}>
         <MediumText numberOfLines={1} style={styles.text}>
           {item.code}
@@ -52,19 +56,24 @@ const HomeItem = ({ item }: Props) => {
             },
           ]}
         >
-          <RegularText style={[styles.text, { color: Colors.white }]}>{item.dossierStatus.name}</RegularText>
+          <RegularText style={[styles.text, { color: Colors.white }]}>
+            {item.dossierStatus.name}
+          </RegularText>
         </View>
       </View>
       <View style={[Layout.rowBetween, styles.client]}>
         <RegularText style={[styles.text]}>Tên khách hàng</RegularText>
-        <MediumText style={styles.name}>{item.applicant.data.fullname}</MediumText>
+        <MediumText style={styles.name}>
+          {item.applicant.data.fullname}
+        </MediumText>
       </View>
       <View>
         <RegularText style={styles.name} numberOfLines={3}>
           <MediumText style={styles.name}>Về việc: </MediumText>
-          Theo kế hoạch, ông Quyết sẽ tham gia Diễn đàn đầu tư Việt Nam ở London vào sáng 30/3 và phát biểu
-          kết luận vào cuối phiên với vai trò Chủ tịch Bamboo Airways. Chiều cùng ngày, Roadshow giới thiệu về
-          hệ sinh thái của FLC cũng sẽ được tổ chức tại đây.
+          Theo kế hoạch, ông Quyết sẽ tham gia Diễn đàn đầu tư Việt Nam ở London
+          vào sáng 30/3 và phát biểu kết luận vào cuối phiên với vai trò Chủ
+          tịch Bamboo Airways. Chiều cùng ngày, Roadshow giới thiệu về hệ sinh
+          thái của FLC cũng sẽ được tổ chức tại đây.
         </RegularText>
       </View>
 

@@ -79,7 +79,7 @@ const HomeItem = ({ item }: Props) => {
 
       <View style={[styles.dateContainer, Layout.rowBetween]}>
         <ItalicText style={[styles.date, { color: Colors.grey6, flex: 1 }]}>
-          Ngày trả dự kiến: {formatDateMonth(new Date(item.appointmentDate))}
+          Ngày trả dự kiến: {formatDateMonth(item.appointmentDate)}
         </ItalicText>
         <MediumText style={[styles.name]}>{item.statusCurrentTask}</MediumText>
       </View>

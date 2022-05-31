@@ -25,9 +25,18 @@ DerivedData
 #
 build/
 .idea
-.gradle
+.gradle/
+proguard/
+*.log
+.navigation/
 local.properties
 *.iml
+*.apk
+*.aab
+*.aar
+*.ap_
+*.hprof
+release/
 
 # node.js
 #
@@ -57,3 +66,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+/vendor/bundle/
+ios/prebuild.log
+ios/tmp.xcconfig
+*.app.dSYM.zip

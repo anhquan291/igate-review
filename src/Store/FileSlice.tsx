@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import moment from "moment";
 import { FileDetailFields, FileFields } from "../Models/File";
 import { requestGet } from "../Services/ApiCall";
 import { removeFromStorage, saveToStorage } from "../Utils/Common";
@@ -105,10 +106,10 @@ const FileSlice = createSlice({
             a: { acceptedDate: string | number | Date },
             b: { acceptedDate: string | number | Date },
           ) => {
-            return new Date(a.acceptedDate) > new Date(b.acceptedDate) ? a : b;
+            return moment(a.acceptedDate) > moment(b.acceptedDate) ? a : b;
           },
         );
-        state.fileList = data.content;
+        state.fileList = [latestItem];
         state.isLoading = false;
         return;
       }

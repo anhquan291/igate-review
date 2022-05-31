@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FileDetailFields, FileFields } from "../Models/File";
-import { requestGet, requestPost, requestPostXform } from "../Services/ApiCall";
+import { requestGet } from "../Services/ApiCall";
 import { removeFromStorage, saveToStorage } from "../Utils/Common";
 import { handleAlert } from "../Utils/Notification";
 import { onLogout } from "./AuthSlice";
@@ -108,7 +108,7 @@ const FileSlice = createSlice({
             return new Date(a.acceptedDate) > new Date(b.acceptedDate) ? a : b;
           },
         );
-        state.fileList = [latestItem];
+        state.fileList = data.content;
         state.isLoading = false;
         return;
       }

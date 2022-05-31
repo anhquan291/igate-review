@@ -34,6 +34,7 @@ const FileDetailScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
+  console.log("code", item.code);
   const onRate = async (): Promise<void> => {
     try {
       if (fileDetail) {
@@ -58,7 +59,7 @@ const FileDetailScreen: React.FC = () => {
   useEffect(() => {
     onGetDetail();
   }, []);
-  console.log(fileDetail);
+  console.log("fileDetail", fileDetail);
   return (
     <View style={[Layout.fill]}>
       <Header name="Chi tiết hồ sơ" />

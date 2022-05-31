@@ -216,6 +216,12 @@ export interface QuestionFields {
       description: string;
       question: [
         {
+          sort(
+            arg0: (
+              a: { answerType: number },
+              b: { answerType: number },
+            ) => number,
+          ): any;
           id: string;
           content: string;
           multipleChoice: number;

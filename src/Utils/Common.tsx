@@ -1,7 +1,7 @@
-import { Dimensions, Platform } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import dayjs from 'dayjs';
-import jwtDecode from 'jwt-decode';
+import { Dimensions, Platform } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
+import dayjs from "dayjs";
+import jwtDecode from "jwt-decode";
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
@@ -19,10 +19,10 @@ const IP12MAX_WIDTH = 428;
 const IP12MAX_HEIGHT = 926;
 
 export const hasNotch = (): boolean => {
-  if (Platform.OS !== 'ios' || Platform.isPad || Platform.isTVOS) {
+  if (Platform.OS !== "ios" || Platform.isPad || Platform.isTVOS) {
     return false;
   }
-  const { width, height } = Dimensions.get('window');
+  const { width, height } = Dimensions.get("window");
   if (
     (width === X_WIDTH && height === X_HEIGHT) ||
     (width === XSMAX_WIDTH && height === XSMAX_HEIGHT) ||
@@ -35,7 +35,10 @@ export const hasNotch = (): boolean => {
   return false;
 };
 
-export const saveToStorage = async (key: string, value: string): Promise<void> => {
+export const saveToStorage = async (
+  key: string,
+  value: string,
+): Promise<void> => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (error) {
@@ -51,8 +54,10 @@ export const removeFromStorage = async (key: string): Promise<void> => {
   }
 };
 
-export const formatDateMonth = (date: any) => dayjs(date).format('DD/MM/YYYY HH:MM');
-export const formatDate = (date: any) => dayjs(date).format('DD/MM/YYYY');
+export const formatDateMonth = (date: any) =>
+  dayjs(new Date(date)).format("DD/MM/YYYY HH:MM");
+export const formatDate = (date: any) =>
+  dayjs(new Date(date)).format("DD/MM/YYYY");
 export const checkTokenExpired = (token: string) => {
   let decoded: any = jwtDecode(token);
   if (Date.now() / 1000 > decoded.exp) {

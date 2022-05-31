@@ -81,12 +81,12 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     onGetFileList();
-    const intervalId = setInterval(() => {
-      // this will be executed every 200 ms
-      // even when app is the the background
-      onGetFileList();
-    }, 4000);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(() => {
+    //   // this will be executed every 200 ms
+    //   // even when app is the the background
+    //   onGetFileList();
+    // }, 4000);
+    // return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 

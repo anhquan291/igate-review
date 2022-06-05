@@ -100,13 +100,14 @@ const FileSlice = createSlice({
     builder.addCase(fileGetData.fulfilled, (state, action) => {
       const data: any = action.payload;
       state.totalPages = data.totalPages;
+      // Check ngày hoàn thành hồ sơ mới nhất
       if (data.pageable.pageNumber === 0) {
         const latestItem = data.content.reduce(
           (
-            a: { acceptedDate: string | number | Date },
-            b: { acceptedDate: string | number | Date },
+            a: { completedDate: string | number | Date },
+            b: { completedDate: string | number | Date },
           ) => {
-            return moment(a.acceptedDate) > moment(b.acceptedDate) ? a : b;
+            return moment(a.completedDate) > moment(b.completedDate) ? a : b;
           },
         );
         state.fileList = [latestItem];

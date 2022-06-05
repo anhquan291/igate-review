@@ -50,12 +50,10 @@ export interface FileFields {
   procedure: {
     id: string;
     code: string;
-    translate: [
-      {
-        languageId: number;
-        name: string;
-      },
-    ];
+    translate: {
+      languageId: number;
+      name: string;
+    };
     sector: {
       id: string;
       name: [

@@ -73,6 +73,19 @@ export const authCheckLogin = createAsyncThunk(
   },
 );
 
+export const authLogout = createAsyncThunk(
+  "auth/auth_logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      removeFromStorage("authToken");
+      removeFromStorage("refreshToken");
+    } catch (error: any) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const AuthSlice = createSlice({
   name: "auth",
   initialState: {
@@ -87,11 +100,15 @@ const AuthSlice = createSlice({
       state.isLogin = false;
       state.token = "";
       state.refreshToken = "";
-      removeFromStorage("authToken");
-      removeFromStorage("refreshToken");
     },
   },
   extraReducers: (builder) => {
+    // Check Token Expire to Keep Login
+    builder.addCase(authLogout.fulfilled, (state, action) => {
+      state.isLogin = false;
+      state.token = "";
+      state.refreshToken = "";
+    });
     builder.addCase(authGetToken.pending, (state) => {
       state.isLoading = true;
     });

@@ -70,10 +70,7 @@ const HomeItem = ({ item }: Props) => {
       <View>
         <RegularText style={styles.name} numberOfLines={3}>
           <MediumText style={styles.name}>Về việc: </MediumText>
-          Theo kế hoạch, ông Quyết sẽ tham gia Diễn đàn đầu tư Việt Nam ở London
-          vào sáng 30/3 và phát biểu kết luận vào cuối phiên với vai trò Chủ
-          tịch Bamboo Airways. Chiều cùng ngày, Roadshow giới thiệu về hệ sinh
-          thái của FLC cũng sẽ được tổ chức tại đây.
+          {item.procedure.translate.name}
         </RegularText>
       </View>
 

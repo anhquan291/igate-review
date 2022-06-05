@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Animated,
+  Alert,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 // Components
@@ -18,6 +19,7 @@ import { fileGetData } from "../../Store/FileSlice";
 import Layout from "../../Themes/Layout";
 import { kScaledSize, kSpacing } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
+import { authLogout } from "../../Store/AuthSlice";
 
 const AnimatedList = Animated.createAnimatedComponent(FlatList);
 
@@ -43,6 +45,18 @@ const HomeScreen: React.FC = () => {
     outputRange: [0, 1],
     extrapolateRight: "clamp",
   });
+
+  const onLogout = (): void => {
+    Alert.alert("Thông báo", "Bạn có muốn đăng xuất không?", [
+      {
+        text: "Đồng ý",
+        onPress: () => dispatch(authLogout()),
+      },
+      {
+        text: "Huỷ",
+      },
+    ]);
+  };
 
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     await dispatch(
@@ -85,14 +99,19 @@ const HomeScreen: React.FC = () => {
     //   // this will be executed every 200 ms
     //   // even when app is the the background
     //   onGetFileList();
-    // }, 4000);
+    // }, 5000);
     // return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 
   return (
     <View style={[Layout.fill]}>
-      <Header name="Danh sách hồ sơ" showBackButton={false} />
+      <Header
+        name="Danh sách hồ sơ"
+        showBackButton={false}
+        logout
+        onLogout={onLogout}
+      />
       {isLoading && <AppLoader />}
       <View style={[Layout.fill, styles.container]}>
         <AnimatedList

@@ -34,9 +34,10 @@ const FileDetailScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
-  console.log("code", item.code);
+
   const onRate = async (): Promise<void> => {
     try {
+      // Check nếu hồ sơ đã được đánh giá.
       if (fileDetail) {
         const fileCheck = await dispatch(
           rateCheckFile({
@@ -49,6 +50,7 @@ const FileDetailScreen: React.FC = () => {
           return;
         }
       }
+      // Check chưa thì chuyển tới trang đánh giá.
       navigation.navigate("RatingScreen", { item: fileDetail });
     } catch (error) {
       console.log(error);
@@ -75,21 +77,24 @@ const FileDetailScreen: React.FC = () => {
                 styles.result,
                 {
                   backgroundColor:
-                    fileDetail?.dossierStatus.id === 4
+                    fileDetail?.dossierStatus.id === 4 ||
+                    fileDetail?.dossierStatus.id === 5
                       ? Colors.primary
                       : Colors.orange,
                 },
               ]}
             >
               <RegularText style={Layout.whiteText}>
-                {fileDetail?.dossierStatus.id === 4
+                {fileDetail?.dossierStatus.id === 4 ||
+                fileDetail?.dossierStatus.id === 5
                   ? "Đã trả hồ sơ"
                   : "Chưa trả hồ sơ"}
               </RegularText>
             </View>
             {/* Nếu đã nhận hồ sơ thì mới cho hiện nút đánh giá */}
             {/* fileDetail.applicant.userId === userData.user_id && */}
-            {fileDetail?.dossierStatus.id === 4 && (
+            {(fileDetail?.dossierStatus.id === 4 ||
+              fileDetail?.dossierStatus.id === 5) && (
               <TouchableOpacity
                 onPress={onRate}
                 style={[styles.result, { backgroundColor: Colors.green1 }]}

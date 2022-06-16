@@ -65,6 +65,7 @@ const HomeScreen: React.FC = () => {
         size: 10,
         spec: "page",
         "user-id": userData.user_id,
+        agencyId: userData.experience[0].agency.id,
       }),
     ).unwrap();
   };
@@ -88,6 +89,7 @@ const HomeScreen: React.FC = () => {
         size: 10,
         spec: "page",
         "user-id": userData.user_id,
+        agencyId: userData.experience[0].agency.id,
       }),
     );
     setRefresh(false);
@@ -95,12 +97,12 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     onGetFileList();
-    // const intervalId = setInterval(() => {
-    //   // this will be executed every 200 ms
-    //   // even when app is the the background
-    //   onGetFileList();
-    // }, 5000);
-    // return () => clearInterval(intervalId);
+    const intervalId = setInterval(() => {
+      // this will be executed every 200 ms
+      // even when app is the the background
+      onGetFileList();
+    }, 5000);
+    return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 
@@ -164,9 +166,7 @@ const HomeScreen: React.FC = () => {
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    marginTop: kSpacing.kSpacing10,
-  },
+  container: {},
   floatButton: {
     position: "absolute",
     bottom: 35,

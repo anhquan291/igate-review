@@ -188,28 +188,36 @@ const RateScreen: React.FC = () => {
                 </MediumText>
               </View>
             </View>
-            <MediumText style={[styles.title]}>
-              Đợt đánh giá cán bộ {formatDate(data?.startDate)}
-            </MediumText>
-            <View style={[Layout.rowBetween, styles.mb]}>
-              <RegularText>Người đánh giá</RegularText>
-              <MediumText style={styles.detail}>
-                {fileDetail.applicant.data.fullname}
+            <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
+              <MediumText style={[styles.title]}>
+                Đợt đánh giá cán bộ {formatDate(data?.startDate)}
               </MediumText>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Người đánh giá</RegularText>
+                <MediumText style={styles.detail}>
+                  {fileDetail.applicant.data.fullname}
+                </MediumText>
+              </View>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>CMND</RegularText>
+                <MediumText style={styles.detail}>
+                  {fileDetail.applicant.data.identityNumber}
+                </MediumText>
+              </View>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Mã hồ sơ</RegularText>
+                <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
+              </View>
+              <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
             </View>
-            <View style={[Layout.rowBetween, styles.mb]}>
-              <RegularText>CMND</RegularText>
-              <MediumText style={styles.detail}>
-                {fileDetail.applicant.data.identityNumber}
-              </MediumText>
-            </View>
-            <View style={[Layout.rowBetween, styles.mb]}>
-              <RegularText>Mã hồ sơ</RegularText>
-              <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
-            </View>
-            <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
             <View
-              style={[Layout.rowBetween, { marginBottom: kSpacing.kSpacing20 }]}
+              style={[
+                Layout.rowBetween,
+                {
+                  marginBottom: kSpacing.kSpacing20,
+                  marginHorizontal: kSpacing.kSpacing10,
+                },
+              ]}
             >
               {questionData &&
                 questionData.answer
@@ -283,7 +291,6 @@ const RateScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    marginHorizontal: kSpacing.kSpacing10,
   },
   title: {
     marginVertical: kSpacing.kSpacing20,
@@ -305,6 +312,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: kSpacing.kSpacing15,
     borderColor: Colors.grey7,
+    marginHorizontal: kSpacing.kSpacing16,
   },
   name: {
     color: Colors.orange2,

@@ -1,9 +1,9 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import MediumText from '../Texts/MediumText';
-import Colors from '../../Themes/Colors';
-import Layout from '../../Themes/Layout';
-import { kSpacing } from '../../Utils/Constants';
+import React from "react";
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import MediumText from "../Texts/MediumText";
+import Colors from "../../Themes/Colors";
+import Layout from "../../Themes/Layout";
+import { kSpacing } from "../../Utils/Constants";
 
 type Props = {
   title: string;

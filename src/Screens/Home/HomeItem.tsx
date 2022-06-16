@@ -88,6 +88,7 @@ export default HomeItem;
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: kSpacing.kSpacing20,
     marginBottom: kSpacing.kSpacing14,
     paddingHorizontal: kSpacing.kSpacing10,
     paddingVertical: kSpacing.kSpacing15,

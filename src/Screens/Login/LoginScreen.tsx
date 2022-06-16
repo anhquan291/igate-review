@@ -6,7 +6,11 @@ import { Button } from "../../Components/Buttons";
 import { AppLoader } from "../../Components/Loaders";
 // Reddux
 import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
-import { authCheckLogin, authGetToken } from "../../Store/AuthSlice";
+import {
+  authCheckLogin,
+  authGetToken,
+  authGetUserData,
+} from "../../Store/AuthSlice";
 // Form
 import { useForm } from "react-hook-form";
 // Theme
@@ -14,6 +18,7 @@ import Layout from "../../Themes/Layout";
 import { CommonTextInput, PasswordTextInput } from "../../Components/Input";
 import { kScaledSize, kSpacing } from "../../Utils/Constants";
 import { ScrollContainer } from "../../Components/Container";
+import jwtDecode from "jwt-decode";
 
 const LoginScreen: React.FC = () => {
   const { isLoading } = useAppSelector((state) => state.auth);
@@ -34,7 +39,9 @@ const LoginScreen: React.FC = () => {
       username,
       password,
     };
-    await dispatch(authGetToken(details)).unwrap();
+    const userInfo = await dispatch(authGetToken(details)).unwrap();
+    let decoded: any = jwtDecode(userInfo.access_token);
+    await dispatch(authGetUserData(decoded.user_id)).unwrap();
   };
 
   useEffect(() => {

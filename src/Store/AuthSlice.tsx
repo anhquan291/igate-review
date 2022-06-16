@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { requestPostXform } from "../Services/ApiCall";
+import { requestGet, requestPostXform } from "../Services/ApiCall";
 import {
   checkTokenExpired,
   removeFromStorage,
@@ -55,14 +55,41 @@ export const authGetToken = createAsyncThunk(
   },
 );
 
+export const authGetUserData = createAsyncThunk(
+  "auth/get_user_data",
+  async (userId: string, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await requestGet(
+        `hu/user/${userId}/--fully?user-id=${userId}`,
+        {
+          needToken: true,
+        },
+      );
+      console.log(response.data);
+      await AsyncStorage.setItem("userData", JSON.stringify(response.data));
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response);
+      handleAlert({
+        message:
+          error.response === undefined
+            ? "Cố lỗi xẩy ra"
+            : "Tên đăng nhập hoặc mật khẩu không đúng",
+      });
+      return rejectWithValue(error);
+    }
+  },
+);
+
 export const authCheckLogin = createAsyncThunk(
   "auth/check_login",
   async (_, { rejectWithValue }) => {
     try {
       const token: any = await AsyncStorage.getItem("authToken");
+      const userData: any = await AsyncStorage.getItem("userData");
       if (token) {
         const isTokenExpire = checkTokenExpired(token);
-        return { isTokenExpire, token };
+        return { isTokenExpire, token, userData };
       } else {
         return { isTokenExpire: true };
       }
@@ -114,24 +141,34 @@ const AuthSlice = createSlice({
     });
     builder.addCase(authGetToken.fulfilled, (state, action) => {
       const { access_token, refresh_token }: any = action.payload;
-      let decoded: any = jwtDecode(access_token);
       saveToStorage("authToken", JSON.stringify(access_token));
       saveToStorage("refreshToken", JSON.stringify(refresh_token));
       state.token = access_token;
       state.refreshToken = refresh_token;
-      state.userData = decoded;
-      state.isLoading = false;
-      state.isLogin = true;
+      // state.isLoading = false;
     });
     builder.addCase(authGetToken.rejected, (state) => {
       state.isLoading = false;
     });
+    builder.addCase(authGetUserData.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(authGetUserData.fulfilled, (state, action) => {
+      const userData = action.payload;
+      state.userData = userData;
+      state.isLoading = false;
+      state.isLogin = true;
+    });
+    builder.addCase(authGetUserData.rejected, (state) => {
+      state.isLoading = false;
+    });
+
     // Check Token Expire to Keep Login
     builder.addCase(authCheckLogin.fulfilled, (state, action) => {
-      const { isTokenExpire, token }: any = action.payload;
+      const { isTokenExpire, userData }: any = action.payload;
       if (!isTokenExpire) {
-        let decoded: any = jwtDecode(token);
-        state.userData = decoded;
+        const user = JSON.parse(userData);
+        state.userData = user;
         state.isLogin = true;
       } else {
         state.isLogin = false;

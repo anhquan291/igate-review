@@ -14,7 +14,7 @@ type Props = {
 
 const UserScreen = (props: Props) => {
   const { userData } = useAppSelector((state) => state.auth);
-  console.log(userData);
+  console.log("userData", userData);
   const onNavigate = () => {
     props.navigation.navigate("HomeScreen");
   };
@@ -28,14 +28,26 @@ const UserScreen = (props: Props) => {
           </View>
           <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
             <RegularText style={{ color: Colors.grey6 }}>Họ tên: </RegularText>
-            <MediumText style={styles.textLeft}>{userData.name}</MediumText>
+            <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
           </View>
           <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
             <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
             <MediumText style={styles.textLeft}>
-              {userData.preferred_username}
+              {userData.email[0].value}
             </MediumText>
           </View>
+          {userData.experience[0].primary && (
+            <View
+              style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}
+            >
+              <RegularText style={{ color: Colors.grey6 }}>
+                Cơ quan:{" "}
+              </RegularText>
+              <MediumText style={styles.textLeft}>
+                {userData.experience[0].agency.parent.name}
+              </MediumText>
+            </View>
+          )}
         </View>
         <TouchableOpacity
           onPress={onNavigate}
@@ -63,8 +75,8 @@ const styles = StyleSheet.create({
   result: {
     marginTop: kScaledSize(30),
     alignSelf: "center",
-    paddingVertical: kSpacing.kSpacing5,
-    paddingHorizontal: kSpacing.kSpacing10,
+    paddingVertical: kSpacing.kSpacing10,
+    paddingHorizontal: kSpacing.kSpacing20,
     borderRadius: 5,
   },
   avatar: {

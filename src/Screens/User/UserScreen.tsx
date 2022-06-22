@@ -34,7 +34,8 @@ const UserScreen = (props: Props) => {
   };
   return (
     <View style={[Layout.fill]}>
-      <Header name="Thông tin" showBackButton={false} />
+      <Header name="Thông tin" showBackButton={false} logout
+        onLogout={onLogout} />
       <View style={[Layout.fill, styles.container]}>
         <View>
           <View style={[styles.avatar, Layout.center]}>
@@ -69,10 +70,10 @@ const UserScreen = (props: Props) => {
         >
           <RegularText style={Layout.whiteText}>Đánh giá hồ sơ</RegularText>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onLogout}
+        {/* <TouchableOpacity onPress={onLogout}
           style={[styles.result, { backgroundColor: Colors.primary }]} >
           <RegularText style={Layout.whiteText}>Đăng xuất</RegularText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

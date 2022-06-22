@@ -1,13 +1,13 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
 import React from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
-import { useAppSelector } from "../../Hooks/RTKHooks";
+import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
 import { MediumText, RegularText } from "../../Components/Texts";
 import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-
+import { authLogout } from "../../Store/AuthSlice";
 type Props = {
   navigation: any;
 };
@@ -16,7 +16,21 @@ const UserScreen = (props: Props) => {
   const { userData } = useAppSelector((state) => state.auth);
   console.log("userData", userData);
   const onNavigate = () => {
-    props.navigation.navigate("HomeScreen");
+    // props.navigation.navigate("HomeScreen");
+    props.navigation.navigate("RatingScreen");
+    // console.log('-->', props.navigation.navigate);
+  };
+  const dispatch = useAppDispatch();
+  const onLogout = (): void => {
+    Alert.alert("Thông báo", "Bạn có muốn đăng xuất không?", [
+      {
+        text: "Đồng ý",
+        onPress: () => dispatch(authLogout()),
+      },
+      {
+        text: "Huỷ",
+      },
+    ]);
   };
   return (
     <View style={[Layout.fill]}>
@@ -54,6 +68,10 @@ const UserScreen = (props: Props) => {
           style={[styles.result, { backgroundColor: Colors.primary }]}
         >
           <RegularText style={Layout.whiteText}>Đánh giá hồ sơ</RegularText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onLogout}
+          style={[styles.result, { backgroundColor: Colors.primary }]} >
+          <RegularText style={Layout.whiteText}>Đăng xuất</RegularText>
         </TouchableOpacity>
       </View>
     </View>

@@ -32,6 +32,7 @@ import {
 } from "../../Utils/Constants";
 import { handleAlert } from "../../Utils/Notification";
 import QuestionItem from "./QuestionItem";
+import moment from "moment";
 
 const QuestionAnswer = [
   {
@@ -92,6 +93,14 @@ const RateScreen: React.FC = () => {
         agencyId: userData.experience[0].agency.id,
       }),
     ).unwrap();
+    const latestItem = response.content.reduce(
+      (
+        a: { completedDate: string | number | Date },
+        b: { completedDate: string | number | Date },
+      ) => {
+        return moment(a.completedDate) > moment(b.completedDate) ? a : b;
+      },
+    );
     await dispatch(fileGetDetail({ code: response.content[0].code })).unwrap();
   };
 

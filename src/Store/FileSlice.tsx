@@ -112,11 +112,11 @@ const FileSlice = createSlice({
           },
         );
         state.fileList = [latestItem];
-        state.isLoading = false;
+        // state.isLoading = false;
         return;
       }
       state.fileList = [...state.fileList, ...data.content];
-      state.isLoading = false;
+      // state.isLoading = false;
     });
     builder.addCase(fileGetData.rejected, (state) => {
       state.isLoading = false;
@@ -124,7 +124,7 @@ const FileSlice = createSlice({
     });
     // Get File Detail
     builder.addCase(fileGetDetail.pending, (state) => {
-      state.isLoading = true;
+      // state.isLoading = true;
       state.error = false;
     });
     builder.addCase(fileGetDetail.fulfilled, (state, action) => {

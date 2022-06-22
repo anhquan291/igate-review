@@ -31,15 +31,15 @@ interface nameFields {
 
 export interface rateOfficerParams {
   formData: {
-    participantName: string;
-    identityNumber: string;
-    profileNumber: string;
+    participantName?: string;
+    identityNumber?: string;
+    profileNumber?: string;
   };
   ratingOfficer: {
     id: string;
     name: Array<nameFields>;
     agency: {
-      id: string;
+      id?: string;
     };
     userGroup: [
       {
@@ -51,7 +51,7 @@ export interface rateOfficerParams {
     endDate: string;
   };
   officer: {
-    id: string;
+    id?: string;
     name?: string;
   };
   detail: any;

@@ -13,8 +13,10 @@ import { Header } from "../../Components/Headers";
 import { AppLoader } from "../../Components/Loaders";
 import { MediumText, RegularText } from "../../Components/Texts";
 import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
+import { fileGetData, fileGetDetail } from "../../Store/FileSlice";
 import { FileDetailFields } from "../../Models/File";
 import {
+  rateCheckFile,
   rateGetData,
   rateOfficer,
   rateOfficerParams,
@@ -59,6 +61,14 @@ const RateScreen: React.FC = () => {
   const { params } = useRoute<any>();
   const navigation = useNavigation<any>();
 
+  const {
+    fileList,
+    isLoading: fileLoading,
+    totalPages,
+  } = useAppSelector((state) => state.files);
+
+  const [page, setPage] = useState<number>(0);
+
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
   console.log("TEST@@", fileDetail);
@@ -66,11 +76,36 @@ const RateScreen: React.FC = () => {
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
 
   const { userData } = useAppSelector((state) => state.auth);
-  console.log('user@@ --->>>', userData);
+  console.log("user@@ --->>>", userData);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
   const ref = useRef<any>(null);
+
+  const onGetFileList = async (reload?: boolean): Promise<void> => {
+    const response = await dispatch(
+      fileGetData({
+        page: reload ? 0 : page,
+        size: 10,
+        spec: "page",
+        "user-id": userData.user_id,
+        agencyId: userData.experience[0].agency.id,
+      }),
+    ).unwrap();
+    await dispatch(fileGetDetail({ code: response.content[0].code })).unwrap();
+  };
+
+  useEffect(() => {
+    onGetFileList();
+    const intervalId = setInterval(() => {
+      // this will be executed every 200 ms
+      // even when app is the the background
+      onGetFileList();
+    }, 5000);
+    return () => clearInterval(intervalId);
+    // setOnEndReachedCalledDuringMomentum(false);
+  }, []);
+
   const renderIcon = (type: number): any => {
     switch (type) {
       case -1:
@@ -87,6 +122,18 @@ const RateScreen: React.FC = () => {
   };
 
   const onRating = async (): Promise<void> => {
+    if (fileDetail) {
+      const fileCheck = await dispatch(
+        rateCheckFile({
+          "officer-id": fileDetail?.applicant.userId,
+          "dossier-id": fileDetail?.code,
+        }),
+      ).unwrap();
+      if (fileCheck.content.length > 0) {
+        handleAlert({ message: "Hồ sơ này đã được đánh giá" });
+        return;
+      }
+    }
     if (selectAnswer === null) {
       handleAlert({ message: "Vui lòng chọn ý kiến đánh giá" });
       return;
@@ -102,23 +149,23 @@ const RateScreen: React.FC = () => {
     if (data) {
       body = {
         formData: {
-          // participantName: fileDetail.applicant.data.fullname,
-          // identityNumber: fileDetail.applicant.data.identityNumber,
-          // profileNumber: fileDetail.code,
+          participantName: fileDetail?.applicant.data.fullname,
+          identityNumber: fileDetail?.applicant.data.identityNumber,
+          profileNumber: fileDetail?.code,
         },
         ratingOfficer: {
           id: data?.id,
           name: data?.name,
           agency: {
-            // id: fileDetail.agency.id,
+            id: fileDetail?.agency.id,
           },
           userGroup: data?.userGroup,
           startDate: data?.startDate,
           endDate: data?.endDate,
         },
         officer: {
-          // id: fileDetail.task[0].assignee.id,
-          // name: fileDetail.task[0].assignee.fullname,
+          id: fileDetail?.task[0].assignee.id,
+          name: fileDetail?.task[0].assignee.fullname,
         },
         detail: [
           {
@@ -138,10 +185,7 @@ const RateScreen: React.FC = () => {
       handleAlert({
         message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
         onPress1: () => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "HomeScreen" }],
-          });
+          navigation.goBack();
         },
       });
     }
@@ -173,124 +217,106 @@ const RateScreen: React.FC = () => {
   return (
     <View style={[Layout.fill]}>
       <Header name="Đánh giá độ hài lòng" />
-      {isLoading ? (
-        <AppLoader />
-      ) : error ? (
-        <View />
-      ) : (
-            <>
-              <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <View style={styles.officer}>
-                  <MediumText style={styles.name}>
-                    {/* {fileDetail.task[0].assignee.fullname} */}
-                  </MediumText>
-                  <View style={[Layout.rowBetween, styles.mb]}>
-                    <RegularText>Chức vụ</RegularText>
-                    <MediumText style={styles.detail}>Chuyên viên</MediumText>
-                  </View>
-                  <View style={[Layout.rowBetween, styles.mb]}>
-                    <RegularText>Đơn vị</RegularText>
-                    <MediumText style={styles.detail}>
-                      {/* {fileDetail.agency.name} */}
-                    </MediumText>
-                  </View>
-                </View>
-                <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
-                  <MediumText style={[styles.title]}>
-                    {/* Đợt đánh giá cán bộ {formatDate(data?.startDate)} */}
-                  </MediumText>
-                  <View style={[Layout.rowBetween, styles.mb]}>
-                    <RegularText>Người đánh giá</RegularText>
-                    <MediumText style={styles.detail}>
-                      {/* {fileDetail.applicant.data.fullname} */}
-                    </MediumText>
-                  </View>
-                  <View style={[Layout.rowBetween, styles.mb]}>
-                    <RegularText>CMND</RegularText>
-                    <MediumText style={styles.detail}>
-                      {/* {fileDetail.applicant.data.identityNumber} */}
-                    </MediumText>
-                  </View>
-                  <View style={[Layout.rowBetween, styles.mb]}>
-                    <RegularText>Mã hồ sơ</RegularText>
-                    {/* <MediumText style={styles.detail}>{fileDetail.code}</MediumText> */}
-                  </View>
-                  <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
-                </View>
-                <View
-                  style={[
-                    Layout.rowBetween,
-                    {
-                      marginBottom: kSpacing.kSpacing20,
-                      marginHorizontal: kSpacing.kSpacing10,
-                    },
-                  ]}
-                >
-                  {questionData &&
-                    questionData.answer
-                      .slice()
-                      .sort((a, b) => a.answerType - b.answerType)
-                      .map((item, index) => (
-                        <TouchableOpacity
-                          key={item.id}
-                          onPress={() => setSelectAnswer(index)}
-                          style={[
-                            styles.mood,
-                            {
-                              backgroundColor:
-                                selectAnswer === index
-                                  ? Colors.primary
-                                  : Colors.white,
-                            },
-                            Layout.shadow,
-                            Layout.center,
-                          ]}
-                        >
-                          <Image
-                            source={renderIcon(item.answerType)}
-                            style={styles.moodIcon}
-                          />
-                          <RegularText
-                            style={[
-                              styles.moodText,
-                              {
-                                color:
-                                  selectAnswer === index
-                                    ? Colors.white
-                                    : Colors.black,
-                              },
-                            ]}
-                          >
-                            {item.content}
-                          </RegularText>
-                        </TouchableOpacity>
-                      ))}
-                </View>
-                {/* <FlatList
-            ref={ref}
-            data={data?.questionGroup[0].question}
-            keyExtractor={(item) => item.id}
-            bounces={false}
-            horizontal
-            scrollEnabled={false}
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={kWidth}
-            renderItem={({ item }) => <QuestionItem item={item} setQuestionIndex={setQuestionIndex} />}
-          />
-          <View style={[Layout.rowBetween, styles.buttonGroup]}>
-            {questionIndex !== 0 ? (
-              <Button title="Quay lại" onPress={() => onScrollToIndex('previous')} />
-            ) : (
-              <View />
-            )}
-            <Button title="Tiếp" onPress={() => onScrollToIndex('next')} />
-          </View> */}
-              </ScrollView>
-              <View style={styles.buttonGroup}>
-                <Button title="Hoàn tất" onPress={onRating} />
+      {(isLoading || fileLoading) && <AppLoader />}
+      {fileList.length > 0 && fileDetail !== null && !error ? (
+        <>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.officer}>
+              <MediumText style={styles.name}>
+                {fileDetail.task[0].assignee.fullname}
+              </MediumText>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Chức vụ</RegularText>
+                <MediumText style={styles.detail}>Chuyên viên</MediumText>
               </View>
-            </>
-          )}
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Đơn vị</RegularText>
+                <MediumText style={styles.detail}>
+                  {fileDetail.agency.name}
+                </MediumText>
+              </View>
+            </View>
+            <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
+              <MediumText style={[styles.title]}>
+                {/* Đợt đánh giá cán bộ {formatDate(data?.startDate)} */}
+              </MediumText>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Người đánh giá</RegularText>
+                <MediumText style={styles.detail}>
+                  {fileDetail.applicant.data.fullname}
+                </MediumText>
+              </View>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>CMND</RegularText>
+                <MediumText style={styles.detail}>
+                  {fileDetail.applicant.data.identityNumber}
+                </MediumText>
+              </View>
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Mã hồ sơ</RegularText>
+                <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
+              </View>
+              <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
+            </View>
+            <View
+              style={[
+                Layout.rowBetween,
+                {
+                  marginBottom: kSpacing.kSpacing20,
+                  marginHorizontal: kSpacing.kSpacing10,
+                },
+              ]}
+            >
+              {questionData &&
+                questionData.answer
+                  .slice()
+                  .sort((a, b) => a.answerType - b.answerType)
+                  .map((item, index) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      onPress={() => setSelectAnswer(index)}
+                      style={[
+                        styles.mood,
+                        {
+                          backgroundColor:
+                            selectAnswer === index
+                              ? Colors.primary
+                              : Colors.white,
+                        },
+                        Layout.shadow,
+                        Layout.center,
+                      ]}
+                    >
+                      <Image
+                        source={renderIcon(item.answerType)}
+                        style={styles.moodIcon}
+                      />
+                      <RegularText
+                        style={[
+                          styles.moodText,
+                          {
+                            color:
+                              selectAnswer === index
+                                ? Colors.white
+                                : Colors.black,
+                          },
+                        ]}
+                      >
+                        {item.content}
+                      </RegularText>
+                    </TouchableOpacity>
+                  ))}
+            </View>
+          </ScrollView>
+          <View style={styles.buttonGroup}>
+            <Button title="Hoàn tất" onPress={onRating} />
+          </View>
+        </>
+      ) : (
+        <View style={[Layout.fill, Layout.center]}>
+          {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
+        </View>
+      )}
     </View>
   );
 };

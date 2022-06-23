@@ -72,15 +72,17 @@ const RateScreen: React.FC = () => {
 
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
-  console.log("TEST@@", fileDetail);
+  // console.log("TEST@@", fileDetail);
   const filetest: FileDetailFields = params;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
 
   const { userData } = useAppSelector((state) => state.auth);
-  console.log("user@@ --->>>", userData);
+  // console.log("user@@ --->>>", userData);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
+  console.log("Chọn đáp án@@ ", selectAnswer);
+
   const ref = useRef<any>(null);
 
   const onGetFileList = async (reload?: boolean): Promise<void> => {
@@ -107,8 +109,6 @@ const RateScreen: React.FC = () => {
   useEffect(() => {
     onGetFileList();
     const intervalId = setInterval(() => {
-      // this will be executed every 200 ms
-      // even when app is the the background
       onGetFileList();
     }, 5000);
     return () => clearInterval(intervalId);
@@ -117,14 +117,28 @@ const RateScreen: React.FC = () => {
 
   const renderIcon = (type: number): any => {
     switch (type) {
+
+      // case 0:
+      //   return require("../../Assets/Images/normal.png");
+      // case 2:
+      //   return require("../../Assets/Images/verySatisfied.png");
+      // case -1:
+      //   return require("../../Assets/Images/notSatisfied.png");
+      // case 1:
+      //   return require("../../Assets/Images/satisfied.png");
+
+      // default:
+      //   return require("../../Assets/Images/normal.png");
+      // test
       case -1:
-        return require("../../Assets/Images/notSatisfied.png");
-      case 0:
         return require("../../Assets/Images/normal.png");
-      case 1:
-        return require("../../Assets/Images/satisfied.png");
-      case 2:
+      case 0:
         return require("../../Assets/Images/verySatisfied.png");
+      case 1:
+        return require("../../Assets/Images/notSatisfied.png");
+      case 2:
+        return require("../../Assets/Images/satisfied.png");
+
       default:
         return require("../../Assets/Images/normal.png");
     }
@@ -148,12 +162,14 @@ const RateScreen: React.FC = () => {
       return;
     }
     let formatAnswer: Array<any> = [];
+    // console.log('formatanswer@@', formatAnswer);
     questionData?.answer.map((item, index) =>
       formatAnswer.push({
         ...item,
         chosen: index === selectAnswer ? 1 : 0,
       }),
     );
+    // data bộ câu hỏi console.log('questiondata', questionData);
     let body: rateOfficerParams;
     if (data) {
       body = {
@@ -198,7 +214,10 @@ const RateScreen: React.FC = () => {
         },
       });
     }
+    // console.log("DATA FORM ####", data);
+    // console.log("DATA status ####", questionData);
   };
+  // data bộ câu hỏi cần push console.log("DATA status ####", questionData);
 
   const onScrollToIndex = (type: string): void => {
     if (
@@ -279,7 +298,7 @@ const RateScreen: React.FC = () => {
               {questionData &&
                 questionData.answer
                   .slice()
-                  .sort((a, b) => a.answerType - b.answerType)
+                  // .sort((a, b) => a.answerType - b.answerType)
                   .map((item, index) => (
                     <TouchableOpacity
                       key={item.id}
@@ -312,6 +331,7 @@ const RateScreen: React.FC = () => {
                         ]}
                       >
                         {item.content}
+                        {/* {console.log("dữ liệu ra", item.content)} */}
                       </RegularText>
                     </TouchableOpacity>
                   ))}
@@ -322,10 +342,10 @@ const RateScreen: React.FC = () => {
           </View>
         </>
       ) : (
-        <View style={[Layout.fill, Layout.center]}>
-          {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
-        </View>
-      )}
+          <View style={[Layout.fill, Layout.center]}>
+            {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
+          </View>
+        )}
     </View>
   );
 };

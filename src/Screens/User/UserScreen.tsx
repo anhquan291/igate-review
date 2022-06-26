@@ -14,7 +14,7 @@ type Props = {
 
 const UserScreen = (props: Props) => {
   const { userData } = useAppSelector((state) => state.auth);
-  console.log("userData", userData);
+  console.log("dữ liệu userData", userData);
   const onNavigate = () => {
     // props.navigation.navigate("HomeScreen");
     props.navigation.navigate("RatingScreen");
@@ -45,12 +45,13 @@ const UserScreen = (props: Props) => {
             <RegularText style={{ color: Colors.grey6 }}>Họ tên: </RegularText>
             <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
           </View>
-          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+          {/**email */}
+          {/* <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
             <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
             <MediumText style={styles.textLeft}>
               {userData.email[0].value}
             </MediumText>
-          </View>
+          </View> */}
           {userData.experience[0].primary && (
             <View
               style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}

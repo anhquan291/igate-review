@@ -54,7 +54,7 @@ export const authGetToken = createAsyncThunk(
     }
   },
 );
-
+//hàm lấy api của từng cá nhân
 export const authGetUserData = createAsyncThunk(
   "auth/get_user_data",
   async (userId: string, { rejectWithValue, dispatch }) => {
@@ -65,7 +65,7 @@ export const authGetUserData = createAsyncThunk(
           needToken: true,
         },
       );
-      console.log(response.data);
+      console.log('1', response.data);
       await AsyncStorage.setItem("userData", JSON.stringify(response.data));
       return response.data;
     } catch (error: any) {

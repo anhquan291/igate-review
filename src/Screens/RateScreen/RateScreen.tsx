@@ -21,6 +21,7 @@ import {
   rateOfficer,
   rateOfficerParams,
 } from "../../Store/RateSlice";
+import { authGetUserData } from "../../Store/AuthSlice";
 import Colors from "../../Themes/Colors";
 import Layout from "../../Themes/Layout";
 import { formatDate, formatDateMonth } from "../../Utils/Common";
@@ -33,6 +34,7 @@ import {
 import { handleAlert } from "../../Utils/Notification";
 import QuestionItem from "./QuestionItem";
 import moment from "moment";
+
 
 const QuestionAnswer = [
   {
@@ -56,7 +58,7 @@ const QuestionAnswer = [
     icon: require("../../Assets/Images/verySatisfied.png"),
   },
 ];
-
+//logic màn rating --> 
 const RateScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { params } = useRoute<any>();
@@ -72,16 +74,15 @@ const RateScreen: React.FC = () => {
 
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
-  // console.log("TEST@@", fileDetail);
+  console.log('dữ liệu test', fileDetail);
   const filetest: FileDetailFields = params;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
 
   const { userData } = useAppSelector((state) => state.auth);
-  // console.log("user@@ --->>>", userData);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
-  console.log("Chọn đáp án@@ ", selectAnswer);
+  console.log("datan@@ ", data);
 
   const ref = useRef<any>(null);
 
@@ -92,9 +93,11 @@ const RateScreen: React.FC = () => {
         size: 10,
         spec: "page",
         "user-id": userData.user_id,
+        userId: userData.id,
         agencyId: userData.experience[0].agency.id,
       }),
     ).unwrap();
+    //console.log('..user..', userData);
     const latestItem = response.content.reduce(
       (
         a: { completedDate: string | number | Date },
@@ -107,6 +110,7 @@ const RateScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    //lấy dữ liệu hồ sơ
     onGetFileList();
     const intervalId = setInterval(() => {
       onGetFileList();
@@ -118,29 +122,29 @@ const RateScreen: React.FC = () => {
   const renderIcon = (type: number): any => {
     switch (type) {
 
-      // case 0:
-      //   return require("../../Assets/Images/normal.png");
-      // case 2:
-      //   return require("../../Assets/Images/verySatisfied.png");
-      // case -1:
-      //   return require("../../Assets/Images/notSatisfied.png");
-      // case 1:
-      //   return require("../../Assets/Images/satisfied.png");
-
-      // default:
-      //   return require("../../Assets/Images/normal.png");
-      // test
-      case -1:
-        return require("../../Assets/Images/normal.png");
       case 0:
-        return require("../../Assets/Images/verySatisfied.png");
-      case 1:
-        return require("../../Assets/Images/notSatisfied.png");
+        return require("../../Assets/Images/normal.png");
       case 2:
+        return require("../../Assets/Images/verySatisfied.png");
+      case -1:
+        return require("../../Assets/Images/notSatisfied.png");
+      case 1:
         return require("../../Assets/Images/satisfied.png");
 
       default:
         return require("../../Assets/Images/normal.png");
+      // test
+      // case -1:
+      //   return require("../../Assets/Images/normal.png");
+      // case 0:
+      //   return require("../../Assets/Images/verySatisfied.png");
+      // case 1:
+      //   return require("../../Assets/Images/notSatisfied.png");
+      // case 2:
+      //   return require("../../Assets/Images/satisfied.png");
+
+      // default:
+      //   return require("../../Assets/Images/normal.png");
     }
   };
 
@@ -170,6 +174,7 @@ const RateScreen: React.FC = () => {
       }),
     );
     // data bộ câu hỏi console.log('questiondata', questionData);
+    // console.log('data', data);
     let body: rateOfficerParams;
     if (data) {
       body = {
@@ -189,8 +194,10 @@ const RateScreen: React.FC = () => {
           endDate: data?.endDate,
         },
         officer: {
-          id: fileDetail?.task[0].assignee.id,
-          name: fileDetail?.task[0].assignee.fullname,
+          // id: fileDetail?.task[0].assignee.id,
+          // name: fileDetail?.task[0].assignee.fullname,
+          id: fileDetail?.task[fileDetail.task.length - 1].assignee.id,
+          name: fileDetail?.task[fileDetail.task.length - 1].assignee.fullname,
         },
         detail: [
           {
@@ -241,7 +248,8 @@ const RateScreen: React.FC = () => {
     onGetData();
     // console.log("hi", onGetData())
   }, []);
-
+  // console.log('task', fileDetail)
+  // console.log('fullname cuối //đúng', fileDetail.task[fileDetail.task.length - 1].assignee.fullname);
   return (
     <View style={[Layout.fill]}>
       <Header name="Đánh giá độ hài lòng" />
@@ -251,7 +259,7 @@ const RateScreen: React.FC = () => {
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.officer}>
               <MediumText style={styles.name}>
-                {fileDetail.task[0].assignee.fullname}
+                {fileDetail.task[fileDetail.task.length - 1].assignee.fullname}
               </MediumText>
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Chức vụ</RegularText>

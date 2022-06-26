@@ -4,7 +4,8 @@ import { FileDetailFields, FileFields } from "../Models/File";
 import { requestGet } from "../Services/ApiCall";
 import { removeFromStorage, saveToStorage } from "../Utils/Common";
 import { handleAlert } from "../Utils/Notification";
-import { onLogout } from "./AuthSlice";
+import { onLogout, authGetUserData } from "./AuthSlice";
+import AsyncStorage from "@react-native-community/async-storage";
 
 interface initialStateFields {
   isLoading: boolean;
@@ -15,6 +16,7 @@ interface initialStateFields {
   error: boolean;
 }
 
+
 interface fileDetailParams {
   page?: number;
   size?: number;
@@ -24,8 +26,9 @@ interface fileDetailParams {
 interface fileListParams extends fileDetailParams {
   "user-id": string;
   agencyId: string;
+  userId: string;
 }
-
+//hàm lấy data trả về theo trạng thái hoàn thành của cá nhân
 export const fileGetData = createAsyncThunk(
   "file/get_list",
   async (fields: fileListParams, { rejectWithValue, dispatch }) => {
@@ -34,13 +37,15 @@ export const fileGetData = createAsyncThunk(
     };
     try {
       const response = await requestGet(
-        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=${fields.agencyId}`,
+        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=${fields.agencyId}&task-assignee-id=${fields.userId}`,
         {
           // params: fields,
+          //&task-assignee-id=${}
           needToken: true,
         },
       );
-      console.log("res", response.data);
+      //console.log("res", response.data);
+      console.log("fields", fields);
       return response.data;
     } catch (error: any) {
       console.log("error", error);
@@ -66,7 +71,7 @@ export const fileGetDetail = createAsyncThunk(
         params: fields,
         needToken: true,
       });
-      console.log("res", response.data);
+      // console.log("res1", response.data);
       return response.data;
     } catch (error: any) {
       console.log("error", error);
@@ -75,7 +80,7 @@ export const fileGetDetail = createAsyncThunk(
           error.response.status === 401
             ? "Hết phiên đăng nhập, vui lòng đăng nhập lại"
             : "Có lỗi xẩy ra",
-        onPress1: error.response.status === 401 ? forceLogout : () => {},
+        onPress1: error.response.status === 401 ? forceLogout : () => { },
       });
       return rejectWithValue(error);
     }

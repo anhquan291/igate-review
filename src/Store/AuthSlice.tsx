@@ -90,11 +90,12 @@ export const authGetUserData = createAsyncThunk(
   async (userId: string, { rejectWithValue, dispatch }) => {
     try {
       const response = await requestGet(
-        `hu/user/${userId}/--fully?user-id=${userId}`,
+        `hu/user/${userId}/--fully`,
         {
           needToken: true,
         },
       );
+      //?user-id=${userId}
       console.log("1", response.data);
       await AsyncStorage.setItem("userData", JSON.stringify(response.data));
       return response.data;

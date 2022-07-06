@@ -36,7 +36,7 @@ export const fileGetData = createAsyncThunk(
     };
     try {
       const response = await requestGet(
-        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=${fields.agencyId}&task-assignee-id=${fields.userId}`,
+        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=${fields.agencyId}&task-assignee-id=${fields.userId}&last-task-assignee-id=${fields.userId}`,
         {
           // params: fields,
           //&task-assignee-id=${}
@@ -79,7 +79,7 @@ export const fileGetDetail = createAsyncThunk(
           error.response.status === 401
             ? "Hết phiên đăng nhập, vui lòng đăng nhập lại"
             : "Có lỗi xẩy ra",
-        onPress1: error.response.status === 401 ? forceLogout : () => {},
+        onPress1: error.response.status === 401 ? forceLogout : () => { },
       });
       return rejectWithValue(error);
     }

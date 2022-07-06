@@ -9,12 +9,13 @@ import {
 import { handleAlert } from "../Utils/Notification";
 import jwtDecode from "jwt-decode";
 
-interface initialStateFields {
+export interface initialStateFields {
   token: string;
   refreshToken: string;
   isLogin: boolean;
   isLoading: boolean;
   userData: any;
+  userCredential: any;
   error: boolean;
 }
 
@@ -40,7 +41,36 @@ export const authGetToken = createAsyncThunk(
           needToken: false,
         },
       );
-      console.log(response.data);
+
+      await saveToStorage("userCredential", JSON.stringify(fields));
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response);
+      handleAlert({
+        message:
+          error.response === undefined
+            ? "Cố lỗi xẩy ra"
+            : "Tên đăng nhập hoặc mật khẩu không đúng",
+      });
+      return rejectWithValue(error);
+    }
+  },
+);
+export const authGetTokenBackground = createAsyncThunk(
+  "auth/get_token_background",
+  async (fields: authTokenParams, { rejectWithValue, dispatch }) => {
+    const forceLogout = () => {
+      dispatch(onLogout());
+    };
+    try {
+      const response = await requestPostXform(
+        "auth/realms/digo/protocol/openid-connect/token",
+        {
+          data: fields,
+          needToken: false,
+        },
+      );
+      console.log("get token bg");
       return response.data;
     } catch (error: any) {
       console.log(error.response);
@@ -65,7 +95,7 @@ export const authGetUserData = createAsyncThunk(
           needToken: true,
         },
       );
-      console.log('1', response.data);
+      console.log("1", response.data);
       await AsyncStorage.setItem("userData", JSON.stringify(response.data));
       return response.data;
     } catch (error: any) {
@@ -87,12 +117,18 @@ export const authCheckLogin = createAsyncThunk(
     try {
       const token: any = await AsyncStorage.getItem("authToken");
       const userData: any = await AsyncStorage.getItem("userData");
-      if (token) {
-        const isTokenExpire = checkTokenExpired(token);
-        return { isTokenExpire, token, userData };
-      } else {
-        return { isTokenExpire: true };
+      const userCredential: any = await AsyncStorage.getItem("userCredential");
+      // if (token) {
+      //   const isTokenExpire = checkTokenExpired(token);
+      //   return { isTokenExpire, token, userData };
+      // } else {
+      //   return { isTokenExpire: true };
+      // }
+      if (userData) {
+        const isTokenExpire = false;
+        return { isTokenExpire, token, userData, userCredential };
       }
+      return { isTokenExpire: true };
     } catch (error: any) {
       console.log(error);
       return rejectWithValue(error);
@@ -106,6 +142,8 @@ export const authLogout = createAsyncThunk(
     try {
       removeFromStorage("authToken");
       removeFromStorage("refreshToken");
+      removeFromStorage("userData");
+      removeFromStorage("userCredential");
     } catch (error: any) {
       console.log(error);
       return rejectWithValue(error);
@@ -150,6 +188,15 @@ const AuthSlice = createSlice({
     builder.addCase(authGetToken.rejected, (state) => {
       state.isLoading = false;
     });
+    // Get Token background
+    builder.addCase(authGetTokenBackground.fulfilled, (state, action) => {
+      const { access_token, refresh_token }: any = action.payload;
+      saveToStorage("authToken", JSON.stringify(access_token));
+      saveToStorage("refreshToken", JSON.stringify(refresh_token));
+      state.token = access_token;
+      state.refreshToken = refresh_token;
+      // state.isLoading = false;
+    });
     builder.addCase(authGetUserData.pending, (state) => {
       state.isLoading = true;
     });
@@ -165,9 +212,11 @@ const AuthSlice = createSlice({
 
     // Check Token Expire to Keep Login
     builder.addCase(authCheckLogin.fulfilled, (state, action) => {
-      const { isTokenExpire, userData }: any = action.payload;
+      const { isTokenExpire, userData, userCredential }: any = action.payload;
       if (!isTokenExpire) {
         const user = JSON.parse(userData);
+        const credential = JSON.parse(userCredential);
+        state.userCredential = credential;
         state.userData = user;
         state.isLogin = true;
       } else {

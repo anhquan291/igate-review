@@ -34,7 +34,7 @@ import {
 import { handleAlert } from "../../Utils/Notification";
 import QuestionItem from "./QuestionItem";
 import moment from "moment";
-
+import SoundPlayer from "react-native-sound-player";
 
 const QuestionAnswer = [
   {
@@ -58,7 +58,7 @@ const QuestionAnswer = [
     icon: require("../../Assets/Images/verySatisfied.png"),
   },
 ];
-//logic màn rating --> 
+//logic màn rating -->
 const RateScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { params } = useRoute<any>();
@@ -74,7 +74,7 @@ const RateScreen: React.FC = () => {
 
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
-  console.log('dữ liệu test', fileDetail);
+  console.log("dữ liệu test", fileDetail);
   const filetest: FileDetailFields = params;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
 
@@ -98,30 +98,29 @@ const RateScreen: React.FC = () => {
       }),
     ).unwrap();
     //console.log('..user..', userData);
-    const latestItem = response.content.reduce(
-      (
-        a: { completedDate: string | number | Date },
-        b: { completedDate: string | number | Date },
-      ) => {
-        return moment(a.completedDate) > moment(b.completedDate) ? a : b;
-      },
-    );
+    // const latestItem = response.content.reduce(
+    //   (
+    //     a: { completedDate: string | number | Date },
+    //     b: { completedDate: string | number | Date },
+    //   ) => {
+    //     return moment(a.completedDate) > moment(b.completedDate) ? a : b;
+    //   },
+    // );
     await dispatch(fileGetDetail({ code: response.content[0].code })).unwrap();
   };
 
   useEffect(() => {
     //lấy dữ liệu hồ sơ
     onGetFileList();
-    const intervalId = setInterval(() => {
-      onGetFileList();
-    }, 5000);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(() => {
+    //   onGetFileList();
+    // }, 5000);
+    // return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 
   const renderIcon = (type: number): any => {
     switch (type) {
-
       case 0:
         return require("../../Assets/Images/normal.png");
       case 2:
@@ -214,6 +213,7 @@ const RateScreen: React.FC = () => {
         deploymentId: data.deploymentId,
       };
       await dispatch(rateOfficer(body)).unwrap();
+      SoundPlayer.playSoundFile("tone", "mp3");
       handleAlert({
         message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
         onPress1: () => {
@@ -221,6 +221,7 @@ const RateScreen: React.FC = () => {
         },
       });
     }
+
     // console.log("DATA FORM ####", data);
     // console.log("DATA status ####", questionData);
   };
@@ -350,10 +351,10 @@ const RateScreen: React.FC = () => {
           </View>
         </>
       ) : (
-          <View style={[Layout.fill, Layout.center]}>
-            {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
-          </View>
-        )}
+        <View style={[Layout.fill, Layout.center]}>
+          {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
+        </View>
+      )}
     </View>
   );
 };

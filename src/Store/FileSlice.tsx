@@ -16,7 +16,6 @@ interface initialStateFields {
   error: boolean;
 }
 
-
 interface fileDetailParams {
   page?: number;
   size?: number;
@@ -80,7 +79,7 @@ export const fileGetDetail = createAsyncThunk(
           error.response.status === 401
             ? "Hết phiên đăng nhập, vui lòng đăng nhập lại"
             : "Có lỗi xẩy ra",
-        onPress1: error.response.status === 401 ? forceLogout : () => { },
+        onPress1: error.response.status === 401 ? forceLogout : () => {},
       });
       return rejectWithValue(error);
     }

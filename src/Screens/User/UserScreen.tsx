@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
 import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
@@ -7,14 +7,20 @@ import { MediumText, RegularText } from "../../Components/Texts";
 import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { authLogout } from "../../Store/AuthSlice";
+import {
+  authGetToken,
+  authGetTokenBackground,
+  authLogout,
+} from "../../Store/AuthSlice";
+import { useIsFocused } from "@react-navigation/native";
 type Props = {
   navigation: any;
 };
 
 const UserScreen = (props: Props) => {
-  const { userData } = useAppSelector((state) => state.auth);
-  console.log("dữ liệu userData", userData);
+  const { userData, userCredential } = useAppSelector((state) => state.auth);
+  const focus = useIsFocused();
+  console.log("dữ liệu userData", userData, userCredential);
   const onNavigate = () => {
     // props.navigation.navigate("HomeScreen");
     props.navigation.navigate("RatingScreen");
@@ -32,10 +38,29 @@ const UserScreen = (props: Props) => {
       },
     ]);
   };
+  const onGetToken = async (): Promise<void> => {
+    console.log("focus run");
+    await dispatch(authGetTokenBackground(userCredential)).unwrap();
+  };
+
+  useEffect(() => {
+    let interval: any;
+    if (focus) {
+      interval = setInterval(() => {
+        onGetToken();
+      }, 5 * 60 * 1000);
+    }
+    return () => clearInterval(interval);
+  }, [focus]);
+
   return (
     <View style={[Layout.fill]}>
-      <Header name="Thông tin" showBackButton={false} logout
-        onLogout={onLogout} />
+      <Header
+        name="Thông tin"
+        showBackButton={false}
+        logout
+        onLogout={onLogout}
+      />
       <View style={[Layout.fill, styles.container]}>
         <View>
           <View style={[styles.avatar, Layout.center]}>

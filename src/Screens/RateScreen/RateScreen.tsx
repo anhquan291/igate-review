@@ -112,6 +112,7 @@ const RateScreen: React.FC = () => {
   useEffect(() => {
     //lấy dữ liệu hồ sơ
     onGetFileList();
+    //load 5s lấy hồ sơ
     const intervalId = setInterval(() => {
       onGetFileList();
     }, 5000);
@@ -158,6 +159,7 @@ const RateScreen: React.FC = () => {
       ).unwrap();
       if (fileCheck.content.length > 0) {
         handleAlert({ message: "Hồ sơ này đã được đánh giá" });
+        navigation.navigate("UserScreen");
         return;
       }
     }
@@ -214,12 +216,14 @@ const RateScreen: React.FC = () => {
         deploymentId: data.deploymentId,
       };
       await dispatch(rateOfficer(body)).unwrap();
-      handleAlert({
-        message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
-        onPress1: () => {
-          navigation.goBack();
-        },
-      });
+      // handleAlert({
+      //   message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
+      //   onPress1: () => {
+      //     navigation.goBack();
+      //   },
+      // });
+      // handleAlert({ message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn" });
+      navigation.navigate("UserScreen");
     }
     // console.log("DATA FORM ####", data);
     // console.log("DATA status ####", questionData);
@@ -248,19 +252,22 @@ const RateScreen: React.FC = () => {
     onGetData();
     // console.log("hi", onGetData())
   }, []);
-  // console.log('task', fileDetail)
+  console.log('data detail', fileDetail)
   // console.log('fullname cuối //đúng', fileDetail.task[fileDetail.task.length - 1].assignee.fullname);
   return (
     <View style={[Layout.fill]}>
-      <Header name="Đánh giá độ hài lòng" />
+      <Header name="ĐÁNH GIÁ ĐỘ HÀI LÒNG" />
       {(isLoading || fileLoading) && <AppLoader />}
       {fileList.length > 0 && fileDetail !== null && !error ? (
         <>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.officer}>
-              <MediumText style={styles.name}>
-                {fileDetail.task[fileDetail.task.length - 1].assignee.fullname}
-              </MediumText>
+              <View style={[Layout.rowBetween]}>
+                <RegularText>Cán bộ : </RegularText>
+                <MediumText style={styles.name}>
+                  {fileDetail.task[fileDetail.task.length - 1].assignee.fullname}
+                </MediumText>
+              </View>
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Chức vụ</RegularText>
                 <MediumText style={styles.detail}>Chuyên viên</MediumText>
@@ -272,10 +279,10 @@ const RateScreen: React.FC = () => {
                 </MediumText>
               </View>
             </View>
-            <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
-              <MediumText style={[styles.title]}>
-                {/* Đợt đánh giá cán bộ {formatDate(data?.startDate)} */}
-              </MediumText>
+            <View style={styles.officer}>
+              {/* <MediumText style={[styles.title]}>
+                Đợt đánh giá cán bộ {formatDate(data?.startDate)}
+              </MediumText> */}
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Người đánh giá</RegularText>
                 <MediumText style={styles.detail}>
@@ -292,11 +299,13 @@ const RateScreen: React.FC = () => {
                 <RegularText>Mã hồ sơ</RegularText>
                 <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
               </View>
-              <MediumText style={[styles.title]}>Ý kiến đánh giá</MediumText>
+            </View>
+            <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
+              <MediumText style={[styles.title]}>MỜI CHẠM VÀO BIỂU TƯỢNG ĐỂ ĐÁNH GIÁ</MediumText>
             </View>
             <View
               style={[
-                Layout.rowBetween,
+                Layout.center,
                 {
                   marginBottom: kSpacing.kSpacing20,
                   marginHorizontal: kSpacing.kSpacing10,
@@ -312,7 +321,7 @@ const RateScreen: React.FC = () => {
                       key={item.id}
                       onPress={() => setSelectAnswer(index)}
                       style={[
-                        styles.mood,
+                        styles.moodv2,
                         {
                           backgroundColor:
                             selectAnswer === index
@@ -320,16 +329,16 @@ const RateScreen: React.FC = () => {
                               : Colors.white,
                         },
                         Layout.shadow,
-                        Layout.center,
+                        // Layout.alignItemsStart,
                       ]}
                     >
                       <Image
                         source={renderIcon(item.answerType)}
-                        style={styles.moodIcon}
+                        style={styles.moodIconv2}
                       />
                       <RegularText
                         style={[
-                          styles.moodText,
+                          styles.moodTextv2,
                           {
                             color:
                               selectAnswer === index
@@ -363,7 +372,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   title: {
-    marginVertical: kSpacing.kSpacing20,
+    marginVertical: kSpacing.kSpacing10,
     color: Colors.primary,
     textAlign: "center",
     fontSize: kTextSizes.medium,
@@ -382,7 +391,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: kSpacing.kSpacing15,
     borderColor: Colors.grey7,
-    marginHorizontal: kSpacing.kSpacing16,
+    marginHorizontal: kSpacing.kSpacing10,
+    marginBottom: kSpacing.kSpacing8,
   },
   name: {
     color: Colors.orange2,
@@ -396,14 +406,34 @@ const styles = StyleSheet.create({
     height: kScaledSize(100),
     borderRadius: 5,
   },
+  moodv2: {
+    width: (kWidth - kScaledSize(40)),
+    height: kScaledSize(75),
+    marginBottom: kSpacing.kSpacing10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   moodText: {
     fontSize: kTextSizes.xmini,
     textAlign: "center",
     marginTop: kSpacing.kSpacing10,
   },
+  moodTextv2: {
+    fontSize: kTextSizes.medium,
+    fontWeight: 'bold',
+    textAlign: "center",
+    textTransform: 'uppercase',
+    marginTop: kSpacing.kSpacing10,
+  },
   moodIcon: {
     width: (kWidth - kScaledSize(60)) / 4,
     height: kScaledSize(45),
+    resizeMode: "contain",
+  },
+  moodIconv2: {
+    width: (kWidth - kScaledSize(60)) / 3,
+    height: kScaledSize(60),
     resizeMode: "contain",
   },
 });

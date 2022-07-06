@@ -34,7 +34,7 @@ const UserScreen = (props: Props) => {
   };
   return (
     <View style={[Layout.fill]}>
-      <Header name="Thông tin" showBackButton={false} logout
+      <Header name="THÔNG TIN CÁN BỘ" showBackButton={false} logout
         onLogout={onLogout} />
       <View style={[Layout.fill, styles.container]}>
         <View>
@@ -46,12 +46,14 @@ const UserScreen = (props: Props) => {
             <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
           </View>
           {/**email */}
-          {/* <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
             <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
             <MediumText style={styles.textLeft}>
-              {userData.email[0].value}
+              {/**check tránh lỗi email. */}
+              {userData.email.length > 0 ? userData.email[0].value : ''}
             </MediumText>
-          </View> */}
+          </View>
+          {/**cơ quan */}
           {userData.experience[0].primary && (
             <View
               style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}
@@ -69,7 +71,7 @@ const UserScreen = (props: Props) => {
           onPress={onNavigate}
           style={[styles.result, { backgroundColor: Colors.primary }]}
         >
-          <RegularText style={Layout.whiteText}>Đánh giá hồ sơ</RegularText>
+          <RegularText style={Layout.whiteText}>ĐÁNH GIÁ HỒ SƠ</RegularText>
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={onLogout}
           style={[styles.result, { backgroundColor: Colors.primary }]} >

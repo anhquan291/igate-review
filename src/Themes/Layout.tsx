@@ -153,5 +153,6 @@ export default StyleSheet.create({
   // Text
   whiteText: {
     color: Colors.white,
+    fontWeight: 'bold'
   },
 });

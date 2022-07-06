@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -213,7 +214,9 @@ const RateScreen: React.FC = () => {
         deploymentId: data.deploymentId,
       };
       await dispatch(rateOfficer(body)).unwrap();
-      SoundPlayer.playSoundFile("tone", "mp3");
+      if (Platform.OS === "android") {
+        SoundPlayer.playSoundFile("tone", "mp3");
+      }
       handleAlert({
         message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
         onPress1: () => {

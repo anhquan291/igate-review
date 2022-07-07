@@ -129,7 +129,7 @@ const UserScreen = (props: Props) => {
               },
             ]}
           >
-            TRUNG TÂM HÀNH CHÍNH CÔNG TỈNH QUẢNG NGÃI
+            TRUNG TÂM PHỤC VỤ - KIỂM SOÁT THỦ TỤC HÀNH CHÍNH TỈNH QUẢNG NGÃI
           </BoldText>
           <BoldText style={{ textAlign: "center" }}>
             TRÂN TRỌNG CẢM ƠN ÔNG/BÀ ĐÃ DÀNH THỜI GIAN ĐÁNH GIÁ

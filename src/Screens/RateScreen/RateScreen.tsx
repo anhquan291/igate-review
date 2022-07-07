@@ -172,7 +172,7 @@ const RateScreen: React.FC = () => {
     questionData?.answer.map((item, index) =>
       formatAnswer.push({
         ...item,
-        chosen: answerType,
+        chosen: item.answerType === answerType ? 1 : 0,
       }),
     );
     // data bộ câu hỏi console.log('questiondata', questionData);

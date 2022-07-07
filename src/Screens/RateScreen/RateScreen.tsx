@@ -151,12 +151,14 @@ const RateScreen: React.FC = () => {
 
   const onRating = async (): Promise<void> => {
     if (fileDetail) {
+      console.log('detail', fileDetail);
       const fileCheck = await dispatch(
         rateCheckFile({
           "officer-id": fileDetail?.applicant.userId,
           "dossier-id": fileDetail?.code,
         }),
       ).unwrap();
+      console.log('filechec ->', fileCheck);
       if (fileCheck.content.length > 0) {
         handleAlert({ message: "Hồ sơ này đã được đánh giá" });
         navigation.navigate("UserScreen");
@@ -228,12 +230,9 @@ const RateScreen: React.FC = () => {
       // });
       navigation.navigate("UserScreen");
     }
-
-    // console.log("DATA FORM ####", data);
-    // console.log("DATA status ####", questionData);
   };
   // data bộ câu hỏi cần push console.log("DATA status ####", questionData);
-  console.log("selection", selectAnswer, answerType);
+  console.log("selection ->", selectAnswer, answerType);
   const onScrollToIndex = (type: string): void => {
     if (
       type === "next" &&
@@ -254,7 +253,6 @@ const RateScreen: React.FC = () => {
 
   useEffect(() => {
     onGetData();
-    // console.log("hi", onGetData())
   }, []);
   // console.log('task', fileDetail)
   // console.log('fullname cuối //đúng', fileDetail.task[fileDetail.task.length - 1].assignee.fullname);
@@ -283,10 +281,10 @@ const RateScreen: React.FC = () => {
                   }
                 </MediumText>
               </View>
-              <View style={[Layout.rowBetween, styles.mb]}>
+              {/* <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Chức vụ</RegularText>
                 <MediumText style={styles.detail}>Chuyên viên</MediumText>
-              </View>
+              </View> */}
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Đơn vị</RegularText>
                 <MediumText style={styles.detail}>
@@ -382,10 +380,10 @@ const RateScreen: React.FC = () => {
           </View>
         </>
       ) : (
-        <View style={[Layout.fill, Layout.center]}>
-          <MediumText>Không có hồ sơ đánh giá</MediumText>
-        </View>
-      )}
+          <View style={[Layout.fill, Layout.center]}>
+            <MediumText>Không có hồ sơ đánh giá</MediumText>
+          </View>
+        )}
     </View>
   );
 };

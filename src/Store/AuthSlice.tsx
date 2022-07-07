@@ -43,7 +43,10 @@ export const authGetToken = createAsyncThunk(
       );
 
       await saveToStorage("userCredential", JSON.stringify(fields));
-      return response.data;
+      return {
+        res: response.data,
+        userCredential: fields,
+      };
     } catch (error: any) {
       console.log(error.response);
       handleAlert({
@@ -89,12 +92,9 @@ export const authGetUserData = createAsyncThunk(
   "auth/get_user_data",
   async (userId: string, { rejectWithValue, dispatch }) => {
     try {
-      const response = await requestGet(
-        `hu/user/${userId}/--fully`,
-        {
-          needToken: true,
-        },
-      );
+      const response = await requestGet(`hu/user/${userId}/--fully`, {
+        needToken: true,
+      });
       //?user-id=${userId}
       console.log("1", response.data);
       await AsyncStorage.setItem("userData", JSON.stringify(response.data));
@@ -179,11 +179,13 @@ const AuthSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(authGetToken.fulfilled, (state, action) => {
-      const { access_token, refresh_token }: any = action.payload;
+      const { res, userCredential }: any = action.payload;
+      const { access_token, refresh_token } = res;
       saveToStorage("authToken", JSON.stringify(access_token));
       saveToStorage("refreshToken", JSON.stringify(refresh_token));
       state.token = access_token;
       state.refreshToken = refresh_token;
+      state.userCredential = userCredential;
       // state.isLoading = false;
     });
     builder.addCase(authGetToken.rejected, (state) => {

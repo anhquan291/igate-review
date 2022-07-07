@@ -83,6 +83,7 @@ const RateScreen: React.FC = () => {
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
+  const [answerType, setAnswerType] = useState<number | null>(null);
   console.log("datan@@ ", data);
 
   const ref = useRef<any>(null);
@@ -113,10 +114,10 @@ const RateScreen: React.FC = () => {
   useEffect(() => {
     //lấy dữ liệu hồ sơ
     onGetFileList();
-    // const intervalId = setInterval(() => {
-    //   onGetFileList();
-    // }, 5000);
-    // return () => clearInterval(intervalId);
+    const intervalId = setInterval(() => {
+      onGetFileList();
+    }, 5000);
+    return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 
@@ -171,11 +172,12 @@ const RateScreen: React.FC = () => {
     questionData?.answer.map((item, index) =>
       formatAnswer.push({
         ...item,
-        chosen: index === selectAnswer ? 1 : 0,
+        chosen: answerType,
       }),
     );
     // data bộ câu hỏi console.log('questiondata', questionData);
     // console.log('data', data);
+
     let body: rateOfficerParams;
     if (data) {
       body = {
@@ -231,7 +233,7 @@ const RateScreen: React.FC = () => {
     // console.log("DATA status ####", questionData);
   };
   // data bộ câu hỏi cần push console.log("DATA status ####", questionData);
-
+  console.log("selection", selectAnswer, answerType);
   const onScrollToIndex = (type: string): void => {
     if (
       type === "next" &&
@@ -263,11 +265,22 @@ const RateScreen: React.FC = () => {
       {fileList.length > 0 && fileDetail !== null && !error ? (
         <>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.officer}>
-              <View style={[Layout.rowBetween]}>
-                <RegularText>Cán bộ : </RegularText>
+            <View
+              style={[
+                styles.officer,
+                {
+                  marginTop: kSpacing.kSpacing5,
+                  marginBottom: kSpacing.kSpacing5,
+                },
+              ]}
+            >
+              <View style={[Layout.rowBetween, styles.mb]}>
+                <RegularText>Cán bộ</RegularText>
                 <MediumText style={styles.name}>
-                  {fileDetail.task[fileDetail.task.length - 1].assignee.fullname}
+                  {
+                    fileDetail.task[fileDetail.task.length - 1].assignee
+                      .fullname
+                  }
                 </MediumText>
               </View>
               <View style={[Layout.rowBetween, styles.mb]}>
@@ -302,8 +315,15 @@ const RateScreen: React.FC = () => {
                 <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
               </View>
             </View>
-            <View style={{ marginHorizontal: kSpacing.kSpacing16 }}>
-              <MediumText style={[styles.title]}>MỜI CHẠM VÀO BIỂU TƯỢNG ĐỂ ĐÁNH GIÁ</MediumText>
+            <View
+              style={{
+                marginHorizontal: kSpacing.kSpacing16,
+                marginVertical: kSpacing.kSpacing10,
+              }}
+            >
+              <MediumText style={[styles.title]}>
+                MỜI CHẠM VÀO BIỂU TƯỢNG ĐỂ ĐÁNH GIÁ
+              </MediumText>
             </View>
             <View
               style={[
@@ -317,11 +337,14 @@ const RateScreen: React.FC = () => {
               {questionData &&
                 questionData.answer
                   .slice()
-                  // .sort((a, b) => a.answerType - b.answerType)
+                  .sort((a, b) => a.answerType - b.answerType)
                   .map((item, index) => (
                     <TouchableOpacity
                       key={item.id}
-                      onPress={() => setSelectAnswer(index)}
+                      onPress={() => {
+                        setSelectAnswer(index);
+                        setAnswerType(item.answerType);
+                      }}
                       style={[
                         styles.moodv2,
                         {
@@ -331,7 +354,6 @@ const RateScreen: React.FC = () => {
                               : Colors.white,
                         },
                         Layout.shadow,
-                        // Layout.alignItemsStart,
                       ]}
                     >
                       <Image
@@ -350,7 +372,6 @@ const RateScreen: React.FC = () => {
                         ]}
                       >
                         {item.content}
-                        {/* {console.log("dữ liệu ra", item.content)} */}
                       </RegularText>
                     </TouchableOpacity>
                   ))}
@@ -361,10 +382,10 @@ const RateScreen: React.FC = () => {
           </View>
         </>
       ) : (
-          <View style={[Layout.fill, Layout.center]}>
-            <MediumText>Không có hồ sơ đánh giá</MediumText>
-          </View>
-        )}
+        <View style={[Layout.fill, Layout.center]}>
+          <MediumText>Không có hồ sơ đánh giá</MediumText>
+        </View>
+      )}
     </View>
   );
 };
@@ -385,36 +406,34 @@ const styles = StyleSheet.create({
   },
   buttonGroup: {
     paddingHorizontal: kSpacing.kSpacing20,
-    marginBottom: kScaledSize(30),
+    marginBottom: kScaledSize(20),
+    marginTop: kScaledSize(5),
   },
   officer: {
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
-    marginTop: kSpacing.kSpacing15,
     borderColor: Colors.grey7,
     marginHorizontal: kSpacing.kSpacing10,
-    marginBottom: kSpacing.kSpacing8,
+    backgroundColor: Colors.white,
   },
   name: {
     color: Colors.orange2,
-    marginBottom: kSpacing.kSpacing10,
   },
   mb: {
     marginBottom: kSpacing.kSpacing10,
   },
   mood: {
     width: (kWidth - kScaledSize(40)) / 4,
-    height: kScaledSize(100),
     borderRadius: 5,
   },
   moodv2: {
-    width: (kWidth - kScaledSize(40)),
-    height: kScaledSize(75),
+    width: kWidth - kScaledSize(40),
+    paddingVertical: kScaledSize(6),
     marginBottom: kSpacing.kSpacing10,
     borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   moodText: {
     fontSize: kTextSizes.xmini,
@@ -423,10 +442,8 @@ const styles = StyleSheet.create({
   },
   moodTextv2: {
     fontSize: kTextSizes.medium,
-    fontWeight: 'bold',
-    textAlign: "center",
-    textTransform: 'uppercase',
-    marginTop: kSpacing.kSpacing10,
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
   moodIcon: {
     width: (kWidth - kScaledSize(60)) / 4,

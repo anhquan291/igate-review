@@ -1,9 +1,15 @@
-import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Alert,
+  ScrollView,
+} from "react-native";
 import React, { useEffect } from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
 import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
-import { MediumText, RegularText } from "../../Components/Texts";
+import { BoldText, MediumText, RegularText } from "../../Components/Texts";
 import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -13,6 +19,9 @@ import {
   authLogout,
 } from "../../Store/AuthSlice";
 import { useIsFocused } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 type Props = {
   navigation: any;
 };
@@ -55,59 +64,84 @@ const UserScreen = (props: Props) => {
 
   return (
     <View style={[Layout.fill]}>
-      <Header
+      {/* <Header
         name="THÔNG TIN CÁN BỘ"
         showBackButton={false}
-        logout
-        onLogout={onLogout}
-      />
-      <View style={[Layout.fill, styles.container]}>
-        <View>
-          <View style={[styles.avatar, Layout.center]}>
-            <FontAwesome name="user" size={kScaledSize(40)} />
-          </View>
-          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-            <RegularText style={{ color: Colors.grey6 }}>Họ tên: </RegularText>
-            <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
-          </View>
-          {/**email */}
-          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-            <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
-            <MediumText style={styles.textLeft}>
-              {/**check tránh lỗi email. */}
-              {userData.email.length > 0 ? userData.email[0].value : ''}
-            </MediumText>
-          </View>
-          {/* <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-            <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
-            <MediumText style={styles.textLeft}>
-              {userData.email[0].value}
-            </MediumText>
-          </View> */}
-          {userData.experience[0].primary && (
-            <View
-              style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}
-            >
-              <RegularText style={{ color: Colors.grey6 }}>
-                Cơ quan:{" "}
-              </RegularText>
-              <MediumText style={styles.textLeft}>
-                {userData.experience[0].agency.parent.name}
-              </MediumText>
-            </View>
-          )}
+        // logout
+        // onLogout={onLogout}
+      /> */}
+      <ScrollView style={[Layout.fill]}>
+        <View style={styles.titleWrapper}>
+          <RegularText style={styles.title}>
+            ĐỂ CẢI THIỆN CHẤT LƯỢNG PHỤC VỤ NGƯỜI DÂN, TỔ CHỨC NGÀY MỘT TỐT HƠN,
+            XIN ÔNG/BÀ VUI LÒNG ĐÁNH GIÁ GIÚP QUÁ TRÌNH TIẾP NHẬN HỒ SƠ VÀ GIẢI
+            QUYẾT TTHC CỦA ÔNG/BÀ.
+          </RegularText>
         </View>
-        <TouchableOpacity
-          onPress={onNavigate}
-          style={[styles.result, { backgroundColor: Colors.primary }]}
-        >
-          <RegularText style={styles.textBold}>ĐÁNH GIÁ HỒ SƠ</RegularText>
-        </TouchableOpacity>
-        {/* <TouchableOpacity onPress={onLogout}
-          style={[styles.result, { backgroundColor: Colors.primary }]} >
-          <RegularText style={Layout.whiteText}>Đăng xuất</RegularText>
-        </TouchableOpacity> */}
-      </View>
+        <View style={[Layout.fill, styles.container]}>
+          <View style={[styles.user, Layout.shadow]}>
+            <View style={[styles.avatar, Layout.center]}>
+              <FontAwesome name="user" size={kScaledSize(40)} />
+            </View>
+            <View style={styles.info}>
+              <View style={[styles.detail]}>
+                <RegularText>Người tiếp nhận hồ sơ và kết quả</RegularText>
+                <MediumText>{userData.fullname}</MediumText>
+              </View>
+              {/**email */}
+              <View style={[styles.detail]}>
+                <RegularText>Email: </RegularText>
+                <MediumText>
+                  {/**check tránh lỗi email. */}
+                  {userData.email.length > 0 ? userData.email[0].value : ""}
+                </MediumText>
+              </View>
+              {userData.experience[0].primary && (
+                <View style={[styles.detail]}>
+                  <RegularText>Cơ quan: </RegularText>
+                  <MediumText>
+                    {userData.experience[0].agency.parent.name}
+                  </MediumText>
+                </View>
+              )}
+              <View style={[Layout.rowBetween]}>
+                <MediumText>Đăng xuất</MediumText>
+                <TouchableOpacity onPress={onLogout}>
+                  <MaterialIcons name="logout" size={kScaledSize(25)} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={[styles.complete, Layout.center]}>
+          <Icon
+            name="checkmark-circle"
+            size={kScaledSize(100)}
+            color={"green"}
+          />
+          <BoldText
+            style={[
+              {
+                color: Colors.primary,
+                marginTop: kScaledSize(10),
+                marginBottom: kScaledSize(10),
+                textAlign: "center",
+              },
+            ]}
+          >
+            TRUNG TÂM HÀNH CHÍNH CÔNG TỈNH QUẢNG NGÃI
+          </BoldText>
+          <BoldText style={{ textAlign: "center" }}>
+            TRÂN TRỌNG CẢM ƠN ÔNG/BÀ ĐÃ DÀNH THỜI GIAN ĐÁNH GIÁ
+          </BoldText>
+          <TouchableOpacity
+            onPress={onNavigate}
+            style={[styles.result, { backgroundColor: Colors.primary }]}
+          >
+            <RegularText style={styles.textBold}>ĐÁNH GIÁ HỒ SƠ</RegularText>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -116,17 +150,32 @@ export default UserScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: kScaledSize(20),
-    marginHorizontal: kSpacing.kSpacing10,
+    marginHorizontal: kScaledSize(15),
+    transform: [{ translateY: kScaledSize(-30) }],
   },
-  textLeft: {
-    textAlign: "right",
+  user: {
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: kScaledSize(15),
+    flexDirection: "row",
+  },
+  info: {
     flex: 1,
-    marginLeft: kSpacing.kSpacing10,
+    marginLeft: kScaledSize(20),
+  },
+  titleWrapper: {
+    paddingTop: kScaledSize(20),
+    paddingBottom: kScaledSize(40),
+    paddingHorizontal: kScaledSize(20),
+    backgroundColor: Colors.primary,
+  },
+  title: {
+    textAlign: "center",
+    color: Colors.white,
   },
   textBold: {
     color: Colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   result: {
     marginTop: kScaledSize(30),
@@ -137,10 +186,16 @@ const styles = StyleSheet.create({
   },
   avatar: {
     height: kScaledSize(80),
-    width: kScaledSize(80),
+    width: kScaledSize(75),
     backgroundColor: Colors.grey7,
-    marginBottom: kScaledSize(30),
-    borderRadius: kScaledSize(40),
-    alignSelf: "center",
+    borderRadius: kScaledSize(5),
+  },
+  detail: {
+    marginBottom: kScaledSize(10),
+    borderBottomWidth: 1,
+    paddingBottom: kScaledSize(5),
+  },
+  complete: {
+    marginHorizontal: kScaledSize(30),
   },
 });

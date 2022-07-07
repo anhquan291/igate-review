@@ -40,7 +40,7 @@ const LoginScreen: React.FC = () => {
       password,
     };
     const userInfo = await dispatch(authGetToken(details)).unwrap();
-    let decoded: any = jwtDecode(userInfo.access_token);
+    let decoded: any = jwtDecode(userInfo.res.access_token);
     await dispatch(authGetUserData(decoded.user_id)).unwrap();
   };
 

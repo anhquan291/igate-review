@@ -114,10 +114,10 @@ const RateScreen: React.FC = () => {
   useEffect(() => {
     //lấy dữ liệu hồ sơ
     onGetFileList();
-    const intervalId = setInterval(() => {
-      onGetFileList();
-    }, 5000);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(() => {
+    //   onGetFileList();
+    // }, 5000);
+    // return () => clearInterval(intervalId);
     // setOnEndReachedCalledDuringMomentum(false);
   }, []);
 
@@ -263,7 +263,7 @@ const RateScreen: React.FC = () => {
       {fileList.length > 0 && fileDetail !== null && !error ? (
         <>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View
+            {/* <View
               style={[
                 styles.officer,
                 {
@@ -281,10 +281,6 @@ const RateScreen: React.FC = () => {
                   }
                 </MediumText>
               </View>
-              {/* <View style={[Layout.rowBetween, styles.mb]}>
-                <RegularText>Chức vụ</RegularText>
-                <MediumText style={styles.detail}>Chuyên viên</MediumText>
-              </View> */}
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Đơn vị</RegularText>
                 <MediumText style={styles.detail}>
@@ -293,9 +289,6 @@ const RateScreen: React.FC = () => {
               </View>
             </View>
             <View style={styles.officer}>
-              {/* <MediumText style={[styles.title]}>
-                Đợt đánh giá cán bộ {formatDate(data?.startDate)}
-              </MediumText> */}
               <View style={[Layout.rowBetween, styles.mb]}>
                 <RegularText>Người đánh giá</RegularText>
                 <MediumText style={styles.detail}>
@@ -312,7 +305,7 @@ const RateScreen: React.FC = () => {
                 <RegularText>Mã hồ sơ</RegularText>
                 <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
               </View>
-            </View>
+            </View> */}
             <View
               style={{
                 marginHorizontal: kSpacing.kSpacing16,
@@ -335,13 +328,14 @@ const RateScreen: React.FC = () => {
               {questionData &&
                 questionData.answer
                   .slice()
-                  .sort((a, b) => a.answerType - b.answerType)
+                  .sort((a, b) => a.answerType - b.answerType).reverse()
                   .map((item, index) => (
                     <TouchableOpacity
                       key={item.id}
                       onPress={() => {
                         setSelectAnswer(index);
                         setAnswerType(item.answerType);
+                        onRating()
                       }}
                       style={[
                         styles.moodv2,
@@ -375,9 +369,9 @@ const RateScreen: React.FC = () => {
                   ))}
             </View>
           </ScrollView>
-          <View style={styles.buttonGroup}>
+          {/* <View style={styles.buttonGroup}>
             <Button title="Hoàn tất" onPress={onRating} />
-          </View>
+          </View> */}
         </>
       ) : (
           <View style={[Layout.fill, Layout.center]}>
@@ -427,8 +421,8 @@ const styles = StyleSheet.create({
   },
   moodv2: {
     width: kWidth - kScaledSize(40),
-    paddingVertical: kScaledSize(6),
-    marginBottom: kSpacing.kSpacing10,
+    paddingVertical: kScaledSize(10),
+    marginBottom: kSpacing.kSpacing25,
     borderRadius: 5,
     flexDirection: "row",
     alignItems: "center",
@@ -439,7 +433,7 @@ const styles = StyleSheet.create({
     marginTop: kSpacing.kSpacing10,
   },
   moodTextv2: {
-    fontSize: kTextSizes.medium,
+    fontSize: kTextSizes.large,
     fontWeight: "bold",
     textTransform: "uppercase",
   },

@@ -52,11 +52,12 @@ export const kSpacing = {
   kSpacing18: kScaledSize(18),
   kSpacing19: kScaledSize(19),
   kSpacing20: kScaledSize(20),
+  kSpacing25: kScaledSize(25),
 };
 
 // Header
 export const kHeaderHeight = hasNotch()
   ? kScaledSize(88)
   : Platform.OS === 'ios'
-  ? kScaledSize(75)
-  : kScaledSize(50);
+    ? kScaledSize(75)
+    : kScaledSize(50);

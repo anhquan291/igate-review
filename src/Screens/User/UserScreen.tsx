@@ -60,6 +60,7 @@ const UserScreen = (props: Props) => {
     if (fileDetail && fileDetail.content[0]) {
       const fileCheck = await dispatch(
         rateCheckFile({
+          "rating-id": fileDetail.content[0]?.id,
           "officer-id": fileDetail.content[0]?.applicant.userId,
           "dossier-id": fileDetail.content[0]?.code,
         }),

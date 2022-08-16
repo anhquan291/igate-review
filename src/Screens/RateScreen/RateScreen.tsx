@@ -151,14 +151,15 @@ const RateScreen: React.FC = () => {
 
   const onRating = async (): Promise<void> => {
     if (fileDetail) {
-      console.log('detail', fileDetail);
+      console.log("detail", fileDetail);
       const fileCheck = await dispatch(
         rateCheckFile({
+          "rating-id": fileDetail?.id,
           "officer-id": fileDetail?.applicant.userId,
           "dossier-id": fileDetail?.code,
         }),
       ).unwrap();
-      console.log('filechec ->', fileCheck);
+      console.log("filechec ->", fileCheck);
       if (fileCheck.content.length > 0) {
         handleAlert({ message: "Hồ sơ này đã được đánh giá" });
         navigation.navigate("UserScreen");
@@ -328,14 +329,15 @@ const RateScreen: React.FC = () => {
               {questionData &&
                 questionData.answer
                   .slice()
-                  .sort((a, b) => a.answerType - b.answerType).reverse()
+                  .sort((a, b) => a.answerType - b.answerType)
+                  .reverse()
                   .map((item, index) => (
                     <TouchableOpacity
                       key={item.id}
                       onPress={() => {
                         setSelectAnswer(index);
                         setAnswerType(item.answerType);
-                        onRating()
+                        onRating();
                       }}
                       style={[
                         styles.moodv2,
@@ -374,10 +376,10 @@ const RateScreen: React.FC = () => {
           </View> */}
         </>
       ) : (
-          <View style={[Layout.fill, Layout.center]}>
-            <MediumText>Không có hồ sơ đánh giá</MediumText>
-          </View>
-        )}
+        <View style={[Layout.fill, Layout.center]}>
+          <MediumText>Không có hồ sơ đánh giá</MediumText>
+        </View>
+      )}
     </View>
   );
 };

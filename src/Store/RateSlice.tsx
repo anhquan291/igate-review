@@ -20,6 +20,7 @@ interface qustionListParams {
 }
 
 interface checkRatingParams extends qustionListParams {
+  "rating-id": string;
   "dossier-id": string;
   "officer-id": string;
 }

@@ -41,6 +41,7 @@ const LoginScreen: React.FC = () => {
     };
     const userInfo = await dispatch(authGetToken(details)).unwrap();
     let decoded: any = jwtDecode(userInfo.res.access_token);
+    // console.log("decode", decoded);
     await dispatch(authGetUserData(decoded.user_id)).unwrap();
   };
 

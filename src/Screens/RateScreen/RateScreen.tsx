@@ -75,7 +75,7 @@ const RateScreen: React.FC = () => {
 
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
-  console.log("dữ liệu test", fileDetail);
+  // console.log("dữ liệu test", fileDetail);
   const filetest: FileDetailFields = params;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
 
@@ -84,7 +84,6 @@ const RateScreen: React.FC = () => {
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
   const [answerType, setAnswerType] = useState<number | null>(null);
-  console.log("datan@@ ", data);
 
   const ref = useRef<any>(null);
 
@@ -97,9 +96,11 @@ const RateScreen: React.FC = () => {
         "user-id": userData.user_id,
         userId: userData.id,
         agencyId: userData.experience[0].agency.id,
+        //thêm trường ancestor thay trường agency
+        ancestorId: userData.experience[0].agency.parent.id,
       }),
     ).unwrap();
-    //console.log('..user..', userData);
+    console.log('..user..', userData);
     // const latestItem = response.content.reduce(
     //   (
     //     a: { completedDate: string | number | Date },
@@ -150,13 +151,18 @@ const RateScreen: React.FC = () => {
   };
 
   const onRating = async (): Promise<void> => {
-    if (fileDetail) {
-      console.log("detail", fileDetail);
+    if (fileDetail && data) {
+      console.log("detail =>>", fileDetail);
+      console.log("data =>>", data);
       const fileCheck = await dispatch(
         rateCheckFile({
-          "rating-id": fileDetail?.id,
-          "officer-id": fileDetail?.applicant.userId,
-          "dossier-id": fileDetail?.code,
+          "rating-id": data?.id,//true
+          "officer-id": fileDetail?.task[fileDetail.task.length - 1].assignee.id,//true
+          "dossier-id": fileDetail?.code,//true
+          //file cũ sai
+          // "rating-id": fileDetail?.id,//false
+          // "officer-id": fileDetail?.applicant.userId,//false
+          // "dossier-id": fileDetail?.code,//true
         }),
       ).unwrap();
       console.log("filechec ->", fileCheck);
@@ -171,18 +177,17 @@ const RateScreen: React.FC = () => {
       return;
     }
     let formatAnswer: Array<any> = [];
-    // console.log('formatanswer@@', formatAnswer);
+    // console.log('selectAnswer câu hỏi@@', selectAnswer);
     questionData?.answer.map((item, index) =>
       formatAnswer.push({
         ...item,
         chosen: item.answerType === answerType ? 1 : 0,
       }),
     );
-    // data bộ câu hỏi console.log('questiondata', questionData);
-    // console.log('data', data);
-
+    // console.log('questiondata', questionData);
     let body: rateOfficerParams;
     if (data) {
+      // console.log('date post lên', data);
       body = {
         formData: {
           participantName: fileDetail?.applicant.data.fullname,
@@ -192,6 +197,13 @@ const RateScreen: React.FC = () => {
         ratingOfficer: {
           id: data?.id,
           name: data?.name,
+          //new post
+          // name: [
+          //   {
+          //     languageId: data[0]?.languageId,
+          //     name: data[0]?.name,
+          //   },
+          // ],
           agency: {
             id: fileDetail?.agency.id,
           },
@@ -208,17 +220,21 @@ const RateScreen: React.FC = () => {
         detail: [
           {
             answer: formatAnswer,
-            status: questionData?.status,
+            // status: questionData?.status,
+            status: 1,
             question: {
               id: questionData?.id,
               content: questionData?.content,
               multipleChoice: questionData?.multipleChoice,
               requiredChoice: questionData?.requiredChoice,
+              status: 1,
+              position: 0,
             },
           },
         ],
         deploymentId: data.deploymentId,
       };
+      console.log('body', body);
       await dispatch(rateOfficer(body)).unwrap();
       if (Platform.OS === "android") {
         SoundPlayer.playSoundFile("tone", "mp3");
@@ -233,7 +249,7 @@ const RateScreen: React.FC = () => {
     }
   };
   // data bộ câu hỏi cần push console.log("DATA status ####", questionData);
-  console.log("selection ->", selectAnswer, answerType);
+  // console.log("selection ->", selectAnswer, answerType);
   const onScrollToIndex = (type: string): void => {
     if (
       type === "next" &&
@@ -307,6 +323,12 @@ const RateScreen: React.FC = () => {
                 <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
               </View>
             </View> */}
+
+            {/**test show hồ sơ*/}
+            <View style={[Layout.rowBetween, styles.mb]}>
+              <RegularText>Mã hồ sơ</RegularText>
+              <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
+            </View>
             <View
               style={{
                 marginHorizontal: kSpacing.kSpacing16,
@@ -337,7 +359,7 @@ const RateScreen: React.FC = () => {
                       onPress={() => {
                         setSelectAnswer(index);
                         setAnswerType(item.answerType);
-                        onRating();
+                        // onRating();
                       }}
                       style={[
                         styles.moodv2,
@@ -371,15 +393,15 @@ const RateScreen: React.FC = () => {
                   ))}
             </View>
           </ScrollView>
-          {/* <View style={styles.buttonGroup}>
+          <View style={styles.buttonGroup}>
             <Button title="Hoàn tất" onPress={onRating} />
-          </View> */}
+          </View>
         </>
       ) : (
-        <View style={[Layout.fill, Layout.center]}>
-          <MediumText>Không có hồ sơ đánh giá</MediumText>
-        </View>
-      )}
+          <View style={[Layout.fill, Layout.center]}>
+            <MediumText>Không có hồ sơ đánh giá</MediumText>
+          </View>
+        )}
     </View>
   );
 };

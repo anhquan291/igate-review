@@ -32,6 +32,7 @@ type Props = {
 };
 
 const UserScreen = (props: Props) => {
+  //gọi userdate là dữ liêụ lấy từ state auth về.
   const { userData, userCredential } = useAppSelector((state) => state.auth);
   const { isLoading: fileLoading } = useAppSelector((state) => state.files);
   const focus = useIsFocused();
@@ -41,8 +42,9 @@ const UserScreen = (props: Props) => {
   const [isShowAlert, setIsShowAlert] = useState(false);
 
   console.log("dữ liệu userData", userData, userCredential);
-
+  //lấy dữ liệu ở màn hình user về.
   const onGetFileList = async (reload?: boolean): Promise<void> => {
+    //Hàm lấy dữ liệu toàn bộ hồ sơ (trạng thái trả kết quả) của Cán Bộ.
     const response = await dispatch(
       fileGetData({
         page: 0,
@@ -51,17 +53,23 @@ const UserScreen = (props: Props) => {
         "user-id": userData.user_id,
         userId: userData.id,
         agencyId: userData.experience[0].agency.id,
+        //thêm trường ancestor
+        ancestorId: userData.experience[0].agency.parent.id,
+        //cần call trường nào thì từ màn user -> đẩy những thông tin cần thiết vô file slice để gọi api
       }),
     ).unwrap();
     const fileDetail = await dispatch(
       fileGetDetail({ code: response.content[0].code }),
     ).unwrap();
     // Check hồ sơ đã đánh giá hay chưa
+    //logic -> nếu chi tiết hồ sơ có tồn tại content -> truyền vào params -> nếu content > 0 đã có đánh giá rồi.
+    //nếu rỗng -> cho qua màn đánh giá.
     if (fileDetail && fileDetail.content[0]) {
       const fileCheck = await dispatch(
         rateCheckFile({
           "rating-id": fileDetail.content[0]?.id,
           "officer-id": fileDetail.content[0]?.applicant.userId,
+          //lấy từ api chi tiết hồ sơ : previoustask.assignee.id
           "dossier-id": fileDetail.content[0]?.code,
         }),
       ).unwrap();

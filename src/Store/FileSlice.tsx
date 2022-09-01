@@ -26,6 +26,8 @@ interface fileListParams extends fileDetailParams {
   "user-id": string;
   agencyId: string;
   userId: string;
+  ancestorId: string;
+  //lấy thêm trường nào thì khai báo trong này.
 }
 //hàm lấy data trả về theo trạng thái hoàn thành của cá nhân
 export const fileGetData = createAsyncThunk(
@@ -35,17 +37,21 @@ export const fileGetData = createAsyncThunk(
       dispatch(onLogout());
     };
     try {
+      //api call lấy tất cả hồ sơ mang trạng thái trả kết quả của cán bộ đó.
+      //ancestor-agency-id lấy từ trường experience.AGENCY.PARENT.ID của api lấy thông tin của token (--fully)
       const response = await requestGet(
-        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&agency-id=${fields.agencyId}&task-assignee-id=${fields.userId}&last-task-assignee-id=${fields.userId}`,
+        `pa/dossier/search?sort=updatedDate,desc&page=0&size=10&spec=page&identity-number=&applicant-name=&remind-id=&code=&sector-id=&procedure-id=&nation-id=&province-id=&district-id=&ward-id=&address=&task-status-id=60ebf17309cbf91d41f87f8e&dossier-status=&apply-method-id=&accepted-from=&accepted-to=&appointment-from=&appointment-to=&result-returned-from=&result-returned-to=&ancestor-agency-id=${fields.ancestorId}&task-assignee-id=${fields.userId}&last-task-assignee-id=${fields.userId}`,
         {
           // params: fields,
           //&task-assignee-id=${}
           needToken: true,
         },
       );
+      // console.log("response.data@@", response.data);
       //console.log("res", response.data);
-      console.log("fields", fields);
+      console.log("fields@@", fields);
       return response.data;
+
     } catch (error: any) {
       console.log("error", error);
       if (error.response.status === 401) {

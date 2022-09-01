@@ -73,7 +73,7 @@ export const authGetTokenBackground = createAsyncThunk(
           needToken: false,
         },
       );
-      console.log("get token bg");
+      console.log("get token bg", response.data);
       return response.data;
     } catch (error: any) {
       console.log(error.response);
@@ -96,7 +96,8 @@ export const authGetUserData = createAsyncThunk(
         needToken: true,
       });
       //?user-id=${userId}
-      console.log("1", response.data);
+      console.log("123", response.data);
+      //lấy dữ liệu lưu dữ liệu userData ở storage.
       await AsyncStorage.setItem("userData", JSON.stringify(response.data));
       return response.data;
     } catch (error: any) {

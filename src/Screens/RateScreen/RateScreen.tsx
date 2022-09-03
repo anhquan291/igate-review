@@ -1,6 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  BackHandler,
   FlatList,
   Image,
   Platform,
@@ -12,7 +13,7 @@ import {
 import { Button } from "../../Components/Buttons";
 import { Header } from "../../Components/Headers";
 import { AppLoader } from "../../Components/Loaders";
-import { MediumText, RegularText } from "../../Components/Texts";
+import { BoldText, MediumText, RegularText } from "../../Components/Texts";
 import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
 import { fileGetData, fileGetDetail } from "../../Store/FileSlice";
 import { FileDetailFields } from "../../Models/File";
@@ -36,6 +37,8 @@ import { handleAlert } from "../../Utils/Notification";
 import QuestionItem from "./QuestionItem";
 import moment from "moment";
 import SoundPlayer from "react-native-sound-player";
+import Modal from "react-native-modal";
+import { useStateWithCallback } from "../../Hooks/useStateWithCallback";
 
 const QuestionAnswer = [
   {
@@ -62,7 +65,6 @@ const QuestionAnswer = [
 //logic màn rating -->
 const RateScreen: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { params } = useRoute<any>();
   const navigation = useNavigation<any>();
 
   const {
@@ -75,15 +77,14 @@ const RateScreen: React.FC = () => {
 
   // const fileDetail: FileDetailFields = params.item;
   const { fileDetail } = useAppSelector((state) => state.files);
-  // console.log("dữ liệu test", fileDetail);
-  const filetest: FileDetailFields = params;
   const { data, isLoading, error } = useAppSelector((state) => state.rate);
+  const [isShowAlert, setIsShowAlert] = useStateWithCallback(false);
 
   const { userData } = useAppSelector((state) => state.auth);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const questionData = data?.questionGroup[0].question[0];
   const [selectAnswer, setSelectAnswer] = useState<number | null>(null);
-  const [answerType, setAnswerType] = useState<number | null>(null);
+  const [answerType, setAnswerType] = useStateWithCallback(null);
 
   const ref = useRef<any>(null);
 
@@ -100,7 +101,7 @@ const RateScreen: React.FC = () => {
         ancestorId: userData.experience[0].agency.parent.id,
       }),
     ).unwrap();
-    console.log('..user..', userData);
+    console.log("..user..", userData);
     // const latestItem = response.content.reduce(
     //   (
     //     a: { completedDate: string | number | Date },
@@ -111,16 +112,6 @@ const RateScreen: React.FC = () => {
     // );
     await dispatch(fileGetDetail({ code: response.content[0].code })).unwrap();
   };
-
-  useEffect(() => {
-    //lấy dữ liệu hồ sơ
-    onGetFileList();
-    // const intervalId = setInterval(() => {
-    //   onGetFileList();
-    // }, 5000);
-    // return () => clearInterval(intervalId);
-    // setOnEndReachedCalledDuringMomentum(false);
-  }, []);
 
   const renderIcon = (type: number): any => {
     switch (type) {
@@ -135,53 +126,52 @@ const RateScreen: React.FC = () => {
 
       default:
         return require("../../Assets/Images/normal.png");
-      // test
-      // case -1:
-      //   return require("../../Assets/Images/normal.png");
-      // case 0:
-      //   return require("../../Assets/Images/verySatisfied.png");
-      // case 1:
-      //   return require("../../Assets/Images/notSatisfied.png");
-      // case 2:
-      //   return require("../../Assets/Images/satisfied.png");
-
-      // default:
-      //   return require("../../Assets/Images/normal.png");
     }
   };
 
-  const onRating = async (): Promise<void> => {
-    if (fileDetail && data) {
-      console.log("detail =>>", fileDetail);
-      console.log("data =>>", data);
-      const fileCheck = await dispatch(
-        rateCheckFile({
-          "rating-id": data?.id,//true
-          "officer-id": fileDetail?.task[fileDetail.task.length - 1].assignee.id,//true
-          "dossier-id": fileDetail?.code,//true
-          //file cũ sai
-          // "rating-id": fileDetail?.id,//false
-          // "officer-id": fileDetail?.applicant.userId,//false
-          // "dossier-id": fileDetail?.code,//true
-        }),
-      ).unwrap();
-      console.log("filechec ->", fileCheck);
-      if (fileCheck.content.length > 0) {
-        handleAlert({ message: "Hồ sơ này đã được đánh giá" });
-        navigation.navigate("UserScreen");
-        return;
-      }
-    }
-    if (selectAnswer === null) {
-      handleAlert({ message: "Vui lòng chọn ý kiến đánh giá" });
-      return;
-    }
+  let timeout: any;
+
+  const goBack = () => {
+    setIsShowAlert(false, () => {
+      navigation.navigate("UserScreen", { item: undefined });
+    });
+  };
+
+  const onRating = async (answerTypeId: number): Promise<void> => {
+    // if (fileDetail && data) {
+    //   console.log("detail =>>", fileDetail);
+    //   console.log("data =>>", data);
+    //   const fileCheck = await dispatch(
+    //     rateCheckFile({
+    //       "rating-id": data?.id, //true
+    //       "officer-id":
+    //         fileDetail?.task[fileDetail.task.length - 1].assignee.id, //true
+    //       "dossier-id": fileDetail?.code, //true
+    //       //file cũ sai
+    //       // "rating-id": fileDetail?.id,//false
+    //       // "officer-id": fileDetail?.applicant.userId,//false
+    //       // "dossier-id": fileDetail?.code,//true
+    //     }),
+    //   ).unwrap();
+    //   console.log("filechec ->", fileCheck);
+    //   if (fileCheck.content.length > 0) {
+    //     handleAlert({
+    //       message: "Hồ sơ này đã được đánh giá",
+    //       onPress1: () => {
+    //         navigation.navigate("UserScreen", { item: undefined });
+    //       },
+    //     });
+
+    //     return;
+    //   }
+    // }
+
     let formatAnswer: Array<any> = [];
     // console.log('selectAnswer câu hỏi@@', selectAnswer);
     questionData?.answer.map((item, index) =>
       formatAnswer.push({
         ...item,
-        chosen: item.answerType === answerType ? 1 : 0,
+        chosen: item.answerType === answerTypeId ? 1 : 0,
       }),
     );
     // console.log('questiondata', questionData);
@@ -234,18 +224,16 @@ const RateScreen: React.FC = () => {
         ],
         deploymentId: data.deploymentId,
       };
-      console.log('body', body);
+      console.log("body", body);
+
       await dispatch(rateOfficer(body)).unwrap();
       if (Platform.OS === "android") {
         SoundPlayer.playSoundFile("tone", "mp3");
       }
-      // handleAlert({
-      //   message: "Cảm ơn bạn đã đánh giá và giúp chúng tôi hoàn thiện hơn",
-      //   onPress1: () => {
-      //     navigation.goBack();
-      //   },
-      // });
-      navigation.navigate("UserScreen");
+      setIsShowAlert(true);
+      setTimeout(() => {
+        goBack();
+      }, 3000);
     }
   };
   // data bộ câu hỏi cần push console.log("DATA status ####", questionData);
@@ -271,8 +259,23 @@ const RateScreen: React.FC = () => {
   useEffect(() => {
     onGetData();
   }, []);
-  // console.log('task', fileDetail)
-  // console.log('fullname cuối //đúng', fileDetail.task[fileDetail.task.length - 1].assignee.fullname);
+
+  useEffect(() => {
+    timeout = setTimeout(() => {
+      console.log("still run");
+      navigation.navigate("UserScreen", { item: fileDetail });
+    }, 15 * 1000);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={[Layout.fill]}>
       <Header name="ĐÁNH GIÁ ĐỘ HÀI LÒNG" />
@@ -325,7 +328,16 @@ const RateScreen: React.FC = () => {
             </View> */}
 
             {/**test show hồ sơ*/}
-            <View style={[Layout.rowBetween, styles.mb]}>
+            <View
+              style={[
+                Layout.rowBetween,
+                styles.mb,
+                {
+                  marginHorizontal: kSpacing.kSpacing20,
+                  marginTop: kSpacing.kSpacing10,
+                },
+              ]}
+            >
               <RegularText>Mã hồ sơ</RegularText>
               <MediumText style={styles.detail}>{fileDetail.code}</MediumText>
             </View>
@@ -358,8 +370,10 @@ const RateScreen: React.FC = () => {
                       key={item.id}
                       onPress={() => {
                         setSelectAnswer(index);
-                        setAnswerType(item.answerType);
-                        // onRating();
+                        // console.log("check ne", item.answerType);
+                        setAnswerType(item.answerType, () => {
+                          onRating(item.answerType);
+                        });
                       }}
                       style={[
                         styles.moodv2,
@@ -393,15 +407,38 @@ const RateScreen: React.FC = () => {
                   ))}
             </View>
           </ScrollView>
-          <View style={styles.buttonGroup}>
+          {/* <View style={styles.buttonGroup}>
             <Button title="Hoàn tất" onPress={onRating} />
-          </View>
+          </View> */}
         </>
       ) : (
-          <View style={[Layout.fill, Layout.center]}>
-            <MediumText>Không có hồ sơ đánh giá</MediumText>
+        <View style={[Layout.fill, Layout.center]}>
+          <MediumText>Không có hồ sơ đánh giá</MediumText>
+        </View>
+      )}
+      <Modal
+        animationIn={"zoomIn"}
+        animationOut={"zoomOut"}
+        useNativeDriver={true}
+        hideModalContentWhileAnimating={true}
+        isVisible={isShowAlert}
+        backdropOpacity={0.7}
+      >
+        <View style={styles.modal}>
+          <View style={[styles.modalContainer]}>
+            <BoldText style={styles.noti}>Thông Báo</BoldText>
+            <MediumText style={styles.message}>
+              Cảm ơn ông/bà đã đánh giá và giúp chúng tôi hoàn thiện hơn.
+            </MediumText>
+            <TouchableOpacity
+              onPress={goBack}
+              style={[styles.result, { backgroundColor: Colors.primary }]}
+            >
+              <RegularText style={styles.textBold}>Đóng</RegularText>
+            </TouchableOpacity>
           </View>
-        )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -470,6 +507,34 @@ const styles = StyleSheet.create({
     width: (kWidth - kScaledSize(60)) / 3,
     height: kScaledSize(60),
     resizeMode: "contain",
+  },
+  modal: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  modalContainer: {
+    backgroundColor: Colors.white,
+    minHeight: kScaledSize(100),
+    borderRadius: kScaledSize(10),
+    padding: kScaledSize(10),
+  },
+  noti: {
+    textAlign: "center",
+    marginBottom: kScaledSize(20),
+    color: Colors.primary,
+    fontSize: kScaledSize(20),
+  },
+  message: { textAlign: "center" },
+  textBold: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  result: {
+    marginTop: kScaledSize(30),
+    alignSelf: "center",
+    paddingVertical: kSpacing.kSpacing10,
+    paddingHorizontal: kSpacing.kSpacing20,
+    borderRadius: 5,
   },
 });
 

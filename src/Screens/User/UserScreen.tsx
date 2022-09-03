@@ -19,13 +19,13 @@ import {
   authGetTokenBackground,
   authLogout,
 } from "../../Store/AuthSlice";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { fileGetData, fileGetDetail } from "../../Store/FileSlice";
 import { AppLoader } from "../../Components/Loaders";
 import { rateCheckFile } from "../../Store/RateSlice";
-import { handleAlert } from "../../Utils/Notification";
+import _ from "lodash";
 
 type Props = {
   navigation: any;
@@ -36,6 +36,7 @@ const UserScreen = (props: Props) => {
   const { userData, userCredential } = useAppSelector((state) => state.auth);
   const { isLoading: fileLoading } = useAppSelector((state) => state.files);
   const focus = useIsFocused();
+  const route: any = useRoute();
 
   const dispatch = useAppDispatch();
 
@@ -45,6 +46,8 @@ const UserScreen = (props: Props) => {
   //lấy dữ liệu ở màn hình user về.
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     //Hàm lấy dữ liệu toàn bộ hồ sơ (trạng thái trả kết quả) của Cán Bộ.
+    console.log("Route FileFields", route.params);
+
     const response = await dispatch(
       fileGetData({
         page: 0,
@@ -64,6 +67,13 @@ const UserScreen = (props: Props) => {
     // Check hồ sơ đã đánh giá hay chưa
     //logic -> nếu chi tiết hồ sơ có tồn tại content -> truyền vào params -> nếu content > 0 đã có đánh giá rồi.
     //nếu rỗng -> cho qua màn đánh giá.
+    if (
+      route.params?.item &&
+      _.isEqual(fileDetail.content[0], route.params?.item)
+    ) {
+      //nếu user không đánh giá trong vòng 15s thì sẽ kiểm tra hồ sơ, nếu ko có hồ sơ mới thì ko qua đánh giá
+      return;
+    }
     if (fileDetail && fileDetail.content[0]) {
       const fileCheck = await dispatch(
         rateCheckFile({
@@ -73,6 +83,7 @@ const UserScreen = (props: Props) => {
           "dossier-id": fileDetail.content[0]?.code,
         }),
       ).unwrap();
+      console.log("check if already rated", fileCheck.content.length);
       if (fileCheck.content.length > 0) {
         // Show thông báo đã được đánh giá
         setIsShowAlert(true);
@@ -107,6 +118,16 @@ const UserScreen = (props: Props) => {
       }, 5 * 60 * 1000);
     }
     return () => clearInterval(interval);
+  }, [focus]);
+
+  useEffect(() => {
+    if (focus) {
+      let interval: any;
+      interval = setInterval(() => {
+        onGetFileList();
+      }, 5 * 1000);
+      return () => clearInterval(interval);
+    }
   }, [focus]);
 
   return (
@@ -182,12 +203,12 @@ const UserScreen = (props: Props) => {
           <BoldText style={{ textAlign: "center" }}>
             TRÂN TRỌNG CẢM ƠN ÔNG/BÀ ĐÃ DÀNH THỜI GIAN ĐÁNH GIÁ
           </BoldText>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => onGetFileList()}
             style={[styles.result, { backgroundColor: Colors.primary }]}
           >
             <RegularText style={styles.textBold}>ĐÁNH GIÁ HỒ SƠ</RegularText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </ScrollView>
       <Modal

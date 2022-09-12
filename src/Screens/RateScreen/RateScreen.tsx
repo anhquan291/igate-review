@@ -275,7 +275,7 @@ const RateScreen: React.FC = () => {
     );
     return () => backHandler.remove();
   }, []);
-
+  // console.log('file dsss', fileDetail);
   return (
     <View style={[Layout.fill]}>
       <Header name="ĐÁNH GIÁ ĐỘ HÀI LÒNG" />
@@ -412,10 +412,10 @@ const RateScreen: React.FC = () => {
           </View> */}
         </>
       ) : (
-        <View style={[Layout.fill, Layout.center]}>
-          <MediumText>Không có hồ sơ đánh giá</MediumText>
-        </View>
-      )}
+          <View style={[Layout.fill, Layout.center]}>
+            <MediumText>Không có hồ sơ đánh giá</MediumText>
+          </View>
+        )}
       <Modal
         animationIn={"zoomIn"}
         animationOut={"zoomOut"}
@@ -428,14 +428,15 @@ const RateScreen: React.FC = () => {
           <View style={[styles.modalContainer]}>
             <BoldText style={styles.noti}>Thông Báo</BoldText>
             <MediumText style={styles.message}>
-              Cảm ơn ông/bà đã đánh giá và giúp chúng tôi hoàn thiện hơn.
+              CẢM ƠN ÔNG/BÀ ĐÃ ĐÁNH GIÁ KẾT QUẢ GIẢI QUYẾT HỒ SƠ <MediumText style={styles.detail}>{fileDetail?.code}</MediumText>
             </MediumText>
-            <TouchableOpacity
+
+            {/* <TouchableOpacity
               onPress={goBack}
               style={[styles.result, { backgroundColor: Colors.primary }]}
             >
               <RegularText style={styles.textBold}>Đóng</RegularText>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </Modal>
@@ -456,6 +457,7 @@ const styles = StyleSheet.create({
   detail: {
     flex: 1,
     textAlign: "right",
+    color: Colors.black,
   },
   buttonGroup: {
     paddingHorizontal: kSpacing.kSpacing20,

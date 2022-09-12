@@ -26,15 +26,18 @@ import { fileGetData, fileGetDetail } from "../../Store/FileSlice";
 import { AppLoader } from "../../Components/Loaders";
 import { rateCheckFile } from "../../Store/RateSlice";
 import _ from "lodash";
-
+import {
+  rateGetData,
+} from "../../Store/RateSlice";
 type Props = {
   navigation: any;
 };
-
 const UserScreen = (props: Props) => {
   //gọi userdate là dữ liêụ lấy từ state auth về.
   const { userData, userCredential } = useAppSelector((state) => state.auth);
   const { isLoading: fileLoading } = useAppSelector((state) => state.files);
+  const { data } = useAppSelector((state) => state.rate);
+  // console.log('dataapapa', data);
   const focus = useIsFocused();
   const route: any = useRoute();
 
@@ -42,7 +45,10 @@ const UserScreen = (props: Props) => {
 
   const [isShowAlert, setIsShowAlert] = useState(false);
 
-  console.log("dữ liệu userData", userData, userCredential);
+  const onGetData = async (): Promise<void> => {
+    dispatch(rateGetData({ page: 0, size: 1, status: 1 })).unwrap();
+  };
+  // console.log("dữ liệu userData", userData, userCredential);
   //lấy dữ liệu ở màn hình user về.
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     //Hàm lấy dữ liệu toàn bộ hồ sơ (trạng thái trả kết quả) của Cán Bộ.
@@ -74,22 +80,35 @@ const UserScreen = (props: Props) => {
       //nếu user không đánh giá trong vòng 15s thì sẽ kiểm tra hồ sơ, nếu ko có hồ sơ mới thì ko qua đánh giá
       return;
     }
-    if (fileDetail && fileDetail.content[0]) {
+    // console.log('tontaidetail', fileDetail);
+    if (fileDetail) {
+      console.log('offficerid', fileDetail.content[0].task[fileDetail.content[0].task.length - 1].assignee.id);
+      console.log('code_id', fileDetail.content[0]?.code);
       const fileCheck = await dispatch(
+
         rateCheckFile({
-          "rating-id": fileDetail.content[0]?.id,
-          "officer-id": fileDetail.content[0]?.applicant.userId,
-          //lấy từ api chi tiết hồ sơ : previoustask.assignee.id
-          "dossier-id": fileDetail.content[0]?.code,
+          //new
+          "rating-id": data?.id, //true
+          "officer-id": fileDetail.content[0]?.task[fileDetail.content[0].task.length - 1].assignee.id, //true
+          "dossier-id": fileDetail.content[0]?.code, //true
+          //old
+          // "rating-id": fileDetail.content[0]?.id,
+          // "officer-id": fileDetail.content[0]?.applicant.userId,
+          // //lấy từ api chi tiết hồ sơ : previoustask.assignee.id
+          // "dossier-id": fileDetail.content[0]?.code,
         }),
       ).unwrap();
-      console.log("check if already rated", fileCheck.content.length);
+      console.log('chay vao day ...')
+      // console.log("zzzz", fileCheck);
+      // console.log("zzzzfileCheck.content.length", fileCheck.content.length);
       if (fileCheck.content.length > 0) {
         // Show thông báo đã được đánh giá
+        console.log('chay vao day ___')
         setIsShowAlert(true);
-        setTimeout(() => setIsShowAlert(false), 3000);
+        // setTimeout(() => setIsShowAlert(false), 3000);
       } else {
         props.navigation.navigate("RatingScreen");
+        console.log('chay vao day ***')
       }
     }
   };
@@ -116,6 +135,7 @@ const UserScreen = (props: Props) => {
       interval = setInterval(() => {
         onGetToken();
       }, 5 * 60 * 1000);
+      // onGetToken();
     }
     return () => clearInterval(interval);
   }, [focus]);
@@ -125,8 +145,11 @@ const UserScreen = (props: Props) => {
       let interval: any;
       interval = setInterval(() => {
         onGetFileList();
+        onGetData();
       }, 5 * 1000);
       return () => clearInterval(interval);
+      // onGetFileList();
+      // onGetData();
     }
   }, [focus]);
 
@@ -211,7 +234,7 @@ const UserScreen = (props: Props) => {
           </TouchableOpacity> */}
         </View>
       </ScrollView>
-      <Modal
+      {/* <Modal
         animationIn={"zoomIn"}
         animationOut={"zoomOut"}
         useNativeDriver={true}
@@ -233,7 +256,7 @@ const UserScreen = (props: Props) => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

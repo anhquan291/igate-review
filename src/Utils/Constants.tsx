@@ -58,5 +58,5 @@ export const kSpacing = {
 export const kHeaderHeight = hasNotch()
   ? kScaledSize(88)
   : Platform.OS === 'ios'
-  ? kScaledSize(75)
-  : kScaledSize(50);
+    ? kScaledSize(75)
+    : kScaledSize(50);

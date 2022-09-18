@@ -50,12 +50,12 @@ const LoginScreen: React.FC = () => {
 
   return (
     <View style={[Layout.fill]}>
-      <Header name="iGate Review" showBackButton={false} />
+      <Header name="TTPV-KSTTHC TỈNH QUẢNG NGÃI" showBackButton={false} />
       {isLoading && <AppLoader />}
       <ScrollContainer contentStyle={styles.container}>
         <View style={Layout.center}>
           <Image
-            source={require("../../Assets/Images/logo.png")}
+            source={require("../../Assets/Images/logohcc.png")}
             style={styles.logo}
           />
         </View>

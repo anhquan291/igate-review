@@ -9,6 +9,18 @@ import {
 // BottomTab
 import { HomeStack, LoginStack } from './Stack';
 import { useAppSelector } from '../Hooks/RTKHooks';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
+
+// function MyTabs() {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="Home" component={HomeScreen} />
+//       <Tab.Screen name="Settings" component={SettingsScreen} />
+//     </Tab.Navigator>
+//   );
+// }
 
 export type RootStackParamList = {
   HomeStack: undefined;
@@ -24,6 +36,18 @@ const Navigation: React.FC = () => {
   const { isLogin } = useAppSelector((state) => state.auth);
   return (
     <NavigationContainer>
+      {/* <AppStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: 'fade_from_bottom',
+        }}
+      >
+        {!isLogin ? (
+          <AppStack.Screen name="LoginStack" component={LoginStack} />
+        ) : (
+            <AppStack.Screen name="HomeStack" component={HomeStack} />
+          )}
+      </AppStack.Navigator> */}
       <AppStack.Navigator
         screenOptions={{
           headerShown: false,
@@ -33,8 +57,10 @@ const Navigation: React.FC = () => {
         {!isLogin ? (
           <AppStack.Screen name="LoginStack" component={LoginStack} />
         ) : (
-          <AppStack.Screen name="HomeStack" component={HomeStack} />
-        )}
+            <AppStack.Screen name="HomeStack" component={HomeStack} />
+          )}
+        {/* <AppStack.Screen name="LoginStack" component={LoginStack} />
+        <AppStack.Screen name="HomeStack" component={HomeStack} /> */}
       </AppStack.Navigator>
     </NavigationContainer>
   );

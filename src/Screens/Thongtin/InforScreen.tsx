@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Alert, Text } from "react-native";
 import React from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
@@ -12,54 +12,37 @@ type Props = {
   navigation: any;
 };
 
-const UserScreen = (props: Props) => {
-  const { userData } = useAppSelector((state) => state.auth);
-  console.log("userData", userData);
-  const onNavigate = () => {
-    // props.navigation.navigate("HomeScreen");
-    props.navigation.navigate("RatingScreen");
-    // console.log('-->', props.navigation.navigate);
-  };
-  const dispatch = useAppDispatch();
-  const onLogout = (): void => {
-    Alert.alert("Thông báo", "Bạn có muốn đăng xuất không?", [
-      {
-        text: "Đồng ý",
-        onPress: () => dispatch(authLogout()),
-      },
-      {
-        text: "Huỷ",
-      },
-    ]);
-  };
+const ThongtinScreen = () => {
   return (
     <View style={[Layout.fill]}>
-      <Header name="QUẢN LÝ THÔNG TIN" showBackButton={false} logout
-        onLogout={onLogout} />
+
       <View style={[Layout.fill, styles.container]}>
+        <View style={styles.category}>
+          <MediumText style={styles.textcenter}>QUẢN LÝ THÔNG TIN</MediumText>
+        </View>
         <View style={styles.category}>
           <MediumText style={styles.category2}>Mã số định danh</MediumText>
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
           <MediumText style={{ color: Colors.black }}>Tên CD/DN: </MediumText>
-          <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
+          <MediumText style={styles.textLeft}>DOANH NGHIỆP ABC</MediumText>
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
           <MediumText style={{ color: Colors.black }}>Email: </MediumText>
           <MediumText style={styles.textLeft}>
-            {userData.email[0].value}
+            test@gmail.com
           </MediumText>
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
           <MediumText style={{ color: Colors.black }}>Ngày sinh/Ngày thành lập: </MediumText>
           <MediumText style={styles.textLeft}>
-
+            22/09/2022
           </MediumText>
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
           <MediumText style={{ color: Colors.black }}>CCCD/Mã số DN: </MediumText>
           <MediumText style={styles.textLeft}>
-
+            222111333444
           </MediumText>
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
@@ -69,49 +52,26 @@ const UserScreen = (props: Props) => {
           </MediumText>
         </View>
       </View>
-      {/* <Header name="Thông tin" showBackButton={false} logout
-        onLogout={onLogout} />
+      {/**Thủ tục hành chính đã thực hiện */}
       <View style={[Layout.fill, styles.container]}>
-        <View>
-          <View style={[styles.avatar, Layout.center]}>
-            <FontAwesome name="user" size={kScaledSize(40)} />
-          </View>
-          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-            <RegularText style={{ color: Colors.grey6 }}>Họ tên: </RegularText>
-            <MediumText style={styles.textLeft}>{userData.fullname}</MediumText>
-          </View>
-          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-            <RegularText style={{ color: Colors.grey6 }}>Email: </RegularText>
-            <MediumText style={styles.textLeft}>
-              {userData.email[0].value}
-            </MediumText>
-          </View>
-          {userData.experience[0].primary && (
-            <View
-              style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}
-            >
-              <RegularText style={{ color: Colors.grey6 }}>
-                Cơ quan:{" "}
-              </RegularText>
-              <MediumText style={styles.textLeft}>
-                {userData.experience[0].agency.parent.name}
-              </MediumText>
-            </View>
-          )}
+        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+          {/* <MediumText style={{ color: Colors.black }}>SĐT/Địa chỉ: </MediumText> */}
+          <MediumText>
+            *Thủ tục hành chính đã thực hiện
+          </MediumText>
         </View>
-        <TouchableOpacity
-          onPress={onNavigate}
-          style={[styles.result, { backgroundColor: Colors.primary }]}
-        >
-          <RegularText style={Layout.whiteText}>Đánh giá hồ sơ</RegularText>
-        </TouchableOpacity>
-      </View> */}
-
+        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+          {/* <MediumText style={{ color: Colors.black }}>SĐT/Địa chỉ: </MediumText> */}
+          <MediumText>
+            *Thủ tục hành chính đã thanh toán trực tuyến
+          </MediumText>
+        </View>
+      </View>
     </View>
   );
 };
 
-export default UserScreen;
+export default ThongtinScreen;
 
 const styles = StyleSheet.create({
   category: {
@@ -119,6 +79,9 @@ const styles = StyleSheet.create({
   },
   category2: {
 
+  },
+  textcenter: {
+    textAlign: "center",
   },
   container: {
     marginTop: kScaledSize(20),

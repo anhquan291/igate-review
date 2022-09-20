@@ -52,7 +52,7 @@ const DichvucongScreen = () => {
           * ĐĂNG KÝ HOẠT ĐỘNG HỘ KINH DOANH
           </MediumText>
         <View>
-          {fileListDataThuTuc && fileListDataThuTuc.content.map((thutuc: any) => (
+          {fileListDataThuTuc && fileListDataThuTuc.content?.map((thutuc: any) => (
             <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
               <RegularText style={styles.nameThutuc}>*{thutuc.name}</RegularText>
               <RegularText style={styles.maThutuc}>Mã quy trình :{thutuc.nationCode}</RegularText>
@@ -64,7 +64,7 @@ const DichvucongScreen = () => {
           * CHẤM DỨT HOẠT ĐỘNG HỘ KINH DOANH
           </MediumText>
         <View>
-          {fileListDataThuTuc2 && fileListDataThuTuc2.content.map((thutuc: any) => (
+          {fileListDataThuTuc2 && fileListDataThuTuc2.content?.map((thutuc: any) => (
             <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
               <RegularText style={styles.nameThutuc}>*{thutuc.name}</RegularText>
               <RegularText style={styles.maThutuc}>Mã quy trình :{thutuc.nationCode}</RegularText>

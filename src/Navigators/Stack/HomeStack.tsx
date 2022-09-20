@@ -39,7 +39,7 @@ const HomeStack = () => {
     //   <Stack.Screen name="FileDetailScreen" component={FileDetailScreen} />
     //   <Stack.Screen name="RatingScreen" component={RateScreen} />
     // </Stack.Navigator>
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
       <Tab.Screen name="Thông tin" component={ThongtinScreen} />
       <Tab.Screen name="Dịch vụ công" component={DichvucongScreen} />

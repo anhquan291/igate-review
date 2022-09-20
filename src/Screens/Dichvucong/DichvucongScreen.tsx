@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, View, Alert, Text } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
 import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
@@ -8,14 +8,32 @@ import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { authLogout } from "../../Store/AuthSlice";
+import { fileGetDataThuTuc } from '../../Store/DichvucongSlice';
+import { AppLoader } from '../../Components/Loaders';
 type Props = {
   navigation: any;
 };
 
 const DichvucongScreen = () => {
+  const [loading, setLoading] = useState(false)
+  const dispatch = useAppDispatch();
+  const { fileListDataThuTuc } = useAppSelector(state => state.dichvucong)
+  const getDvcData = async () => {
+    try {
+      setLoading(true);
+      await dispatch(fileGetDataThuTuc({})).unwrap()
+    } catch (error) {
+
+    } finally { setLoading(false) }
+  }
+  console.log('hehe', fileListDataThuTuc);
+  useEffect(() => {
+    getDvcData();
+
+  }, [])
   return (
     <View style={[Layout.fill]}>
-
+      {loading && <AppLoader />}
       <View style={[Layout.fill, styles.container]}>
         <View style={styles.category}>
           <MediumText style={styles.textcenter}>DANH MỤC HỒ SƠ TRỰC TUYẾN</MediumText>

@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Alert, Text } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Alert, Text, TouchableHighlight } from "react-native";
 import React from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
@@ -8,11 +8,27 @@ import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { authLogout } from "../../Store/AuthSlice";
+
 type Props = {
   navigation: any;
 };
+const dispatch = useAppDispatch();
 
-const ThongtinScreen = () => {
+const ThongtinScreen = (props: Props) => {
+  const { userData } = useAppSelector((state) => state.auth);
+  console.log("userData1", userData);
+  const onLogout = (): void => {
+    Alert.alert("Thông báo", "Bạn có muốn đăng xuất không?", [
+      {
+        text: "Đồng ý",
+        onPress: () => dispatch(authLogout()),
+      },
+      {
+        text: "Huỷ",
+      },
+    ]);
+    console.log('-> có click vào đây')
+  };
   return (
     <View style={[Layout.fill]}>
 
@@ -66,6 +82,14 @@ const ThongtinScreen = () => {
             *Thủ tục hành chính đã thanh toán trực tuyến
           </MediumText>
         </View>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={onLogout}
+        >
+          <MediumText>
+            LOG OUT
+      </MediumText>
+        </TouchableOpacity>
       </View>
     </View>
   );

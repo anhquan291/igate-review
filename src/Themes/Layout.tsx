@@ -129,6 +129,7 @@ export default StyleSheet.create({
   /* Sizes Layouts */
   fill: {
     flex: 1,
+    marginTop: 30,
   },
   fullSize: {
     height: '100%',

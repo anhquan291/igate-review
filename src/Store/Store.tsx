@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { ThemeSlice, UserSlice, AuthSlice, FileSlice } from './index';
+import { ThemeSlice, UserSlice, AuthSlice, FileSlice, DichvucongSlice } from './index';
 import RateSlice from './RateSlice';
 
 export const store = configureStore({
@@ -9,6 +9,7 @@ export const store = configureStore({
     auth: AuthSlice,
     files: FileSlice,
     rate: RateSlice,
+    dichvucong: DichvucongSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
   // middleware: (getDefaultMiddleware) =>

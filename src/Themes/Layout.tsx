@@ -131,6 +131,11 @@ export default StyleSheet.create({
     flex: 1,
     marginTop: 30,
   },
+  fill2: {
+    flex: 1,
+    marginTop: 30,
+    backgroundColor: Colors.primary
+  },
   fullSize: {
     height: '100%',
     width: '100%',

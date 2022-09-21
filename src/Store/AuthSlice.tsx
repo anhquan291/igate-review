@@ -41,7 +41,7 @@ export const authGetToken = createAsyncThunk(
         },
       );
       console.log(response.data);
-      console.log('@@', response.data);
+      console.log("@@", response.data);
       return response.data;
     } catch (error: any) {
       console.log(error.response);
@@ -129,6 +129,10 @@ const AuthSlice = createSlice({
       state.token = "";
       state.refreshToken = "";
     },
+    onLogin: (state: initialStateFields, action) => {
+      state.isLogin = true;
+      state.token = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Check Token Expire to Keep Login
@@ -178,6 +182,6 @@ const AuthSlice = createSlice({
   },
 });
 
-export const { onLogout } = AuthSlice.actions;
+export const { onLogout, onLogin } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

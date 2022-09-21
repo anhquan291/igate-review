@@ -10,6 +10,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { authLogout } from "../../Store/AuthSlice";
 import { fileGetDataThuTuc, fileGetDataThuTuc2 } from '../../Store/DichvucongSlice';
 import { AppLoader } from '../../Components/Loaders';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 type Props = {
   navigation: any;
 };
@@ -46,35 +47,35 @@ const DichvucongScreen = () => {
       {loading && <AppLoader />}
       <View style={[Layout.fill, styles.container]}>
         <View style={styles.category}>
-          <MediumText style={styles.textcenter}>DANH MỤC HỒ SƠ TRỰC TUYẾN</MediumText>
+          <MediumText style={styles.textcenter}>DỊCH VỤ CÔNG TRỰC TUYẾN</MediumText>
         </View>
         <MediumText style={styles.listThutuc}>
-          * ĐĂNG KÝ HOẠT ĐỘNG HỘ KINH DOANH
+          <MaterialCommunityIcons style={styles.iconlistThutuc} name="format-list-bulleted-square" size={18} />Đăng ký hoạt động hộ kinh doanh
           </MediumText>
         <View>
           {fileListDataThuTuc && fileListDataThuTuc.content?.map((thutuc: any) => (
             <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
-              <RegularText style={styles.nameThutuc}>*{thutuc.name}</RegularText>
-              <RegularText style={styles.maThutuc}>Mã quy trình :{thutuc.nationCode}</RegularText>
+              <RegularText style={styles.nameThutuc}>{thutuc.name}</RegularText>
+              <RegularText style={styles.maThutuc}>{thutuc.nationCode}</RegularText>
               <Text style={styles.agencyThutuc}>{thutuc.agencyName}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <MediumText style={styles.listThutuc}>
-          * CHẤM DỨT HOẠT ĐỘNG HỘ KINH DOANH
+          <MaterialCommunityIcons style={styles.iconlistThutuc} name="format-list-bulleted-square" size={18} />Chấm dứt hoạt động hộ kinh doanh
           </MediumText>
         <View>
           {fileListDataThuTuc2 && fileListDataThuTuc2.content?.map((thutuc: any) => (
             <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
-              <RegularText style={styles.nameThutuc}>*{thutuc.name}</RegularText>
-              <RegularText style={styles.maThutuc}>Mã quy trình :{thutuc.nationCode}</RegularText>
+              <RegularText style={styles.nameThutuc}>{thutuc.name}</RegularText>
+              <RegularText style={styles.maThutuc}>{thutuc.nationCode}</RegularText>
               <Text style={styles.agencyThutuc}>{thutuc.agencyName}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText>
-            * THÔNG BÁO HOẠT ĐỘNG KHUYẾN MÃI.
+          <MediumText style={styles.listThutuc}>
+            <MaterialCommunityIcons style={styles.iconlistThutuc} name="format-list-bulleted-square" size={18} />Thông báo hoạt động khuyến mại
           </MediumText>
         </View>
       </View>
@@ -91,12 +92,20 @@ const styles = StyleSheet.create({
   },
   listThutuc: {
     marginBottom: kScaledSize(20),
+    fontWeight: '700',
+    fontSize: 18,
+    color: '#2E5AAC',
+  },
+  iconlistThutuc: {
+    marginRight: kScaledSize(15),
   },
   bgThutuc: {
     marginBottom: kScaledSize(15),
-    borderWidth: 1,
-    borderRadius: 10,
+    // borderWidth: 1,
+    // borderRadius: 10,
     padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey'
   },
   nameThutuc: {
     fontWeight: '700',
@@ -118,6 +127,9 @@ const styles = StyleSheet.create({
   },
   textcenter: {
     textAlign: "center",
+    fontWeight: '700',
+    color: '#2E5AAC',
+    fontSize: 22,
   },
   container: {
     marginTop: kScaledSize(20),

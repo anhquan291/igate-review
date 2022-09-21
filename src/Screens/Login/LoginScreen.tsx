@@ -127,10 +127,14 @@ import Layout from "../../Themes/Layout";
 import Colors from "../../Themes/Colors";
 import { kScaledSize } from "../../Utils/Constants";
 import { useAppDispatch } from "../../Hooks/RTKHooks";
-import { onLogin } from "../../Store/AuthSlice";
+import { onLogin, authGetUserData, } from "../../Store/AuthSlice";
+import {
+  saveToStorage,
+} from "../../Utils/Common";
+import jwtDecode from "jwt-decode";
 
 let urlLogin =
-  "https://ssotest.vnptigate.vn/auth/realms/digo/protocol/openid-connect/auth";
+  "https://dichvucong.quangngai.gov.vn/vi/";
 urlLogin += "?client_id=web-padsvc";
 urlLogin +=
   "&redirect_uri=https://dichvucongtest.vnptigate.vn/vi/businessregistration";
@@ -190,7 +194,7 @@ const LoginScreen = () => {
 
   const callbackLoginSSO = (code: string) => {
     let url =
-      "https://ssotest.vnptigate.vn/auth/realms/digo/protocol/openid-connect/token";
+      "https://ssoquangngai.vnptigate.vn/auth/realms/digo/protocol/openid-connect/token";
     let redirect_uri = "https://dichvucong.quangngai.gov.vn/vi/";
     let client_id = "web-padsvc";
     AU_OAUTH2_TOKEN(url, code, redirect_uri, client_id).then(
@@ -201,7 +205,11 @@ const LoginScreen = () => {
           //("sso_id_token", id_token)
           console.log("sso_id_token", id_token);
           console.log("AU_OAUTH2_TOKEN: " + access_token);
+          saveToStorage("authToken", JSON.stringify(access_token));
           dispatch(onLogin(access_token));
+          let decoded: any = jwtDecode(access_token);
+          dispatch(authGetUserData(decoded.user_id)).unwrap();
+          console.log('decodetest', decoded);
         }
       },
     );
@@ -242,7 +250,7 @@ const LoginScreen = () => {
             <WebView
               ref={webViewRef}
               style={{ flex: 1 }}
-              source={{ uri: urlLogin }}
+              source={{ uri: "https://dichvucong.quangngai.gov.vn/vi/" }}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               decelerationRate="normal"
@@ -257,9 +265,9 @@ const LoginScreen = () => {
                 );
                 if (event.url) {
                   let code = getParameterByName("code", event.url);
-                  if (code) {
+                  if (code && event.url.includes("dichvucong.quangngai.gov.vn")) {
                     console.log("code", code);
-                    webViewRef.stopLoading();
+                    webViewRef.current?.stopLoading();
                     callbackLoginSSO(code);
                     setIsVisible(false);
                   }

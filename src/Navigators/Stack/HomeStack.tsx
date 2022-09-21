@@ -4,7 +4,7 @@ import HomeScreen from "../../Screens/Home";
 import DichvucongScreen from "../../Screens/Dichvucong";
 import ThongtinScreen from "../../Screens/Thongtin";
 import TracuuScreen from "../../Screens/Tracuu";
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // import FileDetailScreen from "../../Screens/FileDetail";
 // import UserScreen from "../../Screens/User";
 //import RateScreen from "../../Screens/RateScreen";
@@ -41,9 +41,21 @@ const HomeStack = () => {
     // </Stack.Navigator>
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
-      <Tab.Screen name="Thông tin" component={ThongtinScreen} />
-      <Tab.Screen name="Dịch vụ công" component={DichvucongScreen} />
-      <Tab.Screen name="Tra cứu" component={TracuuScreen} />
+      <Tab.Screen name="Thông tin" component={ThongtinScreen} options={{
+        tabBarIcon: ({ color }) => (
+          <MaterialCommunityIcons name="account" color={color} size={26} />
+        ),
+      }} />
+      <Tab.Screen name="Dịch vụ công" component={DichvucongScreen} options={{
+        tabBarIcon: ({ color }) => (
+          <MaterialCommunityIcons name="home" color={color} size={26} />
+        ),
+      }} />
+      <Tab.Screen name="Tra cứu" component={TracuuScreen} options={{
+        tabBarIcon: ({ color }) => (
+          <MaterialCommunityIcons name="file-search" color={color} size={26} />
+        ),
+      }} />
 
     </Tab.Navigator>
 

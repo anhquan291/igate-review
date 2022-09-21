@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Alert, Text, TouchableHighlight } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Alert, ImageBackground, Image, Text, TouchableHighlight } from "react-native";
 import React from "react";
 import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
@@ -30,67 +30,61 @@ const ThongtinScreen = (props: Props) => {
     console.log('-> có click vào đây')
   };
   return (
-    <View style={[Layout.fill]}>
-
-      <View style={[Layout.fill, styles.container]}>
-        <View style={styles.category}>
-          <MediumText style={styles.textcenter}>QUẢN LÝ THÔNG TIN</MediumText>
+    <View style={styles.customInforScreen}>
+      <ImageBackground resizeMode='cover' source={require('../../Assets/Images/trongdongv2.png')} style={styles.bgImage}>
+        <View style={[Layout.fill, styles.container]}>
+          <View style={styles.category}>
+            <MediumText style={styles.textcenter}>QUẢN LÝ THÔNG TIN</MediumText>
+          </View>
+          <View style={styles.category}>
+            <MediumText style={styles.textCustom}>Mã số định danh</MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>Tên CD/DN: </MediumText>
+            <MediumText style={styles.textLeft}>{userData?.fullname}</MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>Email: </MediumText>
+            <MediumText style={styles.textLeft}>
+              {userData && userData.email[0]?.value}
+            </MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>CCCD/Mã số DN: </MediumText>
+            <MediumText style={styles.textLeft}>
+              {userData && userData?.identity.number}
+            </MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>Cấp tại: </MediumText>
+            <MediumText style={styles.textLeft}>
+              {userData && userData.identity.agency?.name}
+            </MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>SĐT : </MediumText>
+            <MediumText style={styles.textLeft}>
+              {userData && userData.account.username[0].value}      </MediumText>
+          </View>
+          <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
+            <MediumText style={styles.textCustom}>Địa chỉ : </MediumText>
+            <MediumText style={styles.textLeft}>
+              {userData && userData.address[0].address}
+            </MediumText>
+          </View>
         </View>
-        <View style={styles.category}>
-          <MediumText style={styles.category2}>Mã số định danh</MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText style={{ color: Colors.black }}>Tên CD/DN: </MediumText>
-          <MediumText style={styles.textLeft}>DOANH NGHIỆP ABC</MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText style={{ color: Colors.black }}>Email: </MediumText>
-          <MediumText style={styles.textLeft}>
-            test@gmail.com
-          </MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText style={{ color: Colors.black }}>Ngày sinh/Ngày thành lập: </MediumText>
-          <MediumText style={styles.textLeft}>
-            22/09/2022
-          </MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText style={{ color: Colors.black }}>CCCD/Mã số DN: </MediumText>
-          <MediumText style={styles.textLeft}>
-            222111333444
-          </MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          <MediumText style={{ color: Colors.black }}>SĐT/Địa chỉ: </MediumText>
-          <MediumText style={styles.textLeft}>
-
-          </MediumText>
-        </View>
-      </View>
-      {/**Thủ tục hành chính đã thực hiện */}
-      <View style={[Layout.fill, styles.container]}>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          {/* <MediumText style={{ color: Colors.black }}>SĐT/Địa chỉ: </MediumText> */}
-          <MediumText>
-            *Thủ tục hành chính đã thực hiện
-          </MediumText>
-        </View>
-        <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
-          {/* <MediumText style={{ color: Colors.black }}>SĐT/Địa chỉ: </MediumText> */}
-          <MediumText>
-            *Thủ tục hành chính đã thanh toán trực tuyến
-          </MediumText>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={onLogout}
-        >
-          <MediumText>
-            LOG OUT
+        <View style={[Layout.fill, styles.container]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={onLogout}
+            style={styles.customLogout}
+          >
+            <MediumText style={styles.appButtonText}>
+              Đăng Xuất
       </MediumText>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -98,20 +92,52 @@ const ThongtinScreen = (props: Props) => {
 export default ThongtinScreen;
 
 const styles = StyleSheet.create({
+  customInforScreen: {
+    flex: 1,
+    paddingTop: 30,
+    backgroundColor: '#a3def7'
+  },
+  bgImage: {
+    flex: 1,
+    backgroundColor: 'transparent'
+  },
   category: {
     marginBottom: kScaledSize(20),
   },
   category2: {
 
   },
+  customLogout: {
+    backgroundColor: "#2E5AAC",
+    width: 120,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderColor: '#fff',
+    borderWidth: 1,
+  },
+  appButtonText: {
+    fontSize: 12,
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
+  },
   textcenter: {
+    fontWeight: '700',
     textAlign: "center",
+    color: '#2E5AAC',
+    fontSize: 22,
   },
   container: {
     marginTop: kScaledSize(20),
     marginHorizontal: kSpacing.kSpacing10,
   },
+  textCustom: {
+    color: '#2E5AAC',
+  },
   textLeft: {
+    fontWeight: '700',
     textAlign: "right",
     flex: 1,
     marginLeft: kSpacing.kSpacing10,

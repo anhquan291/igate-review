@@ -278,7 +278,7 @@ const LoginScreen = () => {
         </View>
       </Modal>
       <Button
-        title="Login"
+        title="ĐĂNG NHẬP BẰNG CỔNG DVC QUỐC GIA"
         onPress={() => {
           setIsVisible(true);
         }}

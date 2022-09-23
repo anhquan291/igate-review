@@ -48,7 +48,7 @@ export const requestGet = async (
       params: options?.params,
       headers: {
         "Content-Type": "application/json",
-        ...(options?.needToken && { Authorization: `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJqazlObnpLTWVTeTF6Wk53RW1WMHVzY0FFcWFicTY4MGh5ZFpqY2Q0Wl9zIn0.eyJleHAiOjE2NjM3NzUyNDAsImlhdCI6MTY2MzY4ODg0MCwianRpIjoiMjRkNjljYTMtZDI2Mi00ZTYxLWJhYTItNjVkMWZhYWE3YmQ0IiwiaXNzIjoiaHR0cHM6Ly9zc29xdWFuZ25nYWkudm5wdGlnYXRlLnZuL2F1dGgvcmVhbG1zL2RpZ28iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjpjMDk4ZmY5Zi1kYzllLTQyYjctOTE2Yy1kYjgxYTRiOGZkNzg6Kzg0OTQzMDg3NjU0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoidGVzdC1wdWJsaWMiLCJzZXNzaW9uX3N0YXRlIjoiODNlNjEzZDctYTBmNS00NjZjLTliMWMtNDhkNzBmZWJkN2MwIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL3Nzb2hjbS52bnB0aWdhdGUudm4iLCJodHRwczovL3F1YW50cmloY20udm5wdGlnYXRlLnZuIiwiaHR0cHM6Ly9hcGloY20udm5wdGlnYXRlLnZuIiwiKiIsImh0dHBzOi8vdGFpa2hvYW5oY20udm5wdGlnYXRlLnZuIl0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJhY2NvdW50X2lkIjoiNjJhOTk4OWFkYjc1MTcxZWJhMjBkNTJhIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiQUNUSVZJVElfQURNSU4iLCJBQ1RJVklUSV9VU0VSIiwiQUNUSVZJVElfUFJPQ0VTUyJdfSwidXNlcl9pZCI6IjYyYTk5ODlhMjQ2NjYwMDg1NzU4MWMyZCIsIm5hbWUiOiJOZ3V54buFbiBLaW0gSG_DoG4iLCJncm91cHMiOlsicm9sZS9BQ1RJVklUSV9BRE1JTiIsInJvbGUvQUNUSVZJVElfVVNFUiIsInJvbGUvQUNUSVZJVElfUFJPQ0VTUyIsInRydW5ndGFtZGlldWhhbmgiXSwiZGVwbG95bWVudF9pZCI6IjYxNzdlYzg2YzdlMzRjMGM0NGYzZmJmNyIsInByZWZlcnJlZF91c2VybmFtZSI6Iis4NDk0MzA4NzY1NCIsImdpdmVuX25hbWUiOiJOZ3V54buFbiBLaW0gSG_DoG4ifQ.IhiifJI9_vCrwSGi-j3SYwpxVP7EanJCxT_DVlEQPBOvG2EN1gQRGHPcaHBH4KAsIitNfXoq4R44lTYn3V1nHlc3LpnZ3FIHU-LaoRKhBr1Un2YsNlSue_mSmUD_UFcqEvEZwoOqK7s8r-b2Nn_VWvpbgkgasGhfkNoBPbdUWJ6NnveVlmr6JYIvo0dVNe9VZeJ4ssHeHWIVhd1DnKqYHgdI-Fj_KICXMoJ7Q5bYhwaIn5CNgSYCvRF_1xTasQp7-eTTsnbbd6WbGNxxFhCYeU_93MFBLWSgFDdKk87KfMPAtOySJgDncOO5ZKcQJVk8JNVDIV9yQdKLxnGjL4D7LQ` }),
+        ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
       },
     },
   );
@@ -66,6 +66,31 @@ export const requestGet = async (
   //   timeout: 20000,
   //   headers: header,
   // });
+  return response;
+};
+//Hàm dùng call PUT
+export const requestPut = async (
+  endpoint: string,
+  options?: {
+    data?: Object;
+    params?: Object;
+    needToken?: boolean;
+  },
+) => {
+  const token: any = await AsyncStorage.getItem("authToken");
+  const auth = JSON.parse(token);
+  const userToken = options?.needToken ? auth : null;
+
+  const response = await axios.put(
+    `https://apiquangngai.vnptigate.vn/${endpoint}`,
+    {
+      params: options?.params,
+      headers: {
+        // "Content-Type": "application/json",
+        ...(options?.needToken && { Authorization: `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJqazlObnpLTWVTeTF6Wk53RW1WMHVzY0FFcWFicTY4MGh5ZFpqY2Q0Wl9zIn0.eyJleHAiOjE2NjM5MTA5MDksImlhdCI6MTY2MzgyNDUwOSwianRpIjoiYWQ5YzEzZTEtYTUwZC00M2ZhLWI0ZTUtMDU3ODY1MjhmNzdkIiwiaXNzIjoiaHR0cHM6Ly9zc29xdWFuZ25nYWkudm5wdGlnYXRlLnZuL2F1dGgvcmVhbG1zL2RpZ28iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjpjMDk4ZmY5Zi1kYzllLTQyYjctOTE2Yy1kYjgxYTRiOGZkNzg6Kzg0OTQzMDg3NjU0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoidGVzdC1wdWJsaWMiLCJzZXNzaW9uX3N0YXRlIjoiMDI5OWE2YmQtNDkxMi00NTQzLThlMDktZTFkYjE3YjA4MWIzIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL3Nzb2hjbS52bnB0aWdhdGUudm4iLCJodHRwczovL3F1YW50cmloY20udm5wdGlnYXRlLnZuIiwiaHR0cHM6Ly9hcGloY20udm5wdGlnYXRlLnZuIiwiKiIsImh0dHBzOi8vdGFpa2hvYW5oY20udm5wdGlnYXRlLnZuIl0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJhY2NvdW50X2lkIjoiNjJhOTk4OWFkYjc1MTcxZWJhMjBkNTJhIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiQUNUSVZJVElfQURNSU4iLCJBQ1RJVklUSV9VU0VSIiwiQUNUSVZJVElfUFJPQ0VTUyJdfSwidXNlcl9pZCI6IjYyYTk5ODlhMjQ2NjYwMDg1NzU4MWMyZCIsIm5hbWUiOiJOZ3V54buFbiBLaW0gSG_DoG4iLCJncm91cHMiOlsicm9sZS9BQ1RJVklUSV9BRE1JTiIsInJvbGUvQUNUSVZJVElfVVNFUiIsInJvbGUvQUNUSVZJVElfUFJPQ0VTUyIsInRydW5ndGFtZGlldWhhbmgiXSwiZGVwbG95bWVudF9pZCI6IjYxNzdlYzg2YzdlMzRjMGM0NGYzZmJmNyIsInByZWZlcnJlZF91c2VybmFtZSI6Iis4NDk0MzA4NzY1NCIsImdpdmVuX25hbWUiOiJOZ3V54buFbiBLaW0gSG_DoG4ifQ.fNXfq_MCDBbwCcoUOlVC1Vnj0u5UsHuTiBOnWufVmz_KmSJAen7SrQuZDteD-DwV7sLM94iZqbNo4nznJGbAoti4UN4aj05nfTRHc1JAd5SVWljQ9kJuPt9apCpaen5mosA9uW31IuDzumyMnVytCaVBrZK2KFROboX2b18f-Mig_6--ceTcfyxfE0TLkTf2w5VVlP85SmSAJ7MqYnEtOOJyUtpBAcrpgugEhZWpvaAX21XHS2kc9NEmVVsoSi43aZOv3p4XQQZUbLA1F6L0K8TFKDKhIAvhFJDhzA4rlp5DmrZ5uf-5iF7td55zh5Vn8l4mkF-uR0tlDZCYXIPC3g` }),
+      },
+    },
+  );
   return response;
 };
 

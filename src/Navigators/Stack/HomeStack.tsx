@@ -12,6 +12,7 @@ import { RouteProp } from "@react-navigation/native";
 import { FileFields } from "../../Models/File";
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import DichvucongStack from './DichvucongStack';
 const Tab = createBottomTabNavigator();
 
 export type HomeParamList = {
@@ -46,7 +47,7 @@ const HomeStack = () => {
           <MaterialCommunityIcons name="account" color={color} size={26} />
         ),
       }} />
-      <Tab.Screen name="Dịch vụ công" component={DichvucongScreen} options={{
+      <Tab.Screen name="Dịch vụ công" component={DichvucongStack} options={{
         tabBarIcon: ({ color }) => (
           <MaterialCommunityIcons name="home" color={color} size={26} />
         ),

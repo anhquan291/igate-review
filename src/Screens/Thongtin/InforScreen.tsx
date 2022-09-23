@@ -69,7 +69,7 @@ const ThongtinScreen = (props: Props) => {
           <View style={[Layout.rowBetween, { marginBottom: kScaledSize(10) }]}>
             <MediumText style={styles.textCustom}>Địa chỉ : </MediumText>
             <MediumText style={styles.textLeft}>
-              {userData && userData.address[0].address}
+              {userData && userData.address && userData.address[0].address ? userData.address[0].address : ''}
             </MediumText>
           </View>
         </View>

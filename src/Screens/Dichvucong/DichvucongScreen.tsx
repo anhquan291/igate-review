@@ -4,22 +4,23 @@ import Layout from "../../Themes/Layout";
 import { Header } from "../../Components/Headers";
 import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
 import { MediumText, RegularText } from "../../Components/Texts";
-import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
+import { kScaledSize, kSpacing } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { authLogout } from "../../Store/AuthSlice";
-import { fileGetDataThuTuc, fileGetDataThuTuc2 } from '../../Store/DichvucongSlice';
+import { fileGetDataThuTuc, fileGetDataThuTuc2, fileGetDataThuTuc3 } from '../../Store/DichvucongSlice';
 import { AppLoader } from '../../Components/Loaders';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from "@react-navigation/native";
 type Props = {
   navigation: any;
 };
 
 const DichvucongScreen = () => {
   const [loading, setLoading] = useState(false)
+  const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const { fileListDataThuTuc } = useAppSelector(state => state.dichvucong)
   const { fileListDataThuTuc2 } = useAppSelector(state => state.dichvucong)
+  const { fileListDataThuTuc3 } = useAppSelector(state => state.dichvucong)
   const getDvcData = async () => {
     try {
       setLoading(true);
@@ -36,12 +37,27 @@ const DichvucongScreen = () => {
 
     } finally { setLoading(false) }
   }
+  const getDvcData3 = async () => {
+    try {
+      setLoading(true);
+      await dispatch(fileGetDataThuTuc3({})).unwrap()
+    } catch (error) {
+
+    } finally { setLoading(false) }
+  }
   console.log('hehe', fileListDataThuTuc);
-  console.log('hihihe', fileListDataThuTuc2);
+  console.log('hihihe2', fileListDataThuTuc2);
+  console.log('hihihe3', fileListDataThuTuc3);
   useEffect(() => {
     getDvcData();
     getDvcData2();
+    getDvcData3();
   }, [])
+
+  const navigateThuTucDetail = (id: any) => {
+    navigation.navigate("ThutucChiTietScreen", { id });
+    console.log('idssss', id)
+  }
   return (
     <ScrollView style={[Layout.fill]}>
       {loading && <AppLoader />}
@@ -54,7 +70,7 @@ const DichvucongScreen = () => {
           </MediumText>
         <View>
           {fileListDataThuTuc && fileListDataThuTuc.content?.map((thutuc: any) => (
-            <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
+            <TouchableOpacity key={thutuc.id} style={styles.bgThutuc} onPress={() => navigateThuTucDetail(thutuc.id)}>
               <RegularText style={styles.nameThutuc}>{thutuc.name}</RegularText>
               <RegularText style={styles.maThutuc}>{thutuc.nationCode}</RegularText>
               <Text style={styles.agencyThutuc}>{thutuc.agencyName}</Text>
@@ -66,7 +82,7 @@ const DichvucongScreen = () => {
           </MediumText>
         <View>
           {fileListDataThuTuc2 && fileListDataThuTuc2.content?.map((thutuc: any) => (
-            <TouchableOpacity key={thutuc.id} style={styles.bgThutuc}>
+            <TouchableOpacity key={thutuc.id} style={styles.bgThutuc} onPress={() => navigateThuTucDetail(thutuc.id)}>
               <RegularText style={styles.nameThutuc}>{thutuc.name}</RegularText>
               <RegularText style={styles.maThutuc}>{thutuc.nationCode}</RegularText>
               <Text style={styles.agencyThutuc}>{thutuc.agencyName}</Text>
@@ -77,6 +93,15 @@ const DichvucongScreen = () => {
           <MediumText style={styles.listThutuc}>
             <MaterialCommunityIcons style={styles.iconlistThutuc} name="format-list-bulleted-square" size={18} />Thông báo hoạt động khuyến mại
           </MediumText>
+        </View>
+        <View>
+          {fileListDataThuTuc3 && fileListDataThuTuc3.content?.map((thutuc: any) => (
+            <TouchableOpacity key={thutuc.id} style={styles.bgThutuc} onPress={() => navigateThuTucDetail(thutuc.id)}>
+              <RegularText style={styles.nameThutuc}>{thutuc.name}</RegularText>
+              <RegularText style={styles.maThutuc}>{thutuc.nationCode}</RegularText>
+              <Text style={styles.agencyThutuc}>{thutuc.agencyName}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 

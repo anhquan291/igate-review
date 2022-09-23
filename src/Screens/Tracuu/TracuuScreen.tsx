@@ -1,36 +1,41 @@
-import { StyleSheet, SafeAreaView, TouchableOpacity, TextInput, View, Alert, ImageBackground, Image, Text, TouchableHighlight } from "react-native";
-import React from "react";
+import { StyleSheet, Button, SafeAreaView, TouchableOpacity, TextInput, View, Alert, ImageBackground, Image, Text, TouchableHighlight } from "react-native";
+// import React from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import Layout from "../../Themes/Layout";
-import { Header } from "../../Components/Headers";
-import { useAppSelector, useAppDispatch } from "../../Hooks/RTKHooks";
+import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
 import { MediumText, RegularText } from "../../Components/Texts";
 import { kScaledSize, kSpacing, kTextSizes } from "../../Utils/Constants";
 import Colors from "../../Themes/Colors";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { authLogout } from "../../Store/AuthSlice";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { fileGetDataTracuu } from '../../Store/TracuuSlice';
 type Props = {
   navigation: any;
 };
-const UselessTextInput = () => {
-  const [text, onChangeText] = React.useState("Nhập mã hồ sơ");
-  const [number, onChangeNumber] = React.useState(null);
-
-  return (
-    <SafeAreaView>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-      />
-    </SafeAreaView>
-  );
-};
 
 
-// export default UselessTextInput;
 
-const TracuuScreen = () => {
+const TracuuScreen: React.FC = () => {
+  const route: any = useRoute();
+  const [textTracuu, onChangeText] = React.useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [number, onChangeNumber] = React.useState(null);
+  // const { datatracuu } = useAppSelector((state) => state.tracuu);
+  const dispatch = useAppDispatch();
+  const { datatracuu } = useAppSelector((state) => state.dichvucong);
+  // const id: string = route.params.id;
+  const onGetTracuu = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      await dispatch(fileGetDataTracuu({ code: textTracuu })).unwrap();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  console.log('tra cuu', textTracuu)
+  console.log('@@@', datatracuu)
   return (
     <View style={styles.customInforScreen}>
 
@@ -41,20 +46,41 @@ const TracuuScreen = () => {
               <MediumText style={styles.textcenter}>TRA CỨU HỒ SƠ</MediumText>
             </View>
             <View style={styles.searchInput}>
-              <UselessTextInput />
+              <TextInput
+                style={styles.input}
+                placeholder="Nhập mã hồ sơ"
+                onChangeText={onChangeText}
+                value={textTracuu}
+              />
             </View>
             {/**Search */}
             <View style={styles.customSearch}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                // onPress={onLogout}
-                style={styles.customLogout}
-              >
-                <MediumText style={styles.appButtonText}>
+              <View style={styles.bgSeachBtn}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  // onPress={onLogout}
+                  style={styles.customLogout}
+                >
+                  {/* <MediumText style={styles.appButtonText}>
                   <MaterialCommunityIcons style={styles.iconSearch} name="file-search" size={20} />
-                  Tra cứu</MediumText>
-              </TouchableOpacity>
+                </MediumText> */}
+                  <Button color="#fff" onPress={onGetTracuu} title="Tra cứu" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.textreSearch}>
+                {datatracuu &&
+                  <View style={styles.cusSearch}>
+                    <View><Text >Tên người nộp : {datatracuu.content.map((thutuc: any) =>
+                      <Text>{thutuc.applicant.data.ownerFullname}</Text>
+                    )}</Text></View>
+                    <Text>Trạng thái hồ sơ : {datatracuu.content.map((thutuc: any) =>
+                      <Text>{thutuc.dossierStatus.name}</Text>
+                    )}</Text>
+                  </View>
+                }
+              </View>
             </View>
+
 
           </View>
 
@@ -81,6 +107,16 @@ const styles = StyleSheet.create({
     // fontWeight: '700',
     // color: '#fff'
   },
+  cusSearch: {
+
+  },
+  textreSearch: {
+
+  },
+  nameCus: {
+    color: '#a3def7',
+    fontWeight: '700'
+  },
   searchInput: {
     marginBottom: kScaledSize(10),
   },
@@ -102,18 +138,25 @@ const styles = StyleSheet.create({
   category2: {
 
   },
-  customSearch: {
+  bgSeachBtn: {
     flex: 1,
     alignSelf: "center",
+    marginBottom: 90,
+  },
+  customSearch: {
+    // flex: 1,
+    // alignSelf: "center",
   },
   customLogout: {
     backgroundColor: "#2E5AAC",
-    width: 150,
+    width: 200,
+    height: 60,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderColor: '#fff',
     borderWidth: 1,
+    marginBottom: 25,
   },
   appButtonText: {
     fontSize: 16,

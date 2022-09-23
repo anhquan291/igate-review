@@ -322,10 +322,10 @@ const RateScreen: React.FC = () => {
           </View>
         </>
       ) : (
-        <View style={[Layout.fill, Layout.center]}>
-          {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
-        </View>
-      )}
+          <View style={[Layout.fill, Layout.center]}>
+            {/* <MediumText>Không có hồ sơ đánh giá</MediumText> */}
+          </View>
+        )}
     </View>
   );
 };

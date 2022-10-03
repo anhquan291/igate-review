@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { requestGet, requestPost, requestPut } from "../Services/ApiCall";
+import { requestGet, requestPost, requestPut, requestPut2 } from "../Services/ApiCall";
 import { handleAlert } from "../Utils/Notification";
 import { onLogout } from "./AuthSlice";
 
@@ -128,7 +128,7 @@ export const postThutuc = createAsyncThunk(
         const forceLogout = () => {
             dispatch(onLogout());
         };
-        console.log("postThutuc", fields);
+        // console.log("postThutuc", fields);
         try {
             const response = await requestPost("pa/dossier/--apply-online/", {
                 data: fields,
@@ -155,7 +155,7 @@ export const fileGetCodePattern = createAsyncThunk(
         const forceLogout = () => {
             dispatch(onLogout());
         };
-        console.log('fieldsss', fields);
+        // console.log('fieldsss', fields);
         try {
             const response = await requestGet(
                 // `bd/config/get-pattern?agency-id=62174f6c378b3c2a75639fcc&procedure-id=6243fed45b82236f1d1c21fe`,
@@ -165,7 +165,7 @@ export const fileGetCodePattern = createAsyncThunk(
                     needToken: true,
                 },
             );
-            console.log("get_codepattern", response.data);
+            // console.log("get_codepattern", response.data);
             return response.data;
         } catch (error: any) {
             console.log("error", error);
@@ -187,15 +187,15 @@ export const getNewCode = createAsyncThunk(
             dispatch(onLogout());
         };
         try {
-            const response = await requestPut(
-                `bt/pattern/62a5b245a21aef4ae8daef2b/--get-next-value?code=1.001612.000.00.00.H48`,
+            const response = await requestPut2(
+                `bt/pattern/${fields.codePattern}/--get-next-value?code=${fields.code}`,
                 // `bt/pattern/${fields.codePattern}/--get-next-value?code=${fields.code}`,
                 {
                     // params: fields,
                     needToken: true,
                 },
             );
-            console.log("res", response.data);
+            console.log("resrequestPut2", response.data);
             return response.data;
         } catch (error: any) {
             console.log("error", error);

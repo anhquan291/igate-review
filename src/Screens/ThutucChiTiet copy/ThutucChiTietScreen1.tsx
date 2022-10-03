@@ -7,15 +7,15 @@ import { AppLoader } from "../../Components/Loaders";
 import { MediumText, RegularText } from "../../Components/Texts";
 import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
 import { HomeRouteProps } from "../../Navigators/Stack/HomeStack";
-import { fileGetDetail } from "../../Store/FileSlice";
+import { fileGetDetail } from "../../store/FileSlice";
 import Colors from "../../Themes/Colors";
 import Layout from "../../Themes/Layout";
 import { formatDateMonth } from "../../Utils/Common";
 import { kSpacing, kTextSizes } from "../../Utils/Constants";
 import { FileFields } from "../../Models/File";
-import { rateCheckFile } from "../../Store/RateSlice";
+import { rateCheckFile } from "../../store/RateSlice";
 import { handleAlert } from "../../Utils/Notification";
-import { fileGetDataThuTucDetail, postThutuc, fileGetCodePattern, getNewCode } from '../../Store/DichvucongSlice';
+import { fileGetDataThuTucDetail, postThutuc, fileGetCodePattern, getNewCode } from '../../store/DichvucongSlice';
 import { Button } from '../../Components/Buttons';
 // Constants
 
@@ -443,7 +443,7 @@ const ThutucChiTietScreen: React.FC = () => {
         </View>
       </View>
       {/**FORM 1 */}
-      <View style={styles.fixInput}>
+      {/* <View style={styles.fixInput}>
         <Text style={styles.textCusmargin}>Thông tin chủ hồ sơ :</Text>
         <TextInput
           style={styles.input}
@@ -496,7 +496,7 @@ const ThutucChiTietScreen: React.FC = () => {
           placeholder="Nội dung yêu cầu giải quyết"
           value={textNoiDungGiaiquyet}
         />
-      </View>
+      </View> */}
 
 
       {/* <TextInput
@@ -511,7 +511,7 @@ const ThutucChiTietScreen: React.FC = () => {
         <TouchableOpacity style={{ backgroundColor: "#bfc7c7", borderRadius: 10 }} onPress={() => {
           setIsVisible(true);
         }}>
-          <Text style={styles.textCusmargin}>Nhập thông tin tờ khai đăng ký</Text>
+          <Text style={styles.textCusmargin}>Click vào đây để nhập vào form mẫu đăng kí hộ kinh doanh</Text>
         </TouchableOpacity>
 
       </View>
@@ -526,16 +526,6 @@ const ThutucChiTietScreen: React.FC = () => {
               borderRadius: 10,
             }}
           >
-            <View>
-              <View >
-                <Text style={{ color: "#0066ff", fontWeight: '700' }}>GIẤY ĐỀ NGHỊ ĐĂNG KÝ HỘ KINH DOANH</Text>
-                <Text style={{ color: "#000", fontWeight: '700' }}>Kính gửi:  Phòng Tài chính - Kế hoạch</Text>
-              </View>
-              <View>
-                <Text style={{ color: "#000", fontWeight: '700' }}>Đăng ký hộ kinh doanh do tôi là chủ hộ : </Text>
-              </View>
-            </View>
-
             <View style={styles.fixInput}>
               <Text style={styles.textCusmargin}>Tên hộ kinh doanh :</Text>
               <TextInput
@@ -587,17 +577,15 @@ const ThutucChiTietScreen: React.FC = () => {
                 setIsVisible(false);
               }}
             />
+            {/* <Button
+              title="Đóng"
+              onPress={() => {
+                setIsVisible(false);
+              }}
+            /> */}
           </View>
         </View>
       </Modal>
-      {/* <View style={styles.fixInput}>
-        <TouchableOpacity style={{ backgroundColor: "#bfc7c7", borderRadius: 10 }} onPress={() => {
-          setIsVisible(true);
-        }}>
-          <Text style={styles.textCusmargin}>File đính kèm</Text>
-        </TouchableOpacity>
-
-      </View> */}
       {/* <Button onPress={onPostThutuc} title="Nộp Hồ Sơ" /> */}
     </View>
   );
@@ -662,12 +650,6 @@ const styles = StyleSheet.create({
     textAlign: "right",
     flex: 1,
     marginLeft: kSpacing.kSpacing10,
-  },
-  textCenter: {
-    textAlign: "center",
-    flex: 1,
-    marginBottom: kSpacing.kSpacing10,
-    color: '#0066ff'
   },
   detail: {
     paddingVertical: kSpacing.kSpacing15,

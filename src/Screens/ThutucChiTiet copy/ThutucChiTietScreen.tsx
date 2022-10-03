@@ -7,15 +7,15 @@ import { AppLoader } from "../../Components/Loaders";
 import { MediumText, RegularText } from "../../Components/Texts";
 import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
 import { HomeRouteProps } from "../../Navigators/Stack/HomeStack";
-import { fileGetDetail } from "../../Store/FileSlice";
+import { fileGetDetail } from "../../store/FileSlice";
 import Colors from "../../Themes/Colors";
 import Layout from "../../Themes/Layout";
 import { formatDateMonth } from "../../Utils/Common";
 import { kSpacing, kTextSizes } from "../../Utils/Constants";
 import { FileFields } from "../../Models/File";
-import { rateCheckFile } from "../../Store/RateSlice";
+import { rateCheckFile } from "../../store/RateSlice";
 import { handleAlert } from "../../Utils/Notification";
-import { fileGetDataThuTucDetail, postThutuc, fileGetCodePattern, getNewCode } from '../../Store/DichvucongSlice';
+import { fileGetDataThuTucDetail, postThutuc, fileGetCodePattern, getNewCode } from '../../store/DichvucongSlice';
 import { Button } from '../../Components/Buttons';
 // Constants
 

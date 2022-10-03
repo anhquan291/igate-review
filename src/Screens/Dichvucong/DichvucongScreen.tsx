@@ -55,7 +55,9 @@ const DichvucongScreen = () => {
   }, [])
 
   const navigateThuTucDetail = (id: any) => {
-    navigation.navigate("ThutucChiTietScreen", { id });
+    //Logic trước -> qua trang thủ tục g qua trang mô tả -> thủ tục
+    // navigation.navigate("ThutucChiTietScreen", { id });
+    navigation.navigate("MotaThuTucScreen", { id });
     console.log('idssss', id)
   }
   return (

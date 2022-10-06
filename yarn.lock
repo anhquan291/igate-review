@@ -1656,6 +1656,11 @@
   dependencies:
     ts-toolbelt "^6.15.1"
 
+"@types/react-native-html-to-pdf@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-html-to-pdf/-/react-native-html-to-pdf-0.8.1.tgz#bc07abc31f29f84b227125a6e4e19bb2c23a1664"
+  integrity sha512-DP2buc/3EOkH7uGYL0WTkQb8iG6gTVSrcTTNEqOmE/PGEgs6BKvBHRiTn83++rtWWYhMii97wLu3gs61K35b7A==
+
 "@types/react-native-vector-icons@^6.4.8":
   version "6.4.9"
   resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.9.tgz#643b852666681b36997899a94d940ad29d88176d"
@@ -6010,6 +6015,11 @@ react-native-flipper@0.113.0:
   version "0.113.0"
   resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.113.0.tgz#1fb1b7678d014bf78f0e4fb9a3a9e7a153dd4c74"
   integrity sha512-WHliie4qnx97K86wsBStqFFw5jxMNHOZJSugETYPv9fp+5Ne5PQ5QV2qRE4BX17/VrNz6BdeeW/9WVImV6CZMA==
+
+react-native-html-to-pdf@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-html-to-pdf/-/react-native-html-to-pdf-0.12.0.tgz#2b467296f85c9c9783a7288b19722a7028dcbcb8"
+  integrity sha512-Yb5WO9SfF86s5Yv9PqXQ7fZDr9zZOJ+6jtweT9zFLraPNHWX7pSxe2dSkeg3cGiNrib65ZXGN6ksHymfYLFSSg==
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"

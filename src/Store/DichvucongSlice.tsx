@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { requestGet, requestPost, requestPut, requestPut2 } from "../Services/ApiCall";
+import { requestGet, requestPost, requestPostUpload, requestPut, requestPut2 } from "../Services/ApiCall";
 import { handleAlert } from "../Utils/Notification";
 import { onLogout } from "./AuthSlice";
 
@@ -239,6 +239,79 @@ export const fileGetDataTracuu = createAsyncThunk(
         }
     },
 );
+//action upload file
+export const uploadFile = createAsyncThunk(
+    "file/upload_file",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        let formData = new FormData();
+        //upload many file
+        const { files } = fields
+        for (const file of files) {
+            formData.append('files', file) // appending every file to formdata
+        }
+        //upload 1 file dinh kem
+        // formData.append("files", { uri: fields.file.uri, type: fields.file.type, name: fields.file.name })
+        formData.append("account-id", fields.accountId)
+        console.log('formdata1111', formData);
+        try {
+            const response = await requestPostUpload(
+                `fi/file/--multiple?uuid=1`,
+                {
+                    params: { uuid: 1 },
+                    needToken: true,
+                    data: formData
+                },
+            );
+            console.log("upload data123", response.data);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+//action lấy eformid
+export const fileGetEformId = createAsyncThunk(
+    "file/get_eformid",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        console.log('feweform', fields)
+        try {
+            const response = await requestGet(
+                `/bd/procedure-process-definition?procedure-id=${fields.procedureId}`,
+                {
+                    // params: fields,
+                    needToken: true,
+                },
+            );
+            console.log("tracuu get_eformid", fields);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+
+
+//xử lí data lấy ở màn hình khác mới cần lưu reducer
 //reducer
 const DichvucongSlice = createSlice({
     name: "dichvucong",
@@ -252,6 +325,9 @@ const DichvucongSlice = createSlice({
         dataCodePattern: null,
         newcode: null,
         datatracuu: null,
+        //file_upload
+        //eformId
+        eformId: null,
         totalPages: 0,
         error: false,
     } as any,
@@ -353,6 +429,18 @@ const DichvucongSlice = createSlice({
             state.datatracuu = data;
         });
         builder.addCase(fileGetDataTracuu.rejected, (state) => {
+            state.error = true;
+        });
+        //GetEformId
+        builder.addCase(fileGetEformId.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(fileGetEformId.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.eformId = data;
+        });
+        builder.addCase(fileGetEformId.rejected, (state) => {
             state.error = true;
         });
     },

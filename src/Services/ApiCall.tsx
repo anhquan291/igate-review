@@ -211,3 +211,31 @@ export const requestPostXform = async (
   // });
   return response;
 };
+
+//Post form date Upload
+export const requestPostUpload = async (
+  endpoint: string,
+  options?: {
+    data?: any;
+    params?: Object;
+    needToken?: boolean;
+    formData?: boolean;
+  },
+) => {
+  const token: any = await AsyncStorage.getItem("authToken");
+  const auth = JSON.parse(token);
+  const userToken = options?.needToken ? auth : null;
+  const data = options?.data;
+  const response = await axios.post(
+    `https://apiquangngai.vnptigate.vn/${endpoint}`,
+    data,
+    {
+      params: options?.params,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        ...(options?.needToken && { Authorization: `Bearer ${userToken}` }),
+      },
+    },
+  );
+  return response;
+};

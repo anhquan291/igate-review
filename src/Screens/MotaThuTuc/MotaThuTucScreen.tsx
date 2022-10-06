@@ -127,7 +127,7 @@ const MotaThuTucScreen: React.FC = () => {
             source={sourcePhidv}
           />
         </View>
-        <View >
+        <View style={styles.bgCusBtn} >
           <TouchableOpacity style={styles.customBtn} onPress={() => navigateThuTucDetail()}>
             <Text style={styles.customBtnText}>Nộp hồ sơ trực tuyến</Text>
           </TouchableOpacity>
@@ -147,6 +147,10 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0eb',
     paddingHorizontal: 10,
     // width: 300,
+  },
+  bgCusBtn: {
+    flex: 1,
+    alignItems: 'center'
   },
   customBtn: {
     backgroundColor: "#2E5AAC",

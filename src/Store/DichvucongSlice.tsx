@@ -310,6 +310,128 @@ export const fileGetEformId = createAsyncThunk(
     },
 );
 
+//action lấy nation
+export const fileGetNation = createAsyncThunk(
+    "file/get_nation",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        console.log('nation', fields)
+        try {
+            const response = await requestGet(
+                `/ba/nation`,
+                {
+                    // params: fields,
+                    needToken: true,
+                },
+            );
+            console.log("tracuu nation", fields);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+//action lấy nation_tỉnh ()
+export const fileGetNation_District = createAsyncThunk(
+    "file/get_nation_district",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        console.log('get_nation_district', fields)
+        try {
+            const response = await requestGet(
+                `ba/place/--search?nation-id=${fields.nationId}&parent-type-id=5ee304423167922ac55bea01`,
+                ///https://apiquangngai.vnptigate.vn/ba/place/--search?nation-id=5f39f4a95224cf235e134c5c&parent-type-id=5ee304423167922ac55bea01 
+                {
+                    // params: fields,
+                    needToken: true,
+                },
+            );
+            console.log("tracuu get_nation_district", fields);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+//action lấy nation_quận/huyện ()
+export const fileGetNation_Province = createAsyncThunk(
+    "file/get_nation_province",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        console.log('get_nation_Province', fields)
+        try {
+            const response = await requestGet(
+                `ba/place/--search?nation-id=${fields.nationId}&parent-type-id=5ee304423167922ac55bea02&parent-id=${fields.nationdistrictId}`,
+                {
+                    // params: fields,
+                    needToken: true,
+                },
+            );
+            console.log("tracuu get_nation_Province", fields);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+//action lấy nation_xã ()
+export const fileGetNation_Village = createAsyncThunk(
+    "file/get_nation_village",
+    async (fields: any, { rejectWithValue, dispatch }) => {
+        const forceLogout = () => {
+            dispatch(onLogout());
+        };
+        console.log('get_nation_village', fields)
+        try {
+            const response = await requestGet(
+                `ba/place/--search?nation-id=${fields.nationId}&parent-type-id=5ee304423167922ac55bea03&parent-id=${fields.nationprovinceId}`,
+                {
+                    // params: fields,
+                    needToken: true,
+                },
+            );
+            console.log("tracuu get_nation_village", fields);
+            return response.data;
+        } catch (error: any) {
+            console.log("error", error);
+            if (error.response.status === 401) {
+                handleAlert({
+                    message: "Hết phiên đăng nhập, vui lòng đăng nhập lại",
+                    onPress1: forceLogout,
+                });
+            }
+            return rejectWithValue(error);
+        }
+    },
+);
+
 
 //xử lí data lấy ở màn hình khác mới cần lưu reducer
 //reducer
@@ -328,6 +450,13 @@ const DichvucongSlice = createSlice({
         //file_upload
         //eformId
         eformId: null,
+        //nation,nationdistric,province,village
+        nationid: null,
+        nationdistrict: null,
+        nationprovince: null,
+        nationvillage: null,
+        //
+        uploaddataresponse: null,
         totalPages: 0,
         error: false,
     } as any,
@@ -441,6 +570,66 @@ const DichvucongSlice = createSlice({
             state.eformId = data;
         });
         builder.addCase(fileGetEformId.rejected, (state) => {
+            state.error = true;
+        });
+        //GetNation
+        builder.addCase(fileGetNation.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(fileGetNation.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.nationid = data;
+        });
+        builder.addCase(fileGetNation.rejected, (state) => {
+            state.error = true;
+        });
+        //GetNation district
+        builder.addCase(fileGetNation_District.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(fileGetNation_District.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.nationdistrict = data;
+        });
+        builder.addCase(fileGetNation_District.rejected, (state) => {
+            state.error = true;
+        });
+        //GetNation province
+        builder.addCase(fileGetNation_Province.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(fileGetNation_Province.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.nationprovince = data;
+        });
+        builder.addCase(fileGetNation_Province.rejected, (state) => {
+            state.error = true;
+        });
+        //GetNation village
+        builder.addCase(fileGetNation_Village.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(fileGetNation_Village.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.nationvillage = data;
+        });
+        builder.addCase(fileGetNation_Village.rejected, (state) => {
+            state.error = true;
+        });
+        //Get ID code đính kèm trả về
+        builder.addCase(uploadFile.pending, (state) => {
+            state.error = false;
+        });
+        builder.addCase(uploadFile.fulfilled, (state, action) => {
+            //fulfil call thanh cong (syntax)
+            const data: any = action.payload;
+            state.uploaddataresponse = data;
+        });
+        builder.addCase(uploadFile.rejected, (state) => {
             state.error = true;
         });
     },

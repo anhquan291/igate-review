@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View, TextInput, Alert, Text, Modal } from "react-native";
+import { StyleSheet, TouchableOpacity, View, TextInput, ScrollView, Dimensions, Alert, Text, Modal } from "react-native";
 import { Container } from "../../Components/Container";
 import { Header } from "../../Components/Headers";
 import { AppLoader } from "../../Components/Loaders";
@@ -15,7 +15,7 @@ import { kSpacing, kTextSizes } from "../../Utils/Constants";
 import { FileFields } from "../../Models/File";
 import { rateCheckFile } from "../../Store/RateSlice";
 import { handleAlert } from "../../Utils/Notification";
-import { fileGetDataThuTucDetail, postThutuc, fileGetCodePattern, fileGetEformId, getNewCode, uploadFile } from '../../Store/DichvucongSlice';
+import { fileGetDataThuTucDetail, postThutuc, fileGetNation, fileGetNation_District, fileGetCodePattern, fileGetEformId, getNewCode, uploadFile } from '../../Store/DichvucongSlice';
 import { Button } from '../../Components/Buttons';
 import DocumentPicker, {
   DirectoryPickerResponse,
@@ -26,19 +26,26 @@ import DocumentPicker, {
 // Constants
 //PDF
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Pdf from 'react-native-pdf';
+//Import String file pdf
 import DangkyKinhDoanhForm from '../../FormHtmlConvert/dangkykinhdoanh/dangkykinhdoanh';
+import ChamdutKinhDoanhForm from '../../FormHtmlConvert/chamdutkinhdoanh/chamdutkinhdoanh';
+import KhuyenmaiForm from '../../FormHtmlConvert/hoatdongkhuyenmai/khuyenmai';
+
+
 
 const DinhkemThutucScreen: React.FC = () => {
   const route: any = useRoute();
   const navigation = useNavigation<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isVisible, setIsVisible] = useState(false);
-  const { fileThutucDetail, eformId, dataCodePattern, newcode } = useAppSelector((state) => state.dichvucong);
+  const { fileThutucDetail, eformId, uploaddataresponse, nationid, nationdistrict, dataCodePattern, newcode } = useAppSelector((state) => state.dichvucong);
   const dispatch = useAppDispatch();
   const { userData } = useAppSelector((state) => state.auth);
   console.log('User Id ', userData);
   const id: string = route.params.id;
   console.log('route.params', route.params);
+  console.log('gias tri chi tiet nhap vao', route.params.valueTenChuHoso)
   const onGetDetail = async (): Promise<void> => {
     try {
       setIsLoading(true);
@@ -64,134 +71,110 @@ const DinhkemThutucScreen: React.FC = () => {
   };
   console.log('.....eformId123', eformId);
 
-  const Arr = DangkyKinhDoanhForm;
-  console.log('FORM', DangkyKinhDoanhForm);
-  //Create Pdf
+  //KHOI TAO FORM PDF BIEU MAU và xử lí thông tin
+  const [textTenNguoiDangky, onChangeText9] = React.useState<string>("");
+  const FormDangKy = DangkyKinhDoanhForm;
+  console.log('test textTenNguoiDangky', textTenNguoiDangky);
+  // const newFormDangKyhaveInput = FormDangKy.replace('isNameTest', textTenNguoiDangky);
+  const newFormDangKyhaveInput = FormDangKy.replace('isFullName', route.params.valueTenChuHoso).replace('isBirthday', route.params.valueNgaySinh).replace('isEmail', route.params.valueEmail);
+  //Create PDF
   const createPDF = async () => {
     let options = {
       // html: '<h1>PDF TEST</h1>',
-      html: Arr,
+      // html: FormDangKy,
+      html: newFormDangKyhaveInput,
       fileName: 'dangkykinhdoanh',
       directory: 'Documents',
     };
 
     let file = await RNHTMLtoPDF.convert(options)
-    console.log(file.filePath);
+    //console.log(file.filePath);
     //alert(file.filePath);
+    //truyền filepath ở local sang màn PDF
+    navigation.navigate("PDFExample", { source: file.filePath })
+  }
+  //XEM FILE PDF vừa tạo
+  const navigatelookatPDF = () => {
+    // navigation.navigate("PDFExample", {})
   }
 
 
 
+  // const onPostThutucTest = () => {
+  //   console.log('có chạy vô on post');
+  // }
   const onPostThutuc = async (): Promise<void> => {
     // xử lí dữ liệu trước khi Post lên
+    console.log('uploaddataresponse', uploaddataresponse);
     try {
       setIsLoading(true);
       //DATA API LƯỢT BỎ
       const data = {
-        "code": "",
-        "agency": {
-          "id": fileThutucDetail.agency.id,//"61075ab26e8bb4462db3792c", //agency.id api chi tiet
-          "code": fileThutucDetail.agency.code//"000.09.23.H34"
-        },
-        "procedure": {
-          "id": fileThutucDetail.id, //"620d12d9dea1f56c53607167", //id thu tuc chi tiet
-          "code": fileThutucDetail.code // "thoaitestthutuc16022022-TH2"//code thu tuc chi tiet
-        },
-        "procedureProcessDefinition": {
-          "id": "626a1909edcb06024d6afea5"//api lấy TH giải quyết lấy trường id 
-          //https://apitest.vnptigate.vn/bd/procedure-process-definition/?spec=page&page=0&size=1000&status=1&procedure-id=6215fc5acfa6484e420b67d8
-        },
-        "dossierReceivingKind": {
-          "id": "5f8969018fffa53e4c073dee"//chưa biết lấy ở đâu.
-        },
-        "applicant": {
-          "userId": userData.id,//"6204b7d14d70e102626856fa",
-          "eformId": "5fdc64e6576b78001d53219d",// lấy từ api https://apiquangngai.vnptigate.vn/bd/procedure-process-definition?procedure-id=6243fed45b82236f1d1c21c7
-          //truyền chi tiết thủ tục vào -> lấy trường applicantEForm.id
-          "data": {
-            "fullname": "Quản trị app",
-            "identityDate": "2004-12-31T17:00:00.000+0000",
-            "birthday": "1989-12-31T17:00:00.000+0000",
-            "province": {
-              "label": "Thành phố Cần Thơ",
-              "value": "5def47c5f47614018c000092"
-            },
-            "address": "1",
-            "organization": "", //để rỗng
-            "identityAgency": {
-              "id": "000050000191c4e1bd300024",
-              "name": "Công an Tỉnh Gia Lai"
-            },
-            "gender": 1, //1 nam, 0 nữ
-            "district": {
-              "label": "Huyện Phong Điền",
-              "value": "5def47c5f47614018c001926"
-            },
-            "nation": {
-              "label": "Việt Nam",
-              "value": "5f39f4a95224cf235e134c5c"
-            },
-            "phoneNumber": "+84900010508",
-            "village": {
-              "label": "Xã Giai Xuân",
-              "value": "5def47c5f47614018c131303"
-            },
-            "email": "admin_test@gmail.com",
-            "identityNumber": "351442015"
-          }
-        },
-        "dossierFormFile": [
+        "userId": userData.id,
+        "appliciant":
+        {
+          "address": route.params.valueDiachi,//"1",
+          "birthday": route.params.valueNgaySinh,//"1989-12-31T17:00:00.000+0000",
+          "email": route.params.valueEmail,//"admin_test@gmail.com",
+          "fullname": route.params.valueTenChuHoso,//"Qu\u1ea3n tr\u1ecb app",
+          "gender": userData.gender,//1,
+          "ownerFullname": route.params.valueTenChuHoso,
+          "identityAgency":
           {
-            //truyền procedure-id của thủ tục vào -> lấy các trường ở dưới
-            //https://apitest.vnptigate.vn/bd/procedure-form/?page=0&size=50&spec=page&procedure-id=6215fc5acfa6484e420b67d8&default-online=1
-            //https://apitest.vnptigate.vn/bd/procost/--for-online?procedure-id=6215fc5acfa6484e420b67d8
-            //// 4 trường ở dưới lay tu thanh Phan ho so thu tục.
-            "procedureForm": {
-              "id": "5f9e7345268e6e00d520b769",
-              "name": "Giấy chứng nhận đăng ký kinh doanh"
-            },
-            "order": 1,
-            "case": {
-              "id": "5fc9a7847e85357163eff6e2"
-            },
-            "detail": {
-              "type": {
-                "id": "5f642cfb4e1bd312a6f3ae32",
-                "name": "Bản sao"
-              },
-              "quantity": 1
-            },
-            //lấy từ api upload map vào
-            "file": [
-              {
-                "id": "62e23d0aeaa3695e58271140",
-                "filename": "512x512bb.jpg",
-                "size": 133781
-              }
-            ]
+            "id": userData.identity.agency.id,//"000050000191c4e1bd300024",
+            "name": userData.identity.agency.name//"Công an T\u1ec9nh Gia Lai"
+          },
+          "identityDate": userData.identity.date,//"2004-12-31T17:00:00.000+0000",
+          "identityNumber": userData.identity.number,//"351442015",
+          "nation":
+          {
+            "label": "Việt Nam",
+            "value": "5f39f4a95224cf235e134c5c"
+          },
+          "district":
+          {
+            "label": "Tỉnh Quảng Ngãi",//"Huy\u1ec7n Phong \u0110i\u1ec1n",
+            "value": "5def47c5f47614018c000051"//"5def47c5f47614018c001926"
+          },
+          "organization": "",
+          "phoneNumber": userData.phoneNumber[0].value,//"+84900010508",
+          "province":
+          {
+            "label": "Thành phố Quảng Ngãi",// TP qng
+            "value": "5def47c5f47614018c001522"//id tp qng
+          },
+          "village":
+          {
+            "label": "Phường Lê Hồng Phong",//"Xã Giai Xuân",
+            "value": "5def47c5f47614018c121010"//"5def47c5f47614018c131303"
           }
-        ],
-        "dossierFee": [],
-        //// nhận trực tiếp thì bỏ luôn receivingPlace.
-        "paymentMethod": {
-          "id": "5f7fca83b80e603d5300dcf4",
-          "name": "Trực tiếp",
         },
-        // "receivingPlace": {
-        //   "id": "5def47c5f47614018c131312",
-        //   "fullAddress": "",
-        //   "nationName": "Việt Nam",
-        //   "rcSend": "",
-        //   "rcReceive": "",
-        //   "name": "kiên",
-        //   "phoneNumber": "0811554221",
-        //   "email": "test@am.com",
-        //   "resultReceivingPlaceId": null,
-        //   "fullAddressR": ""
-        // },
-        "dossierStatus": 0
+        "paymentMethod": {
+          "id": "5f7fca83b80e603d5300dcf4",// gắn cứng
+          "name": "Trực tiếp"
+        },
+        "dossierFormFile":
+          [{
+            "idProcedureForm": "5def47c5f47614018c131303",
+            "file":
+              [
+                {
+                  "filename": uploaddataresponse && uploaddataresponse[0].filename,//"512x512bb.jpg",
+                  "id": uploaddataresponse && uploaddataresponse[0].id,//"62e23d0aeaa3695e58271140",
+                  "size": uploaddataresponse && uploaddataresponse[0].size//133781
+                },
+                {
+                  "filename": uploaddataresponse && uploaddataresponse[1].filename,//"512x512bb.jpg",
+                  "id": uploaddataresponse && uploaddataresponse[1].id,//"62e23d0aeaa3695e58271140",
+                  "size": uploaddataresponse && uploaddataresponse[1].size//133781
+                }
+              ],
+          }],
+        //"procedureId": fileThutucDetail.id//"abcxyz"
+        "procedureId": "6215fc5acfa6484e420b67d8"
       }
 
+      console.log("DATA POSTLeNNN", data);
       await dispatch(postThutuc(data)).unwrap();
       handleAlert({
         message: "Cảm ơn bạn đã nộp hồ sơ trực tuyến thành công",
@@ -205,28 +188,17 @@ const DinhkemThutucScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
-  // const createPDF() {
-  //   let options = {
-  //     html: '<h1>PDF TEST</h1>',
-  //     fileName: 'test',
-  //     directory: 'Documents',
-  //   };
-
-  //   let file = await RNHTMLtoPDF.convert(options)
-  //   // console.log(file.filePath);
-  //   alert(file.filePath);
-  // }
-
-
 
   useEffect(() => {
     onGetDetail();
+    // onGetNation();
   }, []);
   useEffect(() => {
     if (fileThutucDetail !== null) {
       onGetEformId();
     }
   }, [fileThutucDetail]);
+
 
   // useEffect(() => {
   //   if (fileThutucDetail !== null) {
@@ -266,200 +238,214 @@ const DinhkemThutucScreen: React.FC = () => {
     console.log('file', file);
     console.log('files', files);
   }
-  const onsubMitTest = async () => {
-    await dispatch(uploadFile({ files: fileUploadShow, accountId: '632d7fbc94807e2c42b645f1' })).unwrap();
+  const onPostDinhkem = async () => {
+    // await dispatch(uploadFile({ files: fileUploadShow, accountId: '632d7fbc94807e2c42b645f1' })).unwrap();
+    await dispatch(uploadFile({ files: fileUploadShow, accountId: userData.id })).unwrap();
+    console.log('dữ liệu return', uploaddataresponse);
   }
 
   return (
-    <View style={styles.container}>
-      <Header name="Đính kèm thông tin hồ sơ" />
-      <View style={styles.fixInput}>
-        <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={() => {
-          setIsVisible(true);
-        }}>
-          <Text style={styles.textCusmargin}>Nhập thông tin tờ khai đăng ký</Text>
-        </TouchableOpacity>
+    <ScrollView style={[Layout.fill]}>
+      <View style={styles.container}>
+        <Header name="Đính kèm thông tin hồ sơ" />
+        {/* <View style={styles.fixInput}>
+          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={() => {
+            setIsVisible(true);
+          }}>
+            <Text style={styles.textCusmargin}>Nhập thông tin tờ khai đăng ký</Text>
+          </TouchableOpacity>
 
-      </View>
-      <Modal transparent={true} visible={isVisible}>
-        <View style={{ backgroundColor: "#000000aa" }}>
-          <View
-            style={{
-              backgroundColor: "#ffffff",
-              margin: 50,
-              padding: 40,
-              borderRadius: 10,
-            }}
-          >
-            <View>
-              <View >
-                <Text style={{ color: "#0066ff", fontWeight: '700' }}>GIẤY ĐỀ NGHỊ ĐĂNG KÝ HỘ KINH DOANH</Text>
-                <Text style={{ color: "#000", fontWeight: '700' }}>Kính gửi:  Phòng Tài chính - Kế hoạch</Text>
-              </View>
-              <View>
-                <Text style={{ color: "#000", fontWeight: '700' }}>Đăng ký hộ kinh doanh do tôi là chủ hộ : </Text>
-              </View>
-            </View>
-
-            <View style={styles.fixInput}>
-              <Text style={styles.textCusmargin}>Tên hộ kinh doanh :</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText6}
-                placeholder="Nhập tên chủ hộ kinh doanh"
-                value={textNoiDungGiaiquyet}
-              />
-            </View>
-            <View style={styles.fixInput}>
-              <Text style={styles.textCusmargin}>Địa chỉ trụ sở hộ kinh doanh :</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText6}
-                placeholder="Địa chỉ trụ sở hộ kinh doanh"
-                value={textNoiDungGiaiquyet}
-              />
-            </View>
-            <View style={styles.fixInput}>
-              <Text style={styles.textCusmargin}>Ngành nghề kinh doanh :</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText6}
-                placeholder="Ngành nghề kinh doanh"
-                value={textNoiDungGiaiquyet}
-              />
-            </View>
-            <View style={styles.fixInput}>
-              <Text style={styles.textCusmargin}>Vốn kinh doanh :</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText6}
-                placeholder="Vốn kinh doanh"
-                value={textNoiDungGiaiquyet}
-              />
-            </View>
-            <View style={styles.fixInput}>
-              <Text style={styles.textCusmargin}>Chủ thể thành lập hộ kinh doanh :</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeText6}
-                placeholder="Chủ thể thành lập hộ kinh doanh"
-                value={textNoiDungGiaiquyet}
-              />
-            </View>
-            <Button
-              title="Xác nhận đồng ý"
-              onPress={() => {
-                setIsVisible(false);
+        </View>
+        <Modal transparent={true} visible={isVisible}>
+          <View style={{ backgroundColor: "#000000aa" }}>
+            <View
+              style={{
+                backgroundColor: "#ffffff",
+                margin: 50,
+                padding: 40,
+                borderRadius: 10,
               }}
-            />
+            >
+              <View>
+                <View >
+                  <Text style={{ color: "#0066ff", fontWeight: '700' }}>GIẤY ĐỀ NGHỊ ĐĂNG KÝ HỘ KINH DOANH</Text>
+                  <Text style={{ color: "#000", fontWeight: '700' }}>Kính gửi:  Phòng Tài chính - Kế hoạch</Text>
+                </View>
+                <View>
+                  <Text style={{ color: "#000", fontWeight: '700' }}>Đăng ký hộ kinh doanh do tôi là chủ hộ : </Text>
+                </View>
+              </View>
+
+              <View style={styles.fixInput}>
+                <Text style={styles.textCusmargin}>Tên hộ kinh doanh :</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeText6}
+                  placeholder="Nhập tên chủ hộ kinh doanh"
+                  value={textNoiDungGiaiquyet}
+                />
+              </View>
+              <View style={styles.fixInput}>
+                <Text style={styles.textCusmargin}>Địa chỉ trụ sở hộ kinh doanh :</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeText6}
+                  placeholder="Địa chỉ trụ sở hộ kinh doanh"
+                  value={textNoiDungGiaiquyet}
+                />
+              </View>
+              <View style={styles.fixInput}>
+                <Text style={styles.textCusmargin}>Ngành nghề kinh doanh :</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeText6}
+                  placeholder="Ngành nghề kinh doanh"
+                  value={textNoiDungGiaiquyet}
+                />
+              </View>
+              <View style={styles.fixInput}>
+                <Text style={styles.textCusmargin}>Vốn kinh doanh :</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeText6}
+                  placeholder="Vốn kinh doanh"
+                  value={textNoiDungGiaiquyet}
+                />
+              </View>
+              <View style={styles.fixInput}>
+                <Text style={styles.textCusmargin}>Chủ thể thành lập hộ kinh doanh :</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeText6}
+                  placeholder="Chủ thể thành lập hộ kinh doanh"
+                  value={textNoiDungGiaiquyet}
+                />
+              </View>
+              <Button
+                title="Xác nhận đồng ý"
+                onPress={() => {
+                  setIsVisible(false);
+                }}
+              />
+            </View>
+          </View>
+        </Modal> */}
+        {/**Bản sao biên bản họp thành viên hộ gia đình về việc thành lập hộ kinh doanh trong trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>Bản sao biên bản họp thành viên hộ gia đình về việc thành lập hộ kinh doanh trong trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh: </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm </Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[0] && fileUploadShow[0].name}</MediumText>
           </View>
         </View>
-      </Modal>
-      {/**Bản sao biên bản họp thành viên hộ gia đình về việc thành lập hộ kinh doanh trong trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>Bản sao biên bản họp thành viên hộ gia đình về việc thành lập hộ kinh doanh trong trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh: </Text>
-        </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm </Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[0] && fileUploadShow[0].name}</MediumText>
-        </View>
-      </View>
 
-      {/**Danh sách các cá nhân góp vốn thành lập hộ kinh doanh */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>Danh sách các cá nhân góp vốn thành lập hộ kinh doanh (nếu có): </Text>
+        {/**Danh sách các cá nhân góp vốn thành lập hộ kinh doanh */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>Danh sách các cá nhân góp vốn thành lập hộ kinh doanh (nếu có): </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[1] && fileUploadShow[1].name}</MediumText>
+          </View>
         </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[1] && fileUploadShow[1].name}</MediumText>
-        </View>
-      </View>
 
-      {/**CMND/Căn Cước/Hộ Chiếu */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>CMND/Căn Cước/Hộ Chiếu: </Text>
+        {/**CMND/Căn Cước/Hộ Chiếu */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>CMND/Căn Cước/Hộ Chiếu: </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[2] && fileUploadShow[2].name}</MediumText>
+          </View>
         </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[2] && fileUploadShow[2].name}</MediumText>
-        </View>
-      </View>
 
-      {/**Bản sao văn bản ủy quyền của thành viên hộ gia đình cho một thành viên làm chủ hộ kinh doanh đối với trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>Bản sao văn bản ủy quyền của thành viên hộ gia đình cho một thành viên làm chủ hộ kinh doanh đối với trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh: </Text>
+        {/**Bản sao văn bản ủy quyền của thành viên hộ gia đình cho một thành viên làm chủ hộ kinh doanh đối với trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>Bản sao văn bản ủy quyền của thành viên hộ gia đình cho một thành viên làm chủ hộ kinh doanh đối với trường hợp các thành viên hộ gia đình đăng ký hộ kinh doanh: </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[3] && fileUploadShow[3].name}</MediumText>
+          </View>
         </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[3] && fileUploadShow[3].name}</MediumText>
-        </View>
-      </View>
 
-      {/**Biên bản họp nhóm cá nhân về việc thành lập hộ kinh doanh đối với trường hợp hộ kinh doanh do một nhóm cá nhân thành lập */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>Biên bản họp nhóm cá nhân về việc thành lập hộ kinh doanh đối với trường hợp hộ kinh doanh do một nhóm cá nhân thành lập: </Text>
+        {/**Biên bản họp nhóm cá nhân về việc thành lập hộ kinh doanh đối với trường hợp hộ kinh doanh do một nhóm cá nhân thành lập */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>Biên bản họp nhóm cá nhân về việc thành lập hộ kinh doanh đối với trường hợp hộ kinh doanh do một nhóm cá nhân thành lập: </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[4] && fileUploadShow[4].name}</MediumText>
+          </View>
         </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[4] && fileUploadShow[4].name}</MediumText>
-        </View>
-      </View>
 
-      {/**Giấy uỷ quyền */}
-      <View style={styles.backgroundItemAttach}>
-        <View>
-          <Text style={{ color: "#000", fontWeight: '700' }}>Giấy uỷ quyền: </Text>
+        {/**Giấy uỷ quyền */}
+        <View style={styles.backgroundItemAttach}>
+          <View>
+            <Text style={{ color: "#000", fontWeight: '700' }}>Giấy uỷ quyền: </Text>
+          </View>
+          <View>
+            <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
+              <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[5] && fileUploadShow[5].name}</MediumText>
+          </View>
         </View>
-        <View>
-          <TouchableOpacity style={{ backgroundColor: "#fc5a03", borderRadius: 10, padding: 5, alignSelf: 'center' }} onPress={documentUploadPicker}>
-            <Text style={styles.textCusmargin}>Chọn tệp tin đính kèm</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <MediumText style={styles.nameFileDinhkem}>{fileUploadShow[5] && fileUploadShow[5].name}</MediumText>
-        </View>
-      </View>
 
-      <View style={styles.bgCusBtn}>
-        {/* <TouchableOpacity style={styles.customBtn} onPress={onsubMitTest}>
+
+        <View style={styles.bgCusBtn}>
+          <TouchableOpacity style={styles.customBtn} onPress={createPDF}>
+            <Text style={styles.customBtnText}>Xem và khởi tạo thông tin biểu mẫu đính kèm</Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.customBtn} onPress={onsubMitTest}>
           <Text style={styles.customBtnText}>Hoàn thành</Text>
         </TouchableOpacity> */}
-        <TouchableOpacity style={styles.customBtn} onPress={onPostThutuc}>
-          <Text style={styles.customBtnText}>Nộp hồ sơ</Text>
-          {/* <Button onPress={onPostThutuc} title="Nộp Hồ Sơ" /> */}
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.customBtn} onPress={() => { onPostDinhkem(), onPostThutuc() }}>
+            <Text style={styles.customBtnText}>Nộp hồ sơ</Text>
+            {/* <Button onPress={onPostThutuc} title="Nộp Hồ Sơ" /> */}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.customBtn} onPress={onPostDinhkem}>
+            <Text style={styles.customBtnText}>onPostDinhkem</Text>
+            {/* <Button onPress={onPostThutuc} title="Nộp Hồ Sơ" /> */}
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.customBtn} onPress={createPDF}>
-          <Text style={styles.customBtnText}>tạo file pdf test</Text>
-        </TouchableOpacity>
+
+          {/* <TouchableOpacity style={styles.customBtn} onPress={navigatelookatPDF}>
+            <Text style={styles.customBtnText}>Xem file PDF vừa tạo</Text>
+          </TouchableOpacity> */}
+        </View>
+
       </View>
+    </ScrollView>
 
-    </View>
   );
 };
 
@@ -561,6 +547,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderColor: Colors.grey7,
   },
+  container1: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 25,
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  }
 });
 
 export default DinhkemThutucScreen;

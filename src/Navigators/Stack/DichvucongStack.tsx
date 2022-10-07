@@ -4,7 +4,7 @@ import DichvucongScreen from '../../Screens/Dichvucong';
 import ThutucChiTietScreen from '../../Screens/ThutucChiTiet';
 import MotaThuTucScreen from '../../Screens/MotaThuTuc';
 import DinhkemThutucScreen from '../../Screens/DinhkemThuTuc';
-
+import PDFExample from '../../Screens/TestManhinhPDF';
 interface Props { }
 
 const Stack = createNativeStackNavigator();
@@ -16,6 +16,7 @@ const DichvucongStack = (props: Props) => {
       <Stack.Screen name="ThutucChiTietScreen" component={ThutucChiTietScreen} />
       <Stack.Screen name="MotaThuTucScreen" component={MotaThuTucScreen} />
       <Stack.Screen name="DinhkemThutucScreen" component={DinhkemThutucScreen} />
+      <Stack.Screen name="PDFExample" component={PDFExample} />
     </Stack.Navigator>
   );
 };

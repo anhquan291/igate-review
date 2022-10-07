@@ -44,7 +44,7 @@ const Header = ({
           <Feather
             name="arrow-left"
             size={kScaledSize(20)}
-            color={iconColor || Colors.white}
+            color={iconColor || Colors.blue}
           />
         </TouchableOpacity>
       )}

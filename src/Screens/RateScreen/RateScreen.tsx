@@ -1,5 +1,5 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   BackHandler,
   FlatList,
@@ -9,57 +9,57 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-} from "react-native";
-import { Button } from "../../Components/Buttons";
-import { Header } from "../../Components/Headers";
-import { AppLoader } from "../../Components/Loaders";
-import { BoldText, MediumText, RegularText } from "../../Components/Texts";
-import { useAppDispatch, useAppSelector } from "../../Hooks/RTKHooks";
-import { fileGetData, fileGetDetail } from "../../Store/FileSlice";
-import { FileDetailFields } from "../../Models/File";
+} from 'react-native';
+import { Button } from '../../Components/Buttons';
+import { Header } from '../../Components/Headers';
+import { AppLoader } from '../../Components/Loaders';
+import { BoldText, MediumText, RegularText } from '../../Components/Texts';
+import { useAppDispatch, useAppSelector } from '../../Hooks/RTKHooks';
+import { fileGetData, fileGetDetail } from '../../Store/FileSlice';
+import { FileDetailFields } from '../../Models/File';
 import {
   rateCheckFile,
   rateGetData,
   rateOfficer,
   rateOfficerParams,
-} from "../../Store/RateSlice";
-import { authGetUserData } from "../../Store/AuthSlice";
-import Colors from "../../Themes/Colors";
-import Layout from "../../Themes/Layout";
-import { formatDate, formatDateMonth } from "../../Utils/Common";
+} from '../../Store/RateSlice';
+import { authGetUserData } from '../../Store/AuthSlice';
+import Colors from '../../Themes/Colors';
+import Layout from '../../Themes/Layout';
+import { formatDate, formatDateMonth } from '../../Utils/Common';
 import {
   kScaledSize,
   kSpacing,
   kTextSizes,
   kWidth,
-} from "../../Utils/Constants";
-import { handleAlert } from "../../Utils/Notification";
-import QuestionItem from "./QuestionItem";
-import moment from "moment";
-import SoundPlayer from "react-native-sound-player";
-import Modal from "react-native-modal";
-import { useStateWithCallback } from "../../Hooks/useStateWithCallback";
+} from '../../Utils/Constants';
+import { handleAlert } from '../../Utils/Notification';
+import QuestionItem from './QuestionItem';
+import moment from 'moment';
+import SoundPlayer from 'react-native-sound-player';
+import Modal from 'react-native-modal';
+import { useStateWithCallback } from '../../Hooks/useStateWithCallback';
 
 const QuestionAnswer = [
   {
     id: 1,
-    name: "Không hài lòng",
-    icon: require("../../Assets/Images/notSatisfied.png"),
+    name: 'Không hài lòng',
+    icon: require('../../Assets/Images/notSatisfied.png'),
   },
   {
     id: 2,
-    name: "Bình thường",
-    icon: require("../../Assets/Images/normal.png"),
+    name: 'Bình thường',
+    icon: require('../../Assets/Images/normal.png'),
   },
   {
     id: 3,
-    name: "Hài lòng",
-    icon: require("../../Assets/Images/satisfied.png"),
+    name: 'Hài lòng',
+    icon: require('../../Assets/Images/satisfied.png'),
   },
   {
     id: 4,
-    name: "Rất hài lòng",
-    icon: require("../../Assets/Images/verySatisfied.png"),
+    name: 'Rất hài lòng',
+    icon: require('../../Assets/Images/verySatisfied.png'),
   },
 ];
 //logic màn rating -->
@@ -93,15 +93,15 @@ const RateScreen: React.FC = () => {
       fileGetData({
         page: reload ? 0 : page,
         size: 10,
-        spec: "page",
-        "user-id": userData.user_id,
+        spec: 'page',
+        'user-id': userData.user_id,
         userId: userData.id,
         agencyId: userData.experience[0].agency.id,
         //thêm trường ancestor thay trường agency
         ancestorId: userData.experience[0].agency.parent.id,
       }),
     ).unwrap();
-    console.log("..user..", userData);
+    console.log('..user..', userData);
     // const latestItem = response.content.reduce(
     //   (
     //     a: { completedDate: string | number | Date },
@@ -116,16 +116,16 @@ const RateScreen: React.FC = () => {
   const renderIcon = (type: number): any => {
     switch (type) {
       case 0:
-        return require("../../Assets/Images/normal.png");
+        return require('../../Assets/Images/normal.png');
       case 2:
-        return require("../../Assets/Images/verySatisfied.png");
+        return require('../../Assets/Images/verySatisfied.png');
       case -1:
-        return require("../../Assets/Images/notSatisfied.png");
+        return require('../../Assets/Images/notSatisfied.png');
       case 1:
-        return require("../../Assets/Images/satisfied.png");
+        return require('../../Assets/Images/satisfied.png');
 
       default:
-        return require("../../Assets/Images/normal.png");
+        return require('../../Assets/Images/normal.png');
     }
   };
 
@@ -133,7 +133,7 @@ const RateScreen: React.FC = () => {
 
   const goBack = () => {
     setIsShowAlert(false, () => {
-      navigation.navigate("UserScreen", { item: undefined });
+      navigation.navigate('UserScreen', { item: undefined });
     });
   };
 
@@ -222,13 +222,13 @@ const RateScreen: React.FC = () => {
             },
           },
         ],
-        deploymentId: data.deploymentId,
+        deploymentId: data.deploymentId, // có
       };
-      console.log("body", body);
+      console.log('body', body);
 
       await dispatch(rateOfficer(body)).unwrap();
-      if (Platform.OS === "android") {
-        SoundPlayer.playSoundFile("tone", "mp3");
+      if (Platform.OS === 'android') {
+        SoundPlayer.playSoundFile('tone', 'mp3');
       }
       setIsShowAlert(true);
       setTimeout(() => {
@@ -240,13 +240,13 @@ const RateScreen: React.FC = () => {
   // console.log("selection ->", selectAnswer, answerType);
   const onScrollToIndex = (type: string): void => {
     if (
-      type === "next" &&
+      type === 'next' &&
       data &&
       questionIndex < data?.questionGroup[0].question.length - 1
     ) {
       ref.current?.scrollToIndex({ animated: true, index: questionIndex + 1 });
       setQuestionIndex(questionIndex + 1);
-    } else if (type === "previous" && questionIndex > 0) {
+    } else if (type === 'previous' && questionIndex > 0) {
       ref.current?.scrollToIndex({ animated: true, index: questionIndex - 1 });
       setQuestionIndex(questionIndex - 1);
     }
@@ -262,15 +262,15 @@ const RateScreen: React.FC = () => {
 
   useEffect(() => {
     timeout = setTimeout(() => {
-      console.log("still run");
-      navigation.navigate("UserScreen", { item: fileDetail });
+      console.log('still run');
+      navigation.navigate('UserScreen', { item: fileDetail });
     }, 15 * 1000);
     return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
+      'hardwareBackPress',
       () => true,
     );
     return () => backHandler.remove();
@@ -278,7 +278,7 @@ const RateScreen: React.FC = () => {
   // console.log('file dsss', fileDetail);
   return (
     <View style={[Layout.fill]}>
-      <Header name="ĐÁNH GIÁ ĐỘ HÀI LÒNG" />
+      <Header name='ĐÁNH GIÁ ĐỘ HÀI LÒNG' />
       {(isLoading || fileLoading) && <AppLoader />}
       {fileList.length > 0 && fileDetail !== null && !error ? (
         <>
@@ -412,13 +412,13 @@ const RateScreen: React.FC = () => {
           </View> */}
         </>
       ) : (
-          <View style={[Layout.fill, Layout.center]}>
-            <MediumText>Không có hồ sơ đánh giá</MediumText>
-          </View>
-        )}
+        <View style={[Layout.fill, Layout.center]}>
+          <MediumText>Không có hồ sơ đánh giá</MediumText>
+        </View>
+      )}
       <Modal
-        animationIn={"zoomIn"}
-        animationOut={"zoomOut"}
+        animationIn={'zoomIn'}
+        animationOut={'zoomOut'}
         useNativeDriver={true}
         hideModalContentWhileAnimating={true}
         isVisible={isShowAlert}
@@ -428,7 +428,8 @@ const RateScreen: React.FC = () => {
           <View style={[styles.modalContainer]}>
             <BoldText style={styles.noti}>Thông Báo</BoldText>
             <MediumText style={styles.message}>
-              CẢM ƠN ÔNG/BÀ ĐÃ ĐÁNH GIÁ KẾT QUẢ GIẢI QUYẾT HỒ SƠ <MediumText style={styles.detail}>{fileDetail?.code}</MediumText>
+              CẢM ƠN ÔNG/BÀ ĐÃ ĐÁNH GIÁ KẾT QUẢ GIẢI QUYẾT HỒ SƠ{' '}
+              <MediumText style={styles.detail}>{fileDetail?.code}</MediumText>
             </MediumText>
 
             {/* <TouchableOpacity
@@ -451,12 +452,12 @@ const styles = StyleSheet.create({
   title: {
     marginVertical: kSpacing.kSpacing10,
     color: Colors.primary,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: kTextSizes.medium,
   },
   detail: {
     flex: 1,
-    textAlign: "right",
+    textAlign: 'right',
     color: Colors.black,
   },
   buttonGroup: {
@@ -487,32 +488,32 @@ const styles = StyleSheet.create({
     paddingVertical: kScaledSize(10),
     marginBottom: kSpacing.kSpacing25,
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   moodText: {
     fontSize: kTextSizes.xmini,
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: kSpacing.kSpacing10,
   },
   moodTextv2: {
     fontSize: kTextSizes.large,
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   moodIcon: {
     width: (kWidth - kScaledSize(60)) / 4,
     height: kScaledSize(45),
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   moodIconv2: {
     width: (kWidth - kScaledSize(60)) / 3,
     height: kScaledSize(60),
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   modal: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   modalContainer: {
     backgroundColor: Colors.white,
@@ -521,19 +522,19 @@ const styles = StyleSheet.create({
     padding: kScaledSize(10),
   },
   noti: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: kScaledSize(20),
     color: Colors.primary,
     fontSize: kScaledSize(20),
   },
-  message: { textAlign: "center" },
+  message: { textAlign: 'center' },
   textBold: {
     color: Colors.white,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   result: {
     marginTop: kScaledSize(30),
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingVertical: kSpacing.kSpacing10,
     paddingHorizontal: kSpacing.kSpacing20,
     borderRadius: 5,

@@ -2,15 +2,26 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.2"
+        androidXCore = "1.6.0"
+        buildToolsVersion = "29.0.3"
         minSdkVersion = 21
         compileSdkVersion = 30
-        targetSdkVersion = 30
+        targetSdkVersion = 29
         ndkVersion = "20.1.5948944"
     }
     repositories {
         google()
         mavenCentral()
+        exclusiveContent {
+filter {
+includeGroup "com.facebook.react"
+}
+forRepository {
+maven {
+url "$rootDir/../node_modules/react-native/android"
+}
+}
+}
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.2.1")
@@ -35,5 +46,15 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
         jcenter()
+        exclusiveContent {
+filter {
+includeGroup "com.facebook.react"
+}
+forRepository {
+maven {
+url "$rootDir/../node_modules/react-native/android"
+}
+}
+}
     }
 }

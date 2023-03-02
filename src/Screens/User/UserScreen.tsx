@@ -36,7 +36,7 @@ const UserScreen = (props: Props) => {
   const { isLoading: fileLoading } = useAppSelector((state) => state.files);
   const { data } = useAppSelector((state) => state.rate);
   console.log('dataapapa', userData);
-  console.log('data', data);
+  console.log('datahihu', data);
   const focus = useIsFocused();
   const route: any = useRoute();
 
@@ -51,18 +51,20 @@ const UserScreen = (props: Props) => {
   //lấy dữ liệu ở màn hình user về.
   const onGetFileList = async (reload?: boolean): Promise<void> => {
     //Hàm lấy dữ liệu toàn bộ hồ sơ (trạng thái trả kết quả) của Cán Bộ.
-    console.log('Route FileFields', route.params);
-
+    //console.log('Route FileFields', route.params);
+    console.log('1234321', userData);
     const response = await dispatch(
       fileGetData({
         page: 0,
-        size: 10,
+        size: 50,
         spec: 'page',
-        'user-id': userData.user_id,
+        'user-id': userData.user_id, //undefine
         userId: userData.id,
         agencyId: userData.experience[0].agency.id,
         //thêm trường ancestor
-        ancestorId: userData.experience[0].agency.parent.id,
+        ancestorId: userData.experience[0].agency.parent.id
+          ? userData.experience[0].agency.parent.id
+          : userData.experience[0].agency.ancestors[0].id, // cua hue null
         //cần call trường nào thì từ màn user -> đẩy những thông tin cần thiết vô file slice để gọi api
       }),
     ).unwrap();
@@ -91,6 +93,7 @@ const UserScreen = (props: Props) => {
         rateCheckFile({
           //new
           'rating-id': data?.id, //true
+          // 'rating-id': fileDetail.content[0]?.id,
           'officer-id':
             fileDetail.content[0]?.task[fileDetail.content[0].task.length - 1]
               .assignee.id, //true
@@ -152,10 +155,11 @@ const UserScreen = (props: Props) => {
         onGetData();
       }, 5 * 1000);
       return () => clearInterval(interval);
-      // onGetFileList();
-      // onGetData();
     }
   }, [focus]);
+  // useEffect(() => {
+  //   onGetFileList();
+  // }, []);
 
   return (
     <View style={[Layout.fill]}>
@@ -192,14 +196,16 @@ const UserScreen = (props: Props) => {
                   {userData.email.length > 0 ? userData.email[0].value : ''}
                 </MediumText>
               </View>
-              {userData.experience[0].primary && (
+              {/* {userData.experience[0].primary && (
                 <View style={[styles.detail]}>
                   <RegularText>Cơ quan: </RegularText>
                   <MediumText>
-                    {userData.experience[0].agency.parent.name}
+                    {userData.experience[0].agency.parent.name
+                      ? userData.experience[0].agency.parent.name
+                      : ''}
                   </MediumText>
                 </View>
-              )}
+              )} */}
               <View style={[Layout.rowBetween]}>
                 <MediumText>Đăng xuất</MediumText>
                 <TouchableOpacity onPress={onLogout}>
